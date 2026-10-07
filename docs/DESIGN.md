@@ -45,3 +45,16 @@ Long delays and the full Quasar feature set are outside the initial scope.
 5. Release metadata, versioned UF2 and eventual Workshop_Computer contribution.
 
 Do not describe the effect as working until DSP is implemented and tested.
+
+## Confirmed platform and configuration decisions
+
+The user selected 192 MHz as the initial CPU target based on stable experience
+with other cards. Use 1.15 V per Chris Johnson's ComputerCard NOTES, set before
+raising the clock. Audio remains 48 kHz with ComputerCard 0.4.0. Performance
+measurements for this card must still cover its actual workload.
+
+The user supports web configuration as complexity grows. Plan for Twin Orbits,
+Spatial Mixer and Disorientation as alternative functions on one card, with
+settings saved through the web UI and a startup function selector. Only the
+selected function runs. The saved startup default and exact selection gesture
+remain to be defined. These functions and the editor are not yet implemented.

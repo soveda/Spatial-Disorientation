@@ -9,7 +9,8 @@ User requirements override older guidance in the copied directive:
 - Work in this independent repository; do not change Workshop_Computer during development.
 
 Search Workshop_Computer examples before introducing new hardware/build/DSP patterns.
-Use 48 kHz audio callbacks at an initial 144 MHz CPU clock. The ADC's 96 kHz
+Use 48 kHz audio callbacks at a 192 MHz CPU clock and 1.15 V core voltage,
+as explicitly requested by the user. The ADC's 96 kHz
 sampling does not change the 48 kHz ProcessSample callback rate.
 Keep ProcessSample under about 20 microseconds; use fixed-point DSP, bounded work,
 and smooth controls. Read hardware inputs only inside ProcessSample.

@@ -88,3 +88,9 @@ and discusses listener-dependent limitations of spatial perception:
 https://www.neuzeit-instruments.com/mediafiles/Manuals/Quasar_Manual_1_0.pdf
 No Quasar firmware, graphics, manual text or transfer-function data is included.
 See ../THIRD_PARTY_NOTICES.md for platform attribution.
+
+## Subsequent user decisions
+
+Target 192 MHz / 1.15 V with 48 kHz audio from the start. Retain a web editor
+as the configuration interface. The three musical directions may coexist as
+separately configured functions selected at startup, with one active at a time.

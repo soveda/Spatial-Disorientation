@@ -38,3 +38,7 @@ Neuzeit Instruments Quasar is the inspiration for two-source binaural positionin
 and orbital movement. Product reference: https://www.neuzeit-instruments.com/Quasar
 No Quasar firmware, manual text, graphics, or transfer-function data is included.
 This is an independent project, without an affiliation or endorsement claim.
+
+Clock and regulator setup follows Chris Johnson's ComputerCard NOTES.md
+(Programming and optimisation / Clock speed) from the same upstream directory
+referenced above: 192 MHz with the regulator at 1.15 V.

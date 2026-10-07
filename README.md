@@ -22,7 +22,7 @@ cmake --build build -j2
 
 Output: `build/spatial_disorientation.uf2`. This is scaffold firmware, not a finished effect.
 Build artifacts are ignored; release firmware will be added when ready.
-Uses vendored ComputerCard **0.4.0**, a 144 MHz CPU clock, a 48 kHz audio callback,
+Uses vendored ComputerCard **0.4.0**, a 192 MHz CPU clock at 1.15 V, a 48 kHz audio callback,
 RAM execution and oscillator startup multiplier 64. USB/UART stdio are disabled.
 
 ## License and credits

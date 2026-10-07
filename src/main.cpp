@@ -3,6 +3,7 @@
 // This deliberately provides a hardware smoke check before effect DSP is added.
 #include "ComputerCard.h"
 #include "hardware/clocks.h"
+#include "hardware/vreg.h"
 
 class Card : public ComputerCard {
     void ProcessSample() override {
@@ -23,7 +24,11 @@ class Card : public ComputerCard {
 };
 
 int main() {
-    set_sys_clock_khz(144000, true);
+    // Follow Chris Johnson's ComputerCard NOTES: 192 MHz at 1.15 V.
+    // Settle the regulator before raising the clock, before audio starts.
+    vreg_set_voltage(VREG_VOLTAGE_1_15);
+    sleep_ms(10);
+    set_sys_clock_khz(192000, true);
     // Static storage leaves stack space available for future DSP and USB work.
     static Card card;
     card.EnableNormalisationProbe();
