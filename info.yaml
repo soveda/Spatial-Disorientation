@@ -1,0 +1,12 @@
+draft: true
+Name: "Spatial Disorientation"
+short-description: "Two-source binaural spatializer inspired by Neuzeit Instruments Quasar"
+summary: "Initial development scaffold. Planned effect is not yet implemented; current firmware provides stereo passthrough only."
+Language: "C++ (Pico SDK)"
+Creator: soveda
+Version: "0.0.1"
+Status: WIP
+License: MIT
+date-created: 2026-10-07
+date-updated: 2026-10-07
+Editor: none
