@@ -1,0 +1,58 @@
+// Copyright (c) 2026 Adrian Vos (soveda). SPDX-License-Identifier: MIT
+#include "orbits.h"
+#include <cassert>
+#include <cstdio>
+#include <cmath>
+#include <cstring>
+using namespace spatial;
+static double Energy(uint32_t angle,int distance,bool right=false,bool inputB=false) {
+    Engine e;Config c;c.value[1]=0;
+    Scene s{{angle,angle},distance};e.SetScene(s,c);
+    double sum=0;
+    for(int i=0;i<48000;++i) {
+        int sample=static_cast<int>(1500*std::sin(i*0.13));
+        auto o=e.Process(inputB?0:sample,inputB?sample:0);
+        if(i>12000) { double v=right?o.right:o.left;sum+=v*v; }
+    }
+    return sum;
+}
+int main() {
+    Config c,decoded;uint8_t bytes[18];EncodeConfig(c,bytes);
+    assert(DecodeConfig(bytes,18,decoded));assert(std::memcmp(&c,&decoded,sizeof(c))==0);
+    bytes[0]=2;assert(!DecodeConfig(bytes,18,decoded));
+    EncodeConfig(c,bytes);bytes[2]=127;assert(!DecodeConfig(bytes,18,decoded));
+    EncodeConfig(c,bytes);bytes[16]=3;assert(!DecodeConfig(bytes,18,decoded));
+    assert(!DecodeConfig(bytes,17,decoded));
+    assert(Checksum(reinterpret_cast<const uint8_t*>("hello"),5)==0x4f9f2cab);
+    double left=Energy(0x40000000u,0),right=Energy(0x40000000u,0,true);
+    assert(right>left*3); // Right source is stronger in right ear.
+    assert(std::abs(Energy(0xc0000000u,0)-right)<right*.03);
+    assert(Energy(0,4095)<Energy(0,0)*.2);
+    assert(std::abs(Energy(0,0,false,true)-Energy(0,0))<Energy(0,0)*.01);
+    Engine e;Scene s;uint32_t random=1;
+    for(int i=0;i<300000;++i) {
+        random=random*1664525u+1013904223u;
+        if((i&255)==0) {
+            s={{random,0u-random},static_cast<int32_t>(random&4095)};
+            for(int n=0;n<5;++n)c.value[n]=(random>>(n*3))&4095;
+            e.SetScene(s,c);
+        }
+        auto o=e.Process(static_cast<int>(random&4095)-2048,static_cast<int>((random>>12)&4095)-2048);
+        assert(o.left>=-2048&&o.left<=2047&&o.right>=-2048&&o.right<=2047);
+    }
+    for(int i=0;i<96000;++i)e.Process(0,0);
+    auto silence=e.Process(0,0);assert(std::abs(silence.left)<=4&&std::abs(silence.right)<=4);
+    Orbits orbit;Config defaults;
+    orbit.Controls(2048,2048,0,0,0,false,defaults);assert(orbit.Step()==0);
+    orbit.Controls(2048,4095,0,0,0,false,defaults);assert(orbit.Step()==178957);
+    auto start=orbit.Advance();for(int i=0;i<100;++i)orbit.Advance();auto finish=orbit.Advance();
+    assert(finish.angle[0]-start.angle[0]==start.angle[1]-finish.angle[1]);
+    orbit.Pulse(true,true,true);for(int i=0;i<23999;++i)orbit.Pulse(true,false,false);orbit.Pulse(true,true,false);
+    orbit.Controls(2048,4095,0,0,0,true,defaults);
+    assert(orbit.ClockLocked());assert(orbit.Step()==44739); // 120 BPM / 4 pulses = .5 Hz.
+    orbit.Controls(2048,2048,0,0,0,true,defaults);assert(orbit.Step()==0);
+    orbit.Pulse(true,false,true);auto reset=orbit.Advance();assert(reset.angle[0]==0&&reset.angle[1]==0x80000000u);
+    for(int i=0;i<144001;++i)orbit.Pulse(true,false,false);assert(!orbit.ClockLocked());
+    orbit.Controls(2048,4095,0,0,0,true,defaults);assert(orbit.Step()==178957);
+    std::puts("PASS: config rejection, checksum, ear symmetry, distance, independent sources, DSP bounds/tails, orbit direction, clock, stop/reset and timeout");
+}

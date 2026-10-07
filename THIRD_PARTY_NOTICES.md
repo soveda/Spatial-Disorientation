@@ -42,3 +42,26 @@ This is an independent project, without an affiliation or endorsement claim.
 Clock and regulator setup follows Chris Johnson's ComputerCard NOTES.md
 (Programming and optimisation / Clock speed) from the same upstream directory
 referenced above: 192 MHz with the regulator at 1.15 V.
+
+## Twin Orbits DSP and editor
+
+Original fixed-point spatial DSP, orbit logic, configuration contract, editor,
+tests and synthetic preview sources: Adrian Vos (soveda), 2026, MIT. The model
+combines interaural delay/level, one-pole head-shadow filtering, distance and
+feed-forward early reflections. No measured HRTF dataset or third-party binaural
+DSP code is incorporated. The mathematical sine table is reused from this author's
+MIT-licensed You spin me round project.
+
+USB descriptor code in src/usb_descriptors.c is adapted from Chris Johnson's
+ComputerCard web_interface example (MIT; upstream source revision/link above).
+Core separation and SysEx transport are based on the same example, with a new
+bounded protocol and settings implementation. The full ComputerCard MIT license
+is preserved in vendor/ComputerCard/LICENSE. src/tusb_config.h preserves its
+original Ha Thach 2019 MIT notice in full. TinyUSB is an MIT-licensed Pico SDK
+dependency; see https://github.com/hathach/tinyusb/blob/master/LICENSE.
+Firmware also incorporates Pico SDK components under their respective licenses;
+the Raspberry Pi BSD-3-Clause notice is in vendor/PicoSDK/LICENSE.TXT.
+
+The alpha operator README, test protocol, protocol description and web editor
+include attribution to their hardware/API sources. The copied upstream directive
+retains upstream ownership as described above.

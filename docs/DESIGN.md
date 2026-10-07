@@ -1,7 +1,7 @@
 # Spatial Disorientation: approved initial design
 
 Two-source binaural spatializer inspired by Neuzeit Instruments Quasar for Music Thing Modular Workshop Computer.
-Approved in conversation on 2026-10-07. This describes the target, not the scaffold.
+Approved in conversation on 2026-10-07. This records the approved target; implementation status is noted below.
 
 ## Performance controls
 
@@ -17,8 +17,8 @@ Approved in conversation on 2026-10-07. This describes the target, not the scaff
 | Audio 1 / Audio 2 out | Binaural left / right |
 
 CV and pulse outputs are reserved; zero/low until useful behaviour is agreed.
-LED animation, ranges, CV scaling, and trigger-versus-gate details need definition
-before the corresponding features are implemented. Use soft takeover if editor
+LED animation, ranges, CV scaling, and trigger-versus-gate details are now defined
+for the initial prototype in README.md. Use soft takeover if editor
 settings and physical controls can otherwise cause jumps.
 
 ## DSP direction
@@ -57,4 +57,14 @@ The user supports web configuration as complexity grows. Plan for Twin Orbits,
 Spatial Mixer and Disorientation as alternative functions on one card, with
 settings saved through the web UI and a startup function selector. Only the
 selected function runs. The saved startup default and exact selection gesture
-remain to be defined. These functions and the editor are not yet implemented.
+remain to be defined. Twin Orbits and its initial editor are implemented; the other functions remain planned.
+
+## Initial Twin Orbits implementation (0.1.0-alpha1)
+
+The controls above are implemented with ranges, CV scaling, LED roles and edge
+semantics documented in README.md. Source levels, separation, room, strength and
+clock division are editor settings; knobs have separate roles, so no takeover
+is necessary. Elevation and other functions remain planned. Hardware/listening
+validation remains pending; see TEST_PROTOCOL.md. Original implementation and
+this addendum: Adrian Vos (soveda), 2026, MIT; upstream sources in
+../THIRD_PARTY_NOTICES.md.

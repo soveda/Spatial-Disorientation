@@ -1,12 +1,12 @@
 draft: true
 Name: "Spatial Disorientation"
 short-description: "Two-source binaural spatializer inspired by Neuzeit Instruments Quasar"
-summary: "Initial development scaffold. Planned effect is not yet implemented; current firmware provides stereo passthrough only."
+summary: "Twin Orbits alpha prototype: two independent sources with linked/opposing binaural orbits, clock/reset, distance and USB editor. Hardware validation pending."
 Language: "C++ (Pico SDK)"
 Creator: soveda
-Version: "0.0.1"
+Version: "0.1.0-alpha1"
 Status: WIP
 License: MIT
 date-created: 2026-10-07
 date-updated: 2026-10-07
-Editor: none
+Editor: "web/index.html"
