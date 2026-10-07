@@ -94,3 +94,20 @@ See ../THIRD_PARTY_NOTICES.md for platform attribution.
 Target 192 MHz / 1.15 V with 48 kHz audio from the start. Retain a web editor
 as the configuration interface. The three musical directions may coexist as
 separately configured functions selected at startup, with one active at a time.
+
+## Future option: 8mu live control
+
+User-requested option recorded on 2026-10-07: integrate 8mu for live performance,
+including its gyroscopic controls to control the sound. Candidate mappings include
+source position, orbit speed/direction, source separation and distance; elevation
+could be a target if implemented later. These are possibilities, not fixed mappings.
+
+Consider editor-configurable assignments, sensitivity, smoothing and a neutral
+position/recentre gesture so motion feels playable. Confirm the available motion
+messages and connection/USB roles against official 8mu documentation before
+choosing a transport or implementing support. Preserve physical knob/CV control
+and define how simultaneous control sources interact.
+
+This is future work; 8mu control is not implemented in Twin Orbits alpha1.
+Concept requested by Adrian Vos; this note © 2026 Adrian Vos (soveda), MIT.
+No device protocol or compatibility claim has been verified for this planning note.

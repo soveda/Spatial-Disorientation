@@ -68,3 +68,9 @@ is necessary. Elevation and other functions remain planned. Hardware/listening
 validation remains pending; see TEST_PROTOCOL.md. Original implementation and
 this addendum: Adrian Vos (soveda), 2026, MIT; upstream sources in
 ../THIRD_PARTY_NOTICES.md.
+
+## Future live-control option
+
+The user requested future 8mu integration, including gyroscopic control of sound.
+See OPTIONS.md for candidate mappings and implementation questions. This does not
+change the current Twin Orbits alpha1 firmware or its hardware test scope.
