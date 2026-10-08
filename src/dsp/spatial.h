@@ -52,11 +52,19 @@ public:
     void Geometry(uint32_t phase,int32_t distance,int32_t level,int32_t strength,int32_t room){
         hrtf_.Geometry(phase,strength);
         int32_t lateral=(static_cast<int32_t>(Sin(phase)>>3)*strength)>>12;
+        int32_t front=(static_cast<int32_t>(Sin(phase+0x40000000u)>>3)*strength)>>12;
         base_target_=(64<<8)+distance*20;
-        room_target_=(room*(512+((distance*1536)>>12)))>>12;
-        gain_target_=((3072-((distance*2304)>>12))*level)>>12;
+        // A distant source loses direct energy faster than its room sound. The
+        // first reflection dominates in front; later arrivals dominate behind.
+        // This is an original small-room cue, not a measured room response.
+        int32_t wet=(room*(1024+((distance*2662)>>12)))>>12;
+        wet=(wet*((3072-((distance*1024)>>12))*level>>12))>>12;
+        room_target_[0]=(wet*(4096-(lateral>>2)))>>12;
+        room_target_[1]=(wet*(4096+(lateral>>2)))>>12;
+        early_target_=2048+(front>>2);
+        int32_t directGain=((3072-((distance*2304)>>12))*level)>>12;
+        gain_target_=(directGain*(4096-((room*(256+(distance>>3)))>>12)))>>12;
         tone_target_=32700-((distance*6500)>>12);
-        level_target_=level;
         delay_target_[0]=lateral>0?lateral*2:0;
         delay_target_[1]=lateral<0?-lateral*2:0;
     }
@@ -64,8 +72,10 @@ public:
         int32_t q8=Clamp(input,-2048,2047)*256;
         dc_=q8-previous_+dc_-(dc_>>10);previous_=q8;
         line_.Write(dc_>>8);
-        base_=Slew(base_,base_target_,256);room_=Slew(room_,room_target_,512);
-        level_=Slew(level_,level_target_,512);gain_=Slew(gain_,gain_target_,128);
+        base_=Slew(base_,base_target_,256);
+        room_[0]=Slew(room_[0],room_target_[0],512);
+        room_[1]=Slew(room_[1],room_target_[1],512);
+        early_=Slew(early_,early_target_,256);gain_=Slew(gain_,gain_target_,128);
         tone_=Slew(tone_,tone_target_,128);
         // Shared Q3 low-pass state replaces two Q8/int64 multiplies. With input
         // bounded to [-4096,4095], |difference|<=65528 and tone<=32700, so the
@@ -78,19 +88,30 @@ public:
         delay_[1]=Slew(delay_[1],delay_target_[1],256);
         filtered=ears_.Process(filtered,delay_);
         int32_t reflected[2]={};
-        if(room_!=0){
-            for(int32_t e=0;e<2;++e){
-                int32_t taps=(line_.Read(base_+(e==0?211:293)*256)
-                             +line_.Read(base_+(e==0?367:433)*256))>>1;
-                reflected[e]=(((taps*room_)>>12)*level_)>>12;
+        // Unequal arrival times (7–24 ms after the direct sound) give the ears
+        // room-width cues without adding latency to the direct path. Three
+        // feed-forward taps per ear have no feedback or accumulating reverb tail.
+        for(int32_t e=0;e<2;++e){
+            int32_t taps=0;
+            if(room_[e]!=0){
+                int32_t first=line_.Read(base_+(e==0?337:401)*256);
+                int32_t later=(line_.Read(base_+(e==0?631:727)*256)
+                              +line_.Read(base_+(e==0?1069:1153)*256))>>1;
+                taps=later+(((first-later)*early_)>>12);
             }
+            // Q3 one-pole wall absorption: softer reflections preserve the
+            // direct HRTF's fine spectral cues. Keep draining when room is zero.
+            wall_[e]+=(taps*8-wall_[e])>>1;
+            reflected[e]=((wall_[e]>>3)*room_[e])>>12;
         }
         return {((filtered.left*gain_)>>12)+reflected[0],((filtered.right*gain_)>>12)+reflected[1]};
     }
 private:
     Delay line_;Hrtf hrtf_;EarDelay ears_;
     int32_t previous_=0,dc_=0,shadow_=0;
-    int32_t base_=64<<8,base_target_=64<<8,room_=0,room_target_=0,level_=0,level_target_=0;
+    int32_t base_=64<<8,base_target_=64<<8;
+    int32_t room_[2]={},room_target_[2]={},wall_[2]={};
+    int32_t early_=2048,early_target_=2048;
     int32_t delay_[2]={},delay_target_[2]={};
     int32_t gain_=0,gain_target_=0,tone_=24000,tone_target_=24000;
 };

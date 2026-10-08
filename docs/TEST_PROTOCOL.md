@@ -240,3 +240,49 @@ listen for clicks or changed motion. Alpha4 is retained for comparison; alpha2 i
 available if the new build has timing/control trouble. No alpha5 hardware pass is
 claimed. Dataset attribution: Gardner/Martin, MIT Media Laboratory, 1994; original
 notes © 2026 Adrian Vos (soveda), MIT.
+
+## Alpha5 user results and alpha6 room pass — 2026-10-08
+
+User reports: alpha5-opt32 callback 5 us / block 916 us; alpha5-hrtf64
+callback 5 us / block 1244 us. The latter exceeds the 1200 us warning threshold.
+64 taps did not noticeably improve localization. 32 taps gave some difference,
+but it sounded very close to the head. These reports do not certify worst-load
+USB stability. Alpha6 uses 32 taps and tests externalization through room cues.
+
+1. Flash alpha6-room32, reload editor and Read. Existing settings should load.
+   For listening, use only Audio 1, a bright mono source, X noon, Main noon/front,
+   Y down, CV2 unpatched, strength full. Apply room zero. Check centre stop,
+   position/left-right movement and the dry front/back comparison.
+2. Apply room 1200 (29%), then 2048 (50%). Compare front/back with the screen
+   hidden; slowly turn Main through a full orbit. Listen for outside-head size
+   separately from tonal change, width or a recognizable slap/echo.
+3. Slowly raise Y from near to middle/far at each room level. Reflections should
+   become more prominent relative to direct sound. Record whether the source
+   sounds farther away or merely quieter/diffuse. Keep volume fixed initially;
+   repeat at comfortable matched levels if needed. Room zero is the dry reference.
+4. Retest source B alone, both sources, linked/opposing movement, clock/reset,
+   CV position/distance, and editor Read/Apply/Save/reset/reconnect. Init still
+   applies settings without saving. Alpha5-opt32 is the unchanged fallback.
+5. With two sources, fast orbits, changing CV and maximum room/levels/strength,
+   exercise editor Apply/Read and a deliberate Save. Record peak callback/block
+   times and warnings. Targets remain <18 us and <1200 us; the block deadline is
+   1333.3 us. A warning is a failed margin check even if audio continues.
+6. Run at least 20 minutes with USB activity. Report clicks/dropouts, timing and
+   whether room improves front/back placement or masks it. No release claim yet.
+
+Host room tests check reflection arrival windows, direct-level retention, stronger
+room/direct ratio with distance, front/rear early/late weighting and tail drainage.
+They establish signal behaviour, not headphone externalization or device timing.
+Previews alpha6-dry-front-back.wav, alpha6-room-near-front-back.wav and
+alpha6-room-far-front-back.wav use the original repeated broadband source with
+room 0/2048/2048 and distance 0/0/3072 respectively. They alternate front/back
+at three-second intervals; level differences are intentional. Source audio and
+room model: Adrian Vos, MIT. Derived HRTFs: Bill Gardner and Keith Martin,
+MIT Media Laboratory, 1994; vendor/KEMAR/SOURCE_TERMS.md retains data terms.
+
+Alpha6 host/build results: warning-free 32-tap RP2040 build (55,260 bytes flash,
+80,860 bytes main RAM, 2 KB per scratch bank); address/undefined sanitizer DSP,
+room and block tests pass, including randomized bounds and starvation recovery.
+Editor regressions pass. The alpha6 dry front/back WAV matches alpha5-opt32 byte
+for byte. UF2 structure, preview headers and firmware SHA256 are verified.
+Hardware validation remains pending.

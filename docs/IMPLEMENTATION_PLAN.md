@@ -3,7 +3,8 @@
 Updated 2026-10-08. Original plan © 2026 Adrian Vos (soveda), MIT.
 User requirements and hardware reports are the basis for this plan. Platform/API
 sources and musical inspiration are credited in ../THIRD_PARTY_NOTICES.md.
-Only the alpha2 DSP pass is implemented here; later stages are planned.
+The stages below record the original plan and subsequent checkpoints. Alpha6 is
+the current room experiment; other functions and 8mu remain planned.
 
 ## 1. Finish the Twin Orbits listening/timing pass
 
@@ -107,3 +108,14 @@ bank reduces numerical magnitude error, but should be kept only if it helps blin
 localization and retains timing margin. Continue with other generic profiles or
 listener calibration if longer filters still do not provide sufficient cues.
 8mu and other function work remains behind this timing/listening checkpoint.
+
+## Alpha6: current externalization pass
+
+Alpha5 hardware reports favor 32 taps: 916 us/block versus 1244 us with 64 taps,
+with no noticeable listening improvement from 64. Keep alpha5-opt32 as baseline.
+The approved alpha6 pass adds synthetic directional early reflections and increases
+the reflected/direct balance with distance, using the existing room control and
+32-tap bank. Validate deadlines under USB load first, then blind outside-head size,
+front/back movement, distance and echo/colour tradeoffs. If room only adds width or
+slap, evaluate another attributed generic HRTF profile or listener calibration
+before expanding functions. 8mu/startup function work remains planned.

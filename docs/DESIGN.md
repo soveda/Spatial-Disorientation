@@ -118,3 +118,15 @@ Timing telemetry identifies the active tap count. Controls, saved configuration,
 block size and output scheduling remain unchanged. Hardware validation is pending.
 Measured source data remains credited to Gardner/Martin (MIT Media Lab, 1994);
 original optimization/integration by Adrian Vos (soveda), MIT.
+
+## Alpha6 room externalization pass (2026-10-08)
+
+User measured alpha5 at 916 us/block (32 taps) and 1244 us (64 taps), both with
+5 us callback. 64 taps did not help noticeably; 32 gave some directional difference
+close to the head. The user approved the next pass on room externalization.
+Alpha6 retains 32 taps, adds three softened feed-forward arrivals per ear at
+7–24 ms, position-dependent early/late and ear balance, and stronger distance
+control of reflected/direct energy. Room zero retains the dry path. No additional
+config fields, controls, transport latency or startup function. Original room
+model/integration: Adrian Vos, MIT; KEMAR attribution/terms remain unchanged.
+Hardware timing and perceived placement are pending a new test run.

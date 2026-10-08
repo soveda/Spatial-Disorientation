@@ -111,3 +111,12 @@ same Bill Gardner / Keith Martin, MIT Media Laboratory, copyright 1994 dataset,
 with the source terms above retained. No new third-party convolver implementation
 or filter dataset is copied. Generator metrics and processing are documented in
 vendor/KEMAR; both banks use the same gain scale for comparison.
+
+## Alpha6 room externalization
+
+Original synthetic three-arrival-per-ear, feed-forward room model and distance
+balance: Adrian Vos (soveda), 2026, MIT. No room impulse response, third-party
+reverb source or additional dataset is copied. Existing Workshop Computer reverb
+ring-buffer reads were reviewed as platform examples; this implementation extends
+its own delay line. The 32-tap spectral bank and alpha6 audio previews retain
+Gardner/Martin KEMAR attribution and data terms above.

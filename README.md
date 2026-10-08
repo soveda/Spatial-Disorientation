@@ -1,6 +1,6 @@
 # Spatial Disorientation — Twin Orbits
 
-**0.1.0-alpha5**: optimized 32/64-tap HRTF comparison prototype for Music Thing Modular Workshop
+**0.1.0-alpha6**: 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs orbit around the listener and mix to binaural
 stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
 **192 MHz / 1.15 V**. Firmware builds and host checks pass. User hardware tests
@@ -10,8 +10,10 @@ reported on 2026-10-08). Alpha2 improved tonal distinction but front/back moveme
 with the visual display hidden. Alpha3 overran the hardware callback: instant timing LED, uncontrolled fast
 motion and unresponsive knobs. **Do not use alpha3 for continued testing.** Alpha4
 moved HRTF DSP out of that callback. User readings on alpha4 were 5 µs callback
-and 1,181 µs/block, with front/back localization still very subtle. Alpha5 hardware
-timing and listening results are pending.
+and 1,181 µs/block, with front/back localization still very subtle. Alpha5 user readings were 5 µs callback / 916 µs block at 32 taps, and
+5 µs / 1,244 µs at 64 taps. The longer bank did not noticeably improve placement;
+32 taps gave some directional difference but remained close to the head. Alpha6
+returns to 32 taps and changes the room cues; hardware validation is pending.
 
 Original code and documentation © 2026 Adrian Vos (soveda), MIT. Hardware/library
 patterns: Chris Johnson and the Workshop Computer contributors. Musical inspiration:
@@ -24,7 +26,7 @@ retain their own attribution terms; original project code remains MIT.
 
 ## Try it
 
-First flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha5-opt32.uf2` using the usual
+First flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha6-room32.uf2` using the usual
 Workshop Computer BOOTSEL procedure. Start with a mono sound in Audio 1, both audio
 outputs connected to the left/right sides of a headphone monitoring path, Main and
 X at noon, Y down. Turn X right to start an orbit; turn left for reverse motion.
@@ -109,6 +111,37 @@ a 220 Hz harmonic tone on A and noise percussion on B. Both are 12 seconds, ster
 motion and one opposing motion. They simulate DSP only, without the physical
 ADC/DAC, USB activity or hardware timing. Later version-labelled files use that
 version's renderer. Generation source: `tools/render_preview.cpp`.
+
+## Alpha6 room externalization experiment
+
+Use the 32-tap `alpha6-room32` UF2. Alpha5-opt32 remains the timing/listening
+baseline. Controls and six saved fields are unchanged; existing settings load.
+Reload the editor for the new room guidance. No extra startup mode is introduced.
+Build size: 55,260 bytes flash / 80,860 bytes main RAM, plus 2 KB in each scratch
+bank. Firmware and sanitizer checks for DSP, room response and block transport
+pass, as do editor regressions. The dry front/back preview is byte-identical to
+alpha5-opt32; new room previews are in `previews/alpha6-room-*.wav`.
+
+Three unequal reflection arrivals per ear replace the earlier pair: approximately
+7–24 ms after the direct sound, with softened high frequencies and no feedback.
+Front positions emphasize the earlier arrival; rear positions emphasize the later
+pair. Side position changes the reflected ear balance. These are original synthetic
+small-room cues by Adrian Vos (soveda), 2026, MIT, rather than measured room data.
+The direct 32-tap KEMAR filters remain attributed to Gardner/Martin (MIT, 1994).
+
+Y now changes direct/reflected balance more strongly: direct sound falls faster
+than room sound as distance rises. Room zero keeps the alpha5 dry path. At nonzero
+room, a modest direct-level reduction leaves space for reflections. The new taps
+reuse the existing delay memory and add no direct-path or block latency. Perceived
+externalization and actual RP2040 timing require listening/hardware checks.
+
+Start with one bright mono source, X noon, Y down, room zero and full strength.
+Compare front/back without the editor, then Apply room 30–50% and repeat. Slowly
+raise Y to the middle and compare apparent distance, direction and loudness
+separately. Try a slow orbit, then two sources and maximum room with USB active.
+Report peak callback/block times, whether the orbit feels outside the head, and
+whether reflections help placement or merely sound like a short echo. See the
+alpha6 section of [the test protocol](docs/TEST_PROTOCOL.md).
 
 ## Alpha5: test optimization, then longer filters
 
@@ -225,16 +258,20 @@ clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/ds
 /tmp/spatial-dsp-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -DSPATIAL_HRTF_TAPS=64 -Isrc tests/dsp_test.cpp -o /tmp/spatial-dsp64-test
 /tmp/spatial-dsp64-test
+clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/room_test.cpp -o /tmp/spatial-room-test
+/tmp/spatial-room-test
 node tests/editor_test.cjs
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/block_audio_test.cpp -o /tmp/spatial-block-test
 /tmp/spatial-block-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/midi_tx_test.cpp -o /tmp/spatial-midi-tx-test
 /tmp/spatial-midi-tx-test
 clang++ -O2 -std=c++17 -Isrc tools/render_preview.cpp -o /tmp/spatial-render
-/tmp/spatial-render previews/alpha5-opt32-front-back.wav front-back
+/tmp/spatial-render previews/alpha6-dry-front-back.wav front-back 0 0
+/tmp/spatial-render previews/alpha6-room-near-front-back.wav front-back 2048 0
+/tmp/spatial-render previews/alpha6-room-far-front-back.wav front-back 2048 3072
 clang++ -O2 -std=c++17 -DSPATIAL_HRTF_TAPS=64 -Isrc tools/render_preview.cpp -o /tmp/spatial-render64
-/tmp/spatial-render64 previews/alpha5-hrtf64-opposed.wav 0
-/tmp/spatial-render64 previews/alpha5-hrtf64-front-back.wav front-back
+/tmp/spatial-render64 /tmp/spatial-current64-opposed.wav 0
+/tmp/spatial-render64 /tmp/spatial-current64-front-back.wav front-back
 ```
 
 Hardware service stays on core 0; block DSP and non-blocking USB/editor share
