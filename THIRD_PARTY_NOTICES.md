@@ -120,3 +120,14 @@ reverb source or additional dataset is copied. Existing Workshop Computer reverb
 ring-buffer reads were reviewed as platform examples; this implementation extends
 its own delay line. The 32-tap spectral bank and alpha6 audio previews retain
 Gardner/Martin KEMAR attribution and data terms above.
+
+## Alpha8 8mu host control
+
+EightMU by Chris Johnson (2026), including rppicomidi's USB MIDI host driver
+(2023), MIT. The adapted header preserves both full notices in vendor/EightMU.
+Source revision, official protocol references and local changes are documented in
+vendor/EightMU/SOURCE.md. USB role selection/configuration follows Chris Johnson's
+WaveSeq (Workshop Computer releases/801_WaveSeq, same revision). Voder's paired
+motion handling was also reviewed; its DSP/control code was not copied.
+Original pickup/mapping, SPSC snapshot, offline LED diagnostics and enumeration
+worker integration: Adrian Vos (soveda), 2026, MIT. KEMAR attribution is unchanged.

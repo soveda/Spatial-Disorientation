@@ -65,3 +65,14 @@ Timing command 44 may append a fifth payload byte: active FIR taps, 32 or 64.
 The updated editor accepts both alpha4's four-byte and alpha5's five-byte form.
 The config schema and parameter IDs remain unchanged. Tap count is a compile-time
 comparison profile, not a saved editor setting.
+
+## Alpha8 separate USB roles
+
+The editor protocol/configuration schema remains version 1. A computer-connected
+reset selects device/editor mode on Rev1.1 hardware; an accessory/empty port
+selects host/8mu mode. Reset after switching roles. Direct 8mu runtime controls
+are volatile overrides and do not modify this protocol's saved configuration.
+Clock division remains its saved value. Offline 8mu diagnostics use LEDs rather
+than SysEx; no simultaneous editor connection is required. Implementation/source
+credit: Adrian Vos (soveda), 2026, MIT; Chris Johnson's WaveSeq/EightMU and the
+rppicomidi driver are credited in ../vendor/EightMU/SOURCE.md.

@@ -1,6 +1,6 @@
 # Spatial Disorientation — Twin Orbits
 
-**0.1.0-alpha7**: 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
+**0.1.0-alpha8**: 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs orbit around the listener and mix to binaural
 stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
 **192 MHz / 1.15 V**. Firmware builds and host checks pass. User hardware tests
@@ -14,9 +14,10 @@ and 1,181 µs/block, with front/back localization still very subtle. Alpha5 user
 5 µs / 1,244 µs at 64 taps. The longer bank did not noticeably improve placement;
 32 taps gave some directional difference but remained close to the head. Alpha6
 returns to 32 taps and changes the room cues. The user reports 5 µs callback /
-1,015 µs block, less inside-head sound, clearer circling and no echoes. Extended
-stability is pending. Alpha7 reduces free-running X speed to 75% of alpha6
+1,015 µs block, less inside-head sound, clearer circling and no echoes. The user accepted 13 minutes with rapid CV changes as a stability pass. Alpha7 reduces free-running X speed to 75% of alpha6
 (maximum 1.5 turns/sec); clock-driven rates and the alpha6 DSP remain unchanged.
+The user reports alpha7 passes. Alpha8 adds direct 8mu control; host-mode
+hardware timing, connection and motion tests are pending.
 
 Original code and documentation © 2026 Adrian Vos (soveda), MIT. Hardware/library
 patterns: Chris Johnson and the Workshop Computer contributors. Musical inspiration:
@@ -29,7 +30,7 @@ retain their own attribution terms; original project code remains MIT.
 
 ## Try it
 
-First flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha7-speed75.uf2` using the usual
+First flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha8-8mu.uf2` using the usual
 Workshop Computer BOOTSEL procedure. Start with a mono sound in Audio 1, both audio
 outputs connected to the left/right sides of a headphone monitoring path, Main and
 X at noon, Y down. Turn X right to start an orbit; turn left for reverse motion.
@@ -114,6 +115,68 @@ a 220 Hz harmonic tone on A and noise percussion on B. Both are 12 seconds, ster
 motion and one opposing motion. They simulate DSP only, without the physical
 ADC/DAC, USB activity or hardware timing. Later version-labelled files use that
 version's renderer. Generation source: `tools/render_preview.cpp`.
+
+## Alpha8: direct 8mu control
+
+Use a USB-C data cable between the 8mu and Workshop Computer. Connect it before
+reset/power-up. On Rev 1.1 hardware the USB power role selects host mode for the
+8mu, or device mode for a computer/editor, following Chris Johnson's WaveSeq.
+The role is fixed until reset: reconnect to the computer and reset for the editor.
+Older boards without USB role detection retain editor/device operation in this
+first pass. No simultaneous editor/8mu connection or editor setup is needed.
+The identify handshake temporarily selects the 8mu default map/bank and disables
+its bank buttons until the 8mu is power-cycled.
+
+The card starts from its saved settings (or init defaults). Move each fader through
+its current panel/saved value to **pick up** control. A blinking fader LED means
+waiting; a steady level means picked up. On disconnect the panel knobs and saved
+settings regain control. The five continuous editor settings map to faders; clock
+division retains its saved value, default 4. No 8mu gesture writes flash.
+
+| 8mu control | Initial mapping |
+|---|---|
+| Fader 1 / CC34 | X: orbit speed/direction, centre stop; same 1.5 turns/sec manual maximum |
+| Fader 2 / CC35 | Y: distance; CV2 still adds |
+| Fader 3 / CC36 | Source separation |
+| Fader 4 / CC37 | Room reflections |
+| Fader 5 / CC38 | Source A level |
+| Fader 6 / CC39 | Source B level |
+| Fader 7 / CC40 | Spatial strength |
+| Fader 8 / CC41 | Motion depth (starts full; move to full to pick up, then reduce) |
+| A / note36 | Recenter motion at the current Main knob and reset orbit phase |
+| B / note48 | Toggle motion takeover of Main; initially off |
+| C / note60, held | Stop automatic orbit; release resumes. Motion can still place the sound |
+| D / note72, held | Show peak block-time bands on the eight 8mu LEDs |
+
+When motion is enabled, Main's **base position is replaced**, rather than added to
+a moving knob. Side tilt (EightMU Roll, CC44/45) moves position relative to the
+captured neutral pose; gyro rotation (CC46/47) integrates a position offset. Gyro
+is rotation rate, so stopping holds the resulting heading. It has a small deadband
+and a 150 ms stale-message guard; sustained-rate response needs hardware checking.
+Pitch/flip are unused in this pass. Motion depth scales tilt/rotation. A or the
+card's Down switch captures a new neutral pose and current Main knob reference.
+B off restores the Main knob. CV1 remains additive and the X orbit still runs.
+Start with X centred when testing motion alone. Main/CV/orbit positions retain
+smoothing in the renderer; recenter deliberately resets the reference.
+
+Hold D for diagnostics: each steady lit LED represents a 150 µs band of the peak
+64-frame DSP render time (seven lit covers 901–1050 µs; eight means above 1050 µs).
+All eight flash together if a callback/block/queue warning has latched. The card's
+bottom-right LED also retains its timing/queue warning. Release D to return to
+pickup/level feedback; LED8 is full while motion is enabled. Reset clears peaks
+and warnings. This gives an offline load check, not precise numeric profiling.
+
+The integration uses Chris Johnson's EightMU class and its bundled rppicomidi
+host driver (MIT notices preserved), adapted to bounded TX/RX and the existing
+cooperative audio worker. TinyUSB enumeration waits also render waiting blocks.
+Original mappings, takeover and tests: Adrian Vos (soveda), 2026, MIT. See
+[vendor/EightMU/SOURCE.md](vendor/EightMU/SOURCE.md) for source revision and edits,
+and [the offline test protocol](docs/TEST_PROTOCOL.md#alpha8-offline-8mu-test).
+Build size: 77,968 bytes flash / 108,244 bytes main RAM, plus 2 KB per scratch
+bank and the driver's small startup FIFO allocations. Build, sanitizer tests for
+mapping/DSP/room/block transport, and editor regressions pass.
+Alpha7 is retained as the stable fallback. Firmware/host tests do not certify
+host-mode hardware deadlines or physical gesture polarity.
 
 ## Alpha7 speed range
 
@@ -271,6 +334,8 @@ clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -DSPATIAL_HRTF
 /tmp/spatial-dsp64-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/room_test.cpp -o /tmp/spatial-room-test
 /tmp/spatial-room-test
+clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/mu_controls_test.cpp -o /tmp/spatial-mu-controls-test
+/tmp/spatial-mu-controls-test
 node tests/editor_test.cjs
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/block_audio_test.cpp -o /tmp/spatial-block-test
 /tmp/spatial-block-test

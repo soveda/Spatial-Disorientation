@@ -119,3 +119,14 @@ the reflected/direct balance with distance, using the existing room control and
 front/back movement, distance and echo/colour tradeoffs. If room only adds width or
 slap, evaluate another attributed generic HRTF profile or listener calibration
 before expanding functions. 8mu/startup function work remains planned.
+
+## Alpha8: initial direct 8mu pass
+
+Alpha6 stability and alpha7 speed checks are accepted by the user. Alpha8 implements
+motion takeover of Main and pickup faders for X/Y/five continuous settings, with
+an eighth motion-depth fader and offline timing LEDs. No simultaneous editor is
+required; clock division stays in saved settings. Prioritize direct-connect USB,
+pickup, recenter/toggle, axis polarity/rate behaviour, disconnect recovery and full
+load without warnings. Confirm editor mode separately after reset. USB work shares
+core 1 with DSP; host enumeration waits must service the worker. Mapping presets,
+sensitivity options, startup functions and other spatial modes remain planned.

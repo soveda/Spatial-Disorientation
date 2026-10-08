@@ -139,3 +139,18 @@ selected 75% of the current maximum. Alpha7 uniformly scales free-running X
 speed to +/-1.5 turns/sec, preserving centre stop and clock-driven rates.
 The alpha6 room/HRTF renderer and saved schema remain unchanged. Original
 range change: Adrian Vos (soveda), 2026, MIT. Extended hardware testing pending.
+
+## Alpha8 initial 8mu integration (2026-10-08)
+
+The user accepts alpha6's 13-minute rapid-CV stability run and reports alpha7
+passes. The first 8mu pass must work without simultaneous web editor access.
+The user specifies motion taking over Main, with faders controlling X, Y and the
+five continuous web settings. Faders 1–7 map to X/Y/separation/room/A/B/strength;
+8 is motion depth. Clock division remains saved/default. B toggles motion on
+(initially off); tilt/gyro replace Main, CV1 and orbit remain additive. A and panel
+Down recenter; C held stops orbit; D held displays offline timing bands. Pickup
+prevents fader jumps; disconnect returns to panel/saved settings. No flash writes
+from 8mu. USB role is chosen at boot using ComputerCard's Rev1.1 power detection;
+older boards retain editor mode. This first host pass needs hardware timing and
+motion-polarity validation. Original integration: Adrian Vos, MIT; EightMU and
+rppicomidi provenance/edits are in vendor/EightMU/SOURCE.md.

@@ -57,9 +57,9 @@
 
 // Device mode with rhport and speed defined by board.mk
 #if   BOARD_DEVICE_RHPORT_NUM == 0
-  #define CFG_TUSB_RHPORT0_MODE     (OPT_MODE_DEVICE | BOARD_DEVICE_RHPORT_SPEED)
+  #define CFG_TUSB_RHPORT0_MODE     (OPT_MODE_DEVICE | OPT_MODE_HOST | BOARD_DEVICE_RHPORT_SPEED)
 #elif BOARD_DEVICE_RHPORT_NUM == 1
-  #define CFG_TUSB_RHPORT1_MODE     (OPT_MODE_DEVICE | BOARD_DEVICE_RHPORT_SPEED)
+  #define CFG_TUSB_RHPORT1_MODE     (OPT_MODE_DEVICE | OPT_MODE_HOST | BOARD_DEVICE_RHPORT_SPEED)
 #else
   #error "Incorrect RHPort configuration"
 #endif
@@ -108,5 +108,9 @@
 #ifdef __cplusplus
  }
 #endif
+
+// Host configuration/driver from Chris Johnson (MIT), with bounded local edits.
+// Include after ending extern C: EightMU also declares its C++ class.
+#include "EightMU.h"
 
 #endif /* _TUSB_CONFIG_H_ */

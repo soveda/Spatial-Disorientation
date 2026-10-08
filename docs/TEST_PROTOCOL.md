@@ -296,3 +296,53 @@ Check centre stop, both directions and both X extremes, then clock lock, timeout
 and unpatch return to manual speed. Repeat the alpha6 listening/load/stability
 protocol above. No DSP or configuration schema change. Original protocol:
 Adrian Vos (soveda), 2026, MIT; upstream/data attribution remains as above.
+
+## Alpha8 offline 8mu test
+
+Original protocol: Adrian Vos (soveda), 2026, MIT. EightMU/USB sources and data
+attribution: ../THIRD_PARTY_NOTICES.md and ../vendor/EightMU/SOURCE.md.
+No simultaneous web editor is needed. Use alpha7 as the stable fallback.
+
+1. Connect the 8mu with a USB-C data cable and reset the card. Rev1.1 USB power
+   detection selects host mode; older boards without it retain editor mode.
+   After identify, 8mu LEDs should show pickup waits (blinking). Keep X centred
+   and start with one audio source. The identify handshake selects the 8mu default
+   map/bank; its bank buttons remain disabled until the 8mu is power-cycled.
+2. With motion initially off, verify Main still works. Fader1 controls X, 2 Y,
+   3 separation, 4 room, 5 A level, 6 B level, 7 strength, 8 motion depth. Each
+   needs pickup: move it through the corresponding knob/saved value. For init
+   settings, separation and A/B are near halfway, room near 29%, strength/depth
+   full. Source B needs its own audio patch. A blinking LED becomes a steady level
+   after pickup. Other settings must remain unchanged when one fader moves.
+3. Centre fader1 after pickup. Hold the 8mu comfortably and press B once. Motion
+   takes over Main; moving the Main knob alone should no longer move the sound.
+   Tilt sideways to place it. Rotate clockwise/anticlockwise to change heading;
+   stopping should hold heading rather than return it to centre. Check the actual
+   tilt axis/polarity: manual versions disagree, so report if front/back tilt is
+   the active pair. Gyro depth/deadband/stale guard are experimental.
+4. Press A in a new pose: that pose becomes neutral at the current Main knob
+   reference and orbit phase resets once. Card Down also recentres/resets. Turn
+   B off: Main immediately regains its normal role. Pitch/flip have no mapping.
+   Pick fader8 up at full, reduce it and compare tilt/rotation response. CV1 still
+   offsets position and CV2 distance; neither should be lost to 8mu takeover.
+5. Start a slow orbit with fader1. Hold C: orbit stops; release resumes it. Motion
+   may still place the source while C is held. Retest linked/opposing switch,
+   clock/reset, clockwise/anticlockwise movement and the 1.5 turns/sec manual cap.
+6. Hold D for offline load feedback: peak DSP time uses 150 us LED bands; seven
+   steady LEDs covers 901–1050 us, eight steady means above 1050 us. All eight
+   flashing together, or the card's bottom-right LED on, means a latched timing
+   or queue warning. Release D for normal feedback (LED8 full means motion on).
+   Capture the lit LED count; precise numbers are unavailable in this session.
+7. Use two sources, maximum room/strength/levels, fast orbits, rapidly moving CV,
+   all faders and motion together. No clicks/dropouts or warning LEDs. Run at
+   least 13 minutes, matching the previously accepted alpha6 duration. Hold D
+   periodically to check headroom. Callback/block limits remain 18/1200 us with
+   a 1333.3 us block deadline; warning bands do not replace the queue warning.
+8. Unplug/replug 8mu while audio runs: panel controls/saved settings return, no
+   stuck gesture, and reconnection starts pickup again. If enumeration fails,
+   reset with the 8mu attached; automatic USB stack restart is deliberately off.
+   Connect a computer instead and reset to select editor mode. Verify Read/Apply/
+   Save/reset/reconnect, and retained settings. 8mu runtime edits must not have
+   overwritten saved configuration. Reset also clears timing peaks/warnings.
+
+No alpha8 hardware pass is claimed by the build/host tests.

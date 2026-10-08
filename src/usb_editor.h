@@ -13,7 +13,7 @@ class UsbEditor {
 public:
     UsbEditor(Shared& shared,Storage& storage,const Config& cfg,void (*worker)()):shared_(shared),storage_(storage),current_(cfg),worker_(worker) {}
     void Run() {
-        tusb_init();
+        tud_init(0); // Only the selected role starts on the single USB controller.
         __dmb();shared_.usb_ready=1;
         while (true) {
             worker_();

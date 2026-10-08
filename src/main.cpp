@@ -1,5 +1,6 @@
 // Copyright (c) 2026 Adrian Vos (soveda). SPDX-License-Identifier: MIT
 // ComputerCard hardware and core split follow Chris Johnson's examples.
+#include "tusb_config.h" // Configure both roles before EightMU/TinyUSB headers.
 #include "ComputerCard.h"
 #include "hardware/clocks.h"
 #include "hardware/vreg.h"
@@ -7,6 +8,7 @@
 #include "orbits.h"
 #include "block_audio.h"
 #include "usb_editor.h"
+#include "mu_host.h"
 
 static spatial::Shared shared;
 static spatial::Storage storage;
@@ -23,13 +25,27 @@ static void RenderBlock() {
         if(elapsed>=1200)blocks.worker_fault|=2;
     }
 }
+// TinyUSB host enumeration includes debounce/reset delays of many milliseconds.
+// Keep audio moving during those waits without recursively running USB tasks.
+extern "C" uint32_t tusb_time_millis_api(void) {
+    return to_ms_since_boot(get_absolute_time());
+}
+extern "C" void tusb_time_delay_ms_api(uint32_t ms) {
+    uint32_t start=tusb_time_millis_api();
+    while(tusb_time_millis_api()-start<ms){RenderBlock();tight_loop_contents();}
+}
 static spatial::UsbEditor* editor;
-static void UsbCore() { editor->Run(); }
+static bool host_mode=false;
+static void UsbCore() {
+    if(host_mode)spatial::RunMuHost(shared,RenderBlock);
+    else editor->Run();
+}
 
 class Card : public ComputerCard {
 public:
-    void Configure(const spatial::Config& cfg) { config_=cfg; }
+    void Configure(const spatial::Config& cfg) { config_=cfg;effective_=cfg; }
     uint32_t Capacity() const { return FlashSizeBytes(); }
+    bool HostMode() { return USBPowerState()==DFP; }
 private:
     void ProcessSample() override {
         uint32_t start=time_us_32();
@@ -46,15 +62,22 @@ private:
                 settled_=true;
             }
             if (selected_!=Switch::Down) linked_=selected_==Switch::Up;
-            orbits_.Controls(KnobVal(Knob::Main),KnobVal(Knob::X),KnobVal(Knob::Y),
-                Connected(Input::CV1)?CVIn1():0,Connected(Input::CV2)?CVIn2():0,linked_,config_);
+            int32_t main=KnobVal(Knob::Main),x=KnobVal(Knob::X),y=KnobVal(Knob::Y);
+            if(shared.ConsumeMu(mu_input_))mu_age_=0;
+            else if(mu_age_<150)++mu_age_;
+            if(mu_age_==150)mu_input_.yaw=0; // No stale integrated motion during USB waits.
+            effective_=config_;
+            reset=mu_controls_.Apply(mu_input_,main,x,y,effective_,reset)||reset;
+            shared.mu_feedback=mu_controls_.Picked()|(mu_controls_.Motion()?256:0);
+            orbits_.Controls(main,x,y,
+                Connected(Input::CV1)?CVIn1():0,Connected(Input::CV2)?CVIn2():0,linked_,effective_);
             CVOut1(0);CVOut2(0);PulseOut1(false);PulseOut2(false);
         }
         orbits_.Pulse(Connected(Input::Pulse1),PulseIn1RisingEdge(),
             reset || (Connected(Input::Pulse2) && PulseIn2RisingEdge()));
         spatial::Scene scene=orbits_.Advance();
         auto output=blocks.Tick(Connected(Input::Audio1)?AudioIn1():0,
-                                    Connected(Input::Audio2)?AudioIn2():0,scene,config_);
+                                    Connected(Input::Audio2)?AudioIn2():0,scene,effective_);
         if (startup_<4800) ++startup_;
         int32_t target=(!saving && startup_==4800)?1024:0;
         fade_=spatial::Slew(fade_,target,128);
@@ -82,11 +105,13 @@ private:
             if(elapsed>=18){overrun_=true;callback_slow_=true;}
         }
     }
-    spatial::Config config_;
+    spatial::Config config_,effective_;
+    spatial::MuInput mu_input_;
+    spatial::MuControls mu_controls_;
     spatial::Orbits orbits_;
     uint32_t startup_=0;
     int32_t fade_=0;
-    unsigned scan_=0,stable_count_=0,silent_=0;
+    unsigned scan_=0,stable_count_=0,silent_=0,mu_age_=0;
     Switch candidate_=Switch::Middle,selected_=Switch::Middle;
     bool linked_=false,settled_=false,overrun_=false,callback_slow_=false;
 };
@@ -95,6 +120,11 @@ int main() {
     sleep_ms(10);
     set_sys_clock_khz(192000,true);
     static Card card;
+    // Same power-role selection as Chris Johnson's WaveSeq: a computer selects
+    // editor/device mode; a powered accessory or empty port selects host mode.
+    // Older boards cannot report the role and retain editor/device operation.
+    sleep_ms(150);
+    host_mode=card.HostMode();
     storage.Init(card.Capacity());
     spatial::Config initial=storage.Load();
     card.Configure(initial);

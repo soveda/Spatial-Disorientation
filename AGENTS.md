@@ -28,3 +28,10 @@ Commit meaningful checkpoints, including successful builds. Do not claim hardwar
 validation from a compilation or publish placeholder firmware as a finished effect.
 Before release, validate metadata against Workshop_Computer's canonical schema and
 include tested UF2 firmware. See THIRD_PARTY_NOTICES.md for source attribution.
+
+Alpha8 adds direct 8mu host control on core 1, selected by USB power role at boot.
+Use vendor/EightMU's bounded local adaptation; do not call EightMU.Start() or
+restore its blocking TX/reinitialization loops. Preserve the TinyUSB enumeration
+delay hook that services the block worker. Motion replaces Main only while enabled;
+8mu runtime changes never write saved settings. Offline LED diagnostics are needed
+because the user cannot connect 8mu and editor simultaneously.
