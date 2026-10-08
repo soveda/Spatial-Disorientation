@@ -73,6 +73,8 @@ Enable MIDI and allow SysEx, select **Spatial Disorientation** as both MIDI port
 then Connect & read. iOS is unsupported. The page is a single static file with no
 external scripts or services.
 
+- **Reset to init:** immediately apply factory editor settings and refresh the page
+  values. Use Save to card separately to retain these defaults across reset.
 - **Read:** fetch applied settings, replacing edits in the page.
 - **Apply:** audition separation, room amount, A/B levels, spatial strength and
   clock pulses/turn. Main/X/Y keep their own roles; no editor/knob takeover needed.

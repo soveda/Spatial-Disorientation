@@ -10,23 +10,25 @@ Original editor; WebMIDI transport inspired by Chris Johnson's ComputerCard web_
 <section><strong>Connect your Workshop Computer</strong><p>Use a USB-C data cable. Close Serial Monitor/other apps. Use Chrome or Edge on desktop with MIDI and SysEx permission; iOS is unsupported. Select “Spatial Disorientation” for both MIDI ports below.</p>
 <button id="access">Enable MIDI</button><select id="inputs" aria-label="MIDI input"></select><select id="outputs" aria-label="MIDI output"></select><button id="connect" disabled>Connect &amp; read</button><button id="disconnect" disabled>Disconnect</button><p id="status" role="status" aria-live="polite">Connect the card, then enable MIDI.</p></section>
 <section><svg viewBox="0 0 280 280" role="img" aria-label="Live source positions; front is up"><circle cx="140" cy="140" r="100" fill="none" stroke="#526979"/><ellipse cx="140" cy="140" rx="27" ry="34" fill="#354552"/><path d="M134 107 L140 97 L146 107" fill="none" stroke="#bfcbd7"/><text x="140" y="20" text-anchor="middle" fill="#bfcbd7">FRONT</text><circle id="a" cx="140" cy="40" r="11" fill="#69dacc"/><circle id="b" cx="140" cy="240" r="11" fill="#ffc777"/></svg><p id="timing">Timing measurements appear after connection.</p><p id="live">A: turquoise · B: amber. Headphones recommended.</p><p>Main: position · X: speed/direction (centre stops) · Y: distance<br>Switch up: linked · middle: opposing · down: reset phase</p></section>
-<section><strong>Twin Orbits settings</strong><p>Apply changes the running sound. Save to card stores the applied settings and briefly fades the audio out. Physical knobs remain independent performance controls.</p>
+<section><strong>Twin Orbits settings</strong><p>Apply changes the running sound. Save to card stores the applied settings and briefly fades the audio out. Reset to init applies factory editor settings; use Save to card to retain them after reset. Physical knobs remain independent performance controls.</p>
 <label>Source separation<input data-id="1" type="range" min="0" max="4095" value="2048"><output></output></label>
 <label>Room reflections<input data-id="2" type="range" min="0" max="4095" value="1200"><output></output></label>
 <label>Source A level<input data-id="3" type="range" min="0" max="4095" value="2048"><output></output></label>
 <label>Source B level<input data-id="4" type="range" min="0" max="4095" value="2048"><output></output></label>
 <label>Spatial strength<input data-id="5" type="range" min="0" max="4095" value="4095"><output></output></label>
 <label>Clock pulses / turn<select data-id="6"><option>1</option><option>2</option><option selected>4</option><option>8</option><option>16</option></select></label>
-<button id="read" disabled>Read</button><button id="apply" disabled>Apply</button><button id="save" disabled>Save to card</button>
+<button id="init" disabled>Reset to init</button><button id="read" disabled>Read</button><button id="apply" disabled>Apply</button><button id="save" disabled>Save to card</button>
 <p><small>Only Twin Orbits is implemented in this prototype. Elevation and the other startup functions are planned. Horizontal ear filters derive from Bill Gardner and Keith Martin’s MIT KEMAR measurements (MIT Media Laboratory, 1994), with separate timing and room cues. This is a short-filter approximation, not personalized HRTF rendering.</small></p></section>
 <p>Code and documentation © 2026 Adrian Vos (soveda), MIT. Built with Chris Johnson’s <a href="https://github.com/TomWhitwell/Workshop_Computer/tree/main/Demonstrations%2BHelloWorlds/PicoSDK/ComputerCard">ComputerCard</a> 0.4.0 for Music Thing Modular Workshop Computer. Musical inspiration: <a href="https://www.neuzeit-instruments.com/Quasar">Neuzeit Instruments Quasar</a>. Independent implementation. HRTF data: <a href="https://sound.media.mit.edu/resources/KEMAR.html">Bill Gardner and Keith Martin, MIT Media Laboratory, 1994</a>; data retains its attribution terms.</p>
 <script>
 'use strict';
 const $=id=>document.getElementById(id), fields=[...document.querySelectorAll('[data-id]')];
 let midi=null,input=null,output=null,sequence=0,connected=false,busy=false,dirty=false;
+// Keep in sync with Config defaults in src/config.h (covered by editor tests).
+const INIT=Object.freeze([2048,1200,2048,2048,4095,4]);
 const pending=new Map();
 function status(text){$('status').textContent=text;}
-function buttons(){for(const id of ['read','apply','save'])$(id).disabled=!connected||busy||(id==='save'&&dirty);$('disconnect').disabled=!input&&!output;$('connect').disabled=!midi||busy||connected;}
+function buttons(){for(const id of ['init','read','apply','save'])$(id).disabled=!connected||busy||(id==='save'&&dirty);$('disconnect').disabled=!input&&!output;$('connect').disabled=!midi||busy||connected;}
 function labels(){for(const f of fields){const o=f.parentElement.querySelector('output');if(o)o.textContent=f.dataset.id==='1'?Math.round(Number(f.value)*360/4096)+'°':Math.round(Number(f.value)*100/4095)+'%';}}
 function validate(values){if(values.length!==6||values.some((v,i)=>!Number.isInteger(v)||(i<5?(v<0||v>4095):![1,2,4,8,16].includes(v))))throw Error('Invalid settings');return values;}
 function encode(values){return validate(values).flatMap((v,i)=>[i+1,v&127,(v>>7)&127]);}
@@ -45,6 +47,7 @@ $('access').onclick=()=>action(async()=>{if(!navigator.requestMIDIAccess)throw E
 $('connect').onclick=()=>action(async()=>{input=midi.inputs.get($('inputs').value);output=midi.outputs.get($('outputs').value);if(!input||!output)throw Error('Select both MIDI ports.');try{await input.open();await output.open();input.onmidimessage=receive;await read();connected=true;}catch(e){await disconnect();throw e;}});
 $('disconnect').onclick=()=>action(async()=>{await disconnect();status('Disconnected.');});
 $('read').onclick=()=>action(read);
+$('init').onclick=()=>action(async()=>{await request(2,encode(INIT));await read();status('Factory settings applied. Use Save to card to retain them after reset.');});
 $('apply').onclick=()=>action(async()=>{await request(2,encode(fields.map(f=>Number(f.value))));await read();status('Applied. Use Save to card to retain settings after reset.');});
 $('save').onclick=()=>action(async()=>{await request(3);status('Saved to card. Reset and reconnect to verify persistence.');});
 fields.forEach(f=>f.oninput=()=>{dirty=true;labels();buttons();status('Settings edited. Apply to audition; Read to discard these edits.');});
