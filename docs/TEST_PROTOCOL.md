@@ -286,3 +286,13 @@ room and block tests pass, including randomized bounds and starvation recovery.
 Editor regressions pass. The alpha6 dry front/back WAV matches alpha5-opt32 byte
 for byte. UF2 structure, preview headers and firmware SHA256 are verified.
 Hardware validation remains pending.
+
+## Alpha7 speed range check
+
+Alpha6 user report: callback 5 us / block 1015 us; less inside-head sound, clearer
+circling, no echoes. Extended stability remains pending. Alpha7 scales free-running
+X speed to 75% (1.5 turns/sec maximum); clock-driven rates retain their old ceiling.
+Check centre stop, both directions and both X extremes, then clock lock, timeout
+and unpatch return to manual speed. Repeat the alpha6 listening/load/stability
+protocol above. No DSP or configuration schema change. Original protocol:
+Adrian Vos (soveda), 2026, MIT; upstream/data attribution remains as above.

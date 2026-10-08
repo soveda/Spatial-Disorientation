@@ -27,7 +27,7 @@ public:
         if (magnitude<=128) step_=0;
         else {
             magnitude=Clamp(magnitude-128,0,1919);
-            int32_t rate=(magnitude*178957)/1919; // up to +/-2 revolutions/sec.
+            int32_t rate=(magnitude*134218)/1919; // up to +/-1.5 turns/sec (75% of the original).
             if (ClockLocked()) {
                 uint32_t denom=period_*cfg.value[5]; // bounded above: 46,080,000.
                 rate=static_cast<int32_t>(4294967296ull/denom);

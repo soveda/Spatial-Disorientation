@@ -1,6 +1,6 @@
 # Spatial Disorientation — Twin Orbits
 
-**0.1.0-alpha6**: 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
+**0.1.0-alpha7**: 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs orbit around the listener and mix to binaural
 stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
 **192 MHz / 1.15 V**. Firmware builds and host checks pass. User hardware tests
@@ -13,7 +13,10 @@ moved HRTF DSP out of that callback. User readings on alpha4 were 5 µs callback
 and 1,181 µs/block, with front/back localization still very subtle. Alpha5 user readings were 5 µs callback / 916 µs block at 32 taps, and
 5 µs / 1,244 µs at 64 taps. The longer bank did not noticeably improve placement;
 32 taps gave some directional difference but remained close to the head. Alpha6
-returns to 32 taps and changes the room cues; hardware validation is pending.
+returns to 32 taps and changes the room cues. The user reports 5 µs callback /
+1,015 µs block, less inside-head sound, clearer circling and no echoes. Extended
+stability is pending. Alpha7 reduces free-running X speed to 75% of alpha6
+(maximum 1.5 turns/sec); clock-driven rates and the alpha6 DSP remain unchanged.
 
 Original code and documentation © 2026 Adrian Vos (soveda), MIT. Hardware/library
 patterns: Chris Johnson and the Workshop Computer contributors. Musical inspiration:
@@ -26,7 +29,7 @@ retain their own attribution terms; original project code remains MIT.
 
 ## Try it
 
-First flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha6-room32.uf2` using the usual
+First flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha7-speed75.uf2` using the usual
 Workshop Computer BOOTSEL procedure. Start with a mono sound in Audio 1, both audio
 outputs connected to the left/right sides of a headphone monitoring path, Main and
 X at noon, Y down. Turn X right to start an orbit; turn left for reverse motion.
@@ -35,7 +38,7 @@ Patch a different sound into Audio 2 to hear the second source.
 | Control | Behaviour |
 |---|---|
 | Main | Full-turn position offset; noon puts A at the front after reset |
-| X | Signed orbit speed: centre deadband stops; either extreme approaches 2 turns/sec |
+| X | Signed orbit speed: centre deadband stops; either extreme approaches 1.5 turns/sec |
 | Y | Near to far: quieter, darker, later, with more room contribution |
 | Switch up | Linked motion; separation stays constant |
 | Switch middle | Opposing motion; A and B rotate in opposite directions |
@@ -111,6 +114,14 @@ a 220 Hz harmonic tone on A and noise percussion on B. Both are 12 seconds, ster
 motion and one opposing motion. They simulate DSP only, without the physical
 ADC/DAC, USB activity or hardware timing. Later version-labelled files use that
 version's renderer. Generation source: `tools/render_preview.cpp`.
+
+## Alpha7 speed range
+
+The free-running X range is scaled uniformly to 75% of its previous speed in both
+directions: maximum 1.5 turns/sec, with the same centre stop. Clock lock retains
+its existing rate and 2 turns/sec ceiling; timeout/unpatch returns to the new
+manual range. No saved settings change. Alpha6 is retained for comparison.
+Original range change: Adrian Vos (soveda), 2026, MIT.
 
 ## Alpha6 room externalization experiment
 

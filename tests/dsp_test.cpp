@@ -91,7 +91,7 @@ int main() {
     auto silence=e.Process(0,0);assert(std::abs(silence.left)<=4&&std::abs(silence.right)<=4);
     Orbits orbit;Config defaults;
     orbit.Controls(2048,2048,0,0,0,false,defaults);assert(orbit.Step()==0);
-    orbit.Controls(2048,4095,0,0,0,false,defaults);assert(orbit.Step()==178957);
+    orbit.Controls(2048,4095,0,0,0,false,defaults);assert(orbit.Step()==134218);
     auto start=orbit.Advance();for(int i=0;i<100;++i)orbit.Advance();auto finish=orbit.Advance();
     assert(finish.angle[0]-start.angle[0]==start.angle[1]-finish.angle[1]);
     orbit.Pulse(true,true,true);for(int i=0;i<23999;++i)orbit.Pulse(true,false,false);orbit.Pulse(true,true,false);
@@ -100,6 +100,6 @@ int main() {
     orbit.Controls(2048,2048,0,0,0,true,defaults);assert(orbit.Step()==0);
     orbit.Pulse(true,false,true);auto reset=orbit.Advance();assert(reset.angle[0]==0&&reset.angle[1]==0x80000000u);
     for(int i=0;i<144001;++i)orbit.Pulse(true,false,false);assert(!orbit.ClockLocked());
-    orbit.Controls(2048,4095,0,0,0,true,defaults);assert(orbit.Step()==178957);
+    orbit.Controls(2048,4095,0,0,0,true,defaults);assert(orbit.Step()==134218);
     std::puts("PASS: config rejection, checksum, ear symmetry, distance, independent sources, DSP bounds/tails, measured FIR reference/front-back/bypass, orbit direction, clock, stop/reset and timeout");
 }

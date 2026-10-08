@@ -130,3 +130,12 @@ control of reflected/direct energy. Room zero retains the dry path. No additiona
 config fields, controls, transport latency or startup function. Original room
 model/integration: Adrian Vos, MIT; KEMAR attribution/terms remain unchanged.
 Hardware timing and perceived placement are pending a new test run.
+
+## Alpha7 speed range (2026-10-08)
+
+User reports alpha6 at 5 us callback / 1015 us block, clearer circling, less
+inside-head sound and no echoes. Faster orbits were less convincing; the user
+selected 75% of the current maximum. Alpha7 uniformly scales free-running X
+speed to +/-1.5 turns/sec, preserving centre stop and clock-driven rates.
+The alpha6 room/HRTF renderer and saved schema remain unchanged. Original
+range change: Adrian Vos (soveda), 2026, MIT. Extended hardware testing pending.
