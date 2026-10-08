@@ -84,3 +84,15 @@ approximation by Adrian Vos (soveda), MIT, not a measured HRTF. Tests verify
 low-frequency retention, high-frequency rear attenuation and strength-zero bypass;
 headphone perception and hardware timing/stability remain to be retested.
 See IMPLEMENTATION_PLAN.md for the remaining staged work.
+
+## Alpha3 HRTF experiment (2026-10-08)
+
+After the user reported insufficient blind front/back movement in alpha2, the
+user approved short direction-dependent ear-response filters. Horizontal MIT
+KEMAR diffuse-field measurements by Bill Gardner and Keith Martin (MIT Media
+Laboratory, 1994) are converted into a 72-direction, 32-tap minimum-phase bank.
+See ../vendor/KEMAR/SOURCE_TERMS.md for data terms and processing. Original generator
+and DSP integration: Adrian Vos, MIT. Timing remains analytic; distance darkening
+is reduced to preserve measured directional detail. Controls/schema are unchanged.
+The user also asked to consider Workshop_BlockAudioCard; its block transport was
+reviewed and deferred pending measured timing needs or longer filters.

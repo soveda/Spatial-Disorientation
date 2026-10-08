@@ -2,6 +2,7 @@
 #pragma once
 #include <cstdint>
 #include "sine_table.h"
+#include "hrtf.h"
 #include "../config.h"
 namespace spatial {
 inline int32_t Clamp(int32_t x, int32_t lo, int32_t hi) { return x < lo ? lo : (x > hi ? hi : x); }
@@ -34,25 +35,20 @@ class Source {
 public:
     void Geometry(uint32_t phase, int32_t distance, int32_t level, int32_t strength, int32_t room) {
         int32_t side = Sin(phase) >> 3; // Q12: positive is right.
-        int32_t rear = (32767 - Sin(phase + 0x40000000u)) >> 4;
+        hrtf_.Geometry(phase,strength);
         int32_t lateral = (side * strength) >> 12;
         int32_t base_q8 = (64 << 8) + distance * 20; // ~1.3 to 8 ms.
         room_target_ = (room * (512 + ((distance * 1536) >> 12))) >> 12;
         base_target_ = base_q8;
-        // Analytical rear spectral cue, not a measured pinna/HRTF response.
-        // A 3-sample feed-forward pair has its first cancellation at 8 kHz.
-        // Blend up to 75% towards that pair at the back, scaled by strength.
-        rear_target_ = (((rear * strength) >> 12) * 3) >> 2;
         for (int32_t ear = 0; ear < 2; ++ear) {
             int32_t away = ear == 0 ? lateral : -lateral;
             // Far ear arrives up to 32 samples later (~0.67 ms).
             delay_target_[ear] = base_q8 + (away > 0 ? away * 2 : 0);
             int32_t direct = 3072 - ((distance * 2304) >> 12);
-            int32_t pan = 4096 - ((away * 2500) >> 12);
-            gain_target_[ear] = (((direct * pan) >> 12) * level) >> 12;
-            tone_target_[ear] = Clamp(24000 - ((distance * 10000) >> 12)
-                - ((((rear * strength) >> 12) * 12000) >> 12)
-                - ((away > 0 ? away * 10000 : 0) >> 12), 1800, 28000);
+            // Ear level/head-shadow spectra now come from the measured bank.
+            gain_target_[ear] = (direct * level) >> 12;
+            // Mild distance darkening preserves the measured high-frequency cues.
+            tone_target_[ear] = 32700 - ((distance * 6500) >> 12);
             level_target_ = level;
         }
     }
@@ -61,14 +57,8 @@ public:
         int32_t q8 = Clamp(input,-2048,2047)*256;
         dc_ = q8 - previous_ + dc_ - (dc_ >> 10);
         previous_ = q8;
-        int32_t sample = Clamp(dc_ >> 8,-4096,4095);
-        rear_mix_ = Slew(rear_mix_,rear_target_,256);
-        int32_t delayed = rear_history_[rear_index_];
-        rear_history_[rear_index_] = sample;
-        if (++rear_index_ == 3) rear_index_ = 0;
-        // Convex feed-forward mix: unity DC gain, no feedback or boost.
-        // Integer-sample history avoids changing the interaural delay geometry.
-        line_.Write(sample + (((delayed-sample)*rear_mix_) >> 13));
+        line_.Write(dc_ >> 8);
+        hrtf_.Update();
         base_ = Slew(base_,base_target_,256);
         room_ = Slew(room_,room_target_,512);
         level_ = Slew(level_,level_target_,512);
@@ -84,7 +74,8 @@ public:
             int32_t reflections = (line_.Read(base_+(ear==0 ? 211 : 293)*256)
                                  +line_.Read(base_+(ear==0 ? 367 : 433)*256)) >> 1;
             int32_t reflected = (((reflections * room_) >> 12)*level_) >> 12;
-            int32_t out = (((shadow_[ear]>>8)*gain_[ear]) >> 12) + reflected;
+            int32_t filtered=hrtf_.Process(ear,Clamp(shadow_[ear]>>8,-4096,4095));
+            int32_t out = ((filtered*gain_[ear]) >> 12) + reflected;
             if (ear==0) result.left=out; else result.right=out;
         }
         return result;
@@ -92,7 +83,7 @@ public:
 private:
     Delay line_;
     int32_t previous_=0,dc_=0;
-    int32_t rear_history_[3]={},rear_index_=0,rear_mix_=0,rear_target_=0;
+    Hrtf hrtf_;
     int32_t base_=64<<8,base_target_=64<<8,room_=0,room_target_=0,level_=0,level_target_=0;
     int32_t delay_[2]={64<<8,64<<8},delay_target_[2]={64<<8,64<<8};
     int32_t gain_[2]={},gain_target_[2]={},shadow_[2]={};

@@ -1,24 +1,27 @@
 # Spatial Disorientation — Twin Orbits
 
-**0.1.0-alpha2**: second listening-test prototype for Music Thing Modular Workshop
+**0.1.0-alpha3-hrtf**: experimental measured-filter prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs orbit around the listener and mix to binaural
 stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
 **192 MHz / 1.15 V**. Firmware builds and host checks pass. User hardware tests
 on **alpha1** pass for the main controls, left/right movement and editor/persistence;
 front/back cues were weak. Alpha1 stability is ongoing (20 minutes without issues
-reported on 2026-10-08). Alpha2 listening reports substantially clearer front/back cues, weaker at greater
-distance, with some influence from the visual path display. Further listening,
-alpha2 stability testing and full interrupt timing measurements remain pending.
+reported on 2026-10-08). Alpha2 improved tonal distinction but front/back movement remained insufficient
+with the visual display hidden. Alpha3 HRTF listening, stability and full interrupt
+timing measurements remain pending.
 
 Original code and documentation © 2026 Adrian Vos (soveda), MIT. Hardware/library
 patterns: Chris Johnson and the Workshop Computer contributors. Musical inspiration:
 [Neuzeit Instruments Quasar](https://www.neuzeit-instruments.com/Quasar).
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for sources and licenses.
-This is an independent implementation; no Quasar DSP or measured HRTF data is used.
+This is an independent implementation; no Quasar DSP is used. The new derived
+HRTF bank credits **Bill Gardner and Keith Martin, MIT Media Laboratory (1994)**;
+see [dataset terms and processing](vendor/KEMAR/SOURCE_TERMS.md). Measurements
+retain their own attribution terms; original project code remains MIT.
 
 ## Try it
 
-Flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha2.uf2` using the usual
+Flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha3-hrtf.uf2` using the usual
 Workshop Computer BOOTSEL procedure. Start with a mono sound in Audio 1, both audio
 outputs connected to the left/right sides of a headphone monitoring path, Main and
 X at noon, Y down. Turn X right to start an orbit; turn left for reverse motion.
@@ -84,34 +87,50 @@ Disorientation and startup function selection remain future work.
 
 ## What it sounds like
 
-Each source has fractional arrival delays, level differences between the ears,
-far-ear and stronger rear filtering, a smoothly blended rear spectral notch, distance attenuation and short feed-forward room
-reflections. Delays and gains move smoothly. Front/back differentiation is subtle
-and listener dependent; this is an approximate binaural model, not a measured
-personal HRTF. Stereo speakers reduce the intended binaural effect.
+Each source has fractional arrival delays, measured direction-dependent ear
+filters, distance attenuation and short feed-forward room reflections. The
+horizontal filters derive from Gardner and Martin's diffuse-field-equalized MIT
+KEMAR data. The short minimum-phase filters replace alpha2's rear notch, panning
+law and direction-dependent one-pole shadow filter; interaural delay remains
+analytic. Mild distance darkening retains more high-frequency directional detail.
+No elevation or individual ear calibration is implemented. Generic short HRTFs
+may still produce front/back confusion; test by ear with the display hidden.
 
-The previews in `previews/` use the actual C++ DSP with original synthetic sources:
+The original alpha1 previews in `previews/` use the actual alpha1 C++ DSP with original synthetic sources:
 a 220 Hz harmonic tone on A and noise percussion on B. Both are 12 seconds, stereo
 48 kHz/16 bit, with identical levels, settings and source signals. One uses linked
 motion and one opposing motion. They simulate DSP only, without the physical
-ADC/DAC, USB activity or hardware timing. Generation source: `tools/render_preview.cpp`.
+ADC/DAC, USB activity or hardware timing. Later version-labelled files use that
+version's renderer. Generation source: `tools/render_preview.cpp`.
 
-## Alpha2 listening comparison
+## Alpha3 HRTF listening comparison
 
-Rear positions now blend in a short three-sample feed-forward filter (first
-cancellation at 8 kHz), alongside stronger rear high-frequency shadowing. The
-front should sound open/bright; the rear darker and more hollow. Low-frequency
-level is largely retained. Spatial strength scales both cues and zero bypasses
-directional colouring. This is an analytical approximation, not measured pinna
-filtering; a tonal distinction does not guarantee externalized rear perception.
-Controls, parameter IDs and saved settings format are unchanged from alpha1.
+Use a bright mono signal in Audio 1, Audio 2 empty, X noon, Y down, room zero and
+spatial strength full. Reset at Main noon for front, then turn Main to either end
+for back. Hide the editor display. Test stationary positions, then a slow orbit;
+judge perceived direction separately from tonal differences. Repeat with room
+and distance raised only after testing the near, dry sound.
 
-`previews/alpha2-front-back.wav` alternates **front / back / front / back** every
-3 seconds, using the same broadband noise segment, room zero, distance near,
-stationary A only. Compare on headphones. The linked/opposing files are retained
-alpha1 references; `alpha2-linked.wav` and `alpha2-opposed.wav` use the revised DSP.
-The previous UF2 is retained for A/B comparison. Alpha1's reported stability does
-not establish alpha2 stability. See docs/IMPLEMENTATION_PLAN.md for remaining work.
+The ear filters now vary across 72 measured horizontal directions. Rear is **not**
+necessarily darker: the measured frequency patterns replace the artificial rear
+colour. Spatial strength smoothly blends from neutral at zero to the measured
+bank at full, also scaling the separate interaural delay. A single conservative
+bank gain preserves ear/direction level differences and provides FIR headroom;
+volume can differ from alpha2 and with strength changes. Compare at comfortable,
+matched monitoring levels. Saved settings/schema and hardware controls are unchanged.
+
+`previews/alpha3-front-back.wav` alternates front/back every 3 seconds with the
+same broadband source, stationary A, distance near and room zero. Alpha3 linked
+and opposing previews use both synthetic sources. All include the derived KEMAR
+filters and their Gardner/Martin attribution. Alpha1/alpha2 previews and firmware
+are retained for comparison. No alpha3 stability result is inherited from alpha1.
+
+The 32-tap filters keep this experiment per sample. Workshop_BlockAudioCard was
+reviewed: its reference uses 64-frame blocks, core 1 rendering and two-block
+scheduling (~2.7 ms). It does not directly preserve this card's ComputerCard 0.4.0,
+USB-on-core-1 and jack-probe arrangement. A block adaptation remains an option for
+longer filters or measured timing problems; buffering alone does not reduce FIR
+multiply count. See docs/IMPLEMENTATION_PLAN.md.
 
 ## Build and verify
 
@@ -125,15 +144,15 @@ clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/ds
 /tmp/spatial-dsp-test
 node tests/editor_test.cjs
 clang++ -O2 -std=c++17 -Isrc tools/render_preview.cpp -o /tmp/spatial-render
-/tmp/spatial-render previews/alpha2-linked.wav 1
-/tmp/spatial-render previews/alpha2-opposed.wav 0
-/tmp/spatial-render previews/alpha2-front-back.wav front-back
+/tmp/spatial-render previews/alpha3-linked.wav 1
+/tmp/spatial-render previews/alpha3-opposed.wav 0
+/tmp/spatial-render previews/alpha3-front-back.wav front-back
 ```
 
 DSP stays on core 0; USB MIDI/editor stays on core 1. Staggered geometry updates
 avoid recalculating both sources on the same sample. Audio remains per sample;
 this first fixed-point implementation does not need FFT/convolution blocks.
-The program executes from RAM. Build use: 44,064 bytes flash; 58,064 bytes main RAM,
+The program executes from RAM. Build use: 50,880 bytes flash; 65,912 bytes main RAM,
 plus 2 KB in each scratch bank. See [docs/TEST_PROTOCOL.md](docs/TEST_PROTOCOL.md)
 for instrument checks and [docs/PROTOCOL.md](docs/PROTOCOL.md) for editor messages.
 This independent repository is not a Workshop_Computer release submission.

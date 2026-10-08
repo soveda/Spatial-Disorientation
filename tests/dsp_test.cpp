@@ -29,10 +29,29 @@ int main() {
     assert(std::abs(Energy(0xc0000000u,0)-right)<right*.03);
     assert(Energy(0,4095)<Energy(0,0)*.2);
     assert(std::abs(Energy(0,0,false,true)-Energy(0,0))<Energy(0,0)*.01);
-    // Rear cue must alter spectral balance, not simply turn everything down.
+    // Validate the convolver against the generated measured impulse responses.
+    // Check every direction and both ears, including filter settling and tails.
+    for(int direction=0;direction<72;++direction) {
+        Hrtf h;
+        uint32_t phase=static_cast<uint32_t>((static_cast<uint64_t>(direction)<<32)/72+1);
+        h.Geometry(phase,4095);
+        for(int i=0;i<4096;++i){h.Update();h.Process(0,0);h.Process(1,0);}
+        for(int i=0;i<40;++i) {
+            h.Update();
+            for(int ear=0;ear<2;++ear) {
+                int got=h.Process(ear,i==0?1024:0);
+                int measured=i<32?kHrtf[direction][ear][i]:0;
+                int neutral=i==0?16384:0;
+                int coefficient=neutral+(((measured-neutral)*4095)>>12);
+                int expected=(1024*coefficient)>>14;
+                assert(std::abs(got-expected)<=1);
+            }
+        }
+    }
+    // Front and rear now have distinct measured spectra, not a fixed rear notch.
     double lowRatio=Energy(0x80000000u,0,false,false,250)/Energy(0,0,false,false,250);
     double highRatio=Energy(0x80000000u,0,false,false,8000)/Energy(0,0,false,false,8000);
-    assert(lowRatio>.85 && highRatio<.08);
+    assert(std::abs(10*std::log10(highRatio/lowRatio))>3);
     // Strength zero bypasses directional colour (room disabled here).
     double flatFront=Energy(0,0,false,false,8000,false);
     double flatBack=Energy(0x80000000u,0,false,false,8000,false);
@@ -63,5 +82,5 @@ int main() {
     orbit.Pulse(true,false,true);auto reset=orbit.Advance();assert(reset.angle[0]==0&&reset.angle[1]==0x80000000u);
     for(int i=0;i<144001;++i)orbit.Pulse(true,false,false);assert(!orbit.ClockLocked());
     orbit.Controls(2048,4095,0,0,0,true,defaults);assert(orbit.Step()==178957);
-    std::puts("PASS: config rejection, checksum, ear symmetry, distance, independent sources, DSP bounds/tails, front/back spectral cue/bypass, orbit direction, clock, stop/reset and timeout");
+    std::puts("PASS: config rejection, checksum, ear symmetry, distance, independent sources, DSP bounds/tails, measured FIR reference/front-back/bypass, orbit direction, clock, stop/reset and timeout");
 }

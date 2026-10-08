@@ -54,7 +54,9 @@ Direction-specific filters from a measured head/ear response may offer more
 specific front/back/elevation cues. This needs a suitably licensed dataset with
 full attribution, filter interpolation, memory/CPU estimates and listener testing.
 Long convolution could justify block processing; short FIR filters might not.
-No dataset, filter length or performance claim has been selected.
+Alpha3 now experiments with 32-tap horizontal minimum-phase filters derived
+from Gardner and Martin's MIT KEMAR data; see ../vendor/KEMAR/SOURCE_TERMS.md.
+Hardware timing and blind localization still require testing.
 
 Do not make the first card depend on convincing elevation before horizontal
 movement and distance are musically useful.

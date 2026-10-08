@@ -121,3 +121,35 @@ Consider retaining more directional detail at distance only after those comparis
 Firmware remains alpha2; no DSP change is made by this record.
 
 Listening observations: Adrian Vos (soveda). Original record © 2026 Adrian Vos, MIT.
+
+## Alpha2 blind result and alpha3 HRTF test — 2026-10-08
+
+Adrian Vos reports insufficient front/back movement without visual cues. Alpha2's
+improved tonal distinction therefore does not establish adequate localization.
+The user authorized a measured-filter experiment and consideration of
+Workshop_BlockAudioCard where appropriate.
+
+Alpha3 uses 32-tap minimum-phase horizontal filters derived from Bill Gardner and
+Keith Martin's MIT KEMAR data (copyright 1994 MIT Media Laboratory; terms and
+processing in ../vendor/KEMAR/SOURCE_TERMS.md). Its FIR outputs are reference-tested
+against the generated bank; this is not a perceptual or hardware timing result.
+
+- Hide the editor: dry bright mono source A, distance near, stationary X, full
+  strength. Compare front (Main noon after reset) with rear (Main either end).
+  Have another person set the angle if possible to reduce knowledge of position.
+  Record whether it seems in front/behind separately from frequency colour.
+- Try slow orbits with noise, voice and rich musical audio. Recheck left/right,
+  then source B alone, then both sources. Measured rear spectra need not be darker.
+- Repeat dry at middle/far distance, then add room. Judge lost detail separately
+  from reduced level; match monitor loudness for an additional comparison.
+- At strength zero, room zero, distance fixed, directional spectral/level/timing
+  differences should vanish once filters settle. Intermediate strength should be
+  smooth. Check rapid position, strength, distance and separation changes for clicks.
+- Recheck all alpha1 controls, editor/persistence and USB reconnect. Run worst-load
+  stability for at least 30 minutes. Bottom-right timing warning must stay off;
+  report any warning or control freeze immediately. Profile total ISR before release.
+  A compiling short FIR does not prove the 20 microsecond deadline.
+
+Alpha1/alpha2 UF2s remain available to revert. No block transport switch is made
+in this experimental pass; see IMPLEMENTATION_PLAN.md for the evaluation.
+Original test notes © 2026 Adrian Vos (soveda), MIT; data attribution as above.

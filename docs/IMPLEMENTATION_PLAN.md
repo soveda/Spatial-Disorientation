@@ -65,3 +65,22 @@ and update the operator guide, source attribution and MIT notices. Validate rele
 metadata against the then-current canonical Workshop Computer schema. Generate a
 versioned UF2 with checksums and a concrete release/PR summary. Remain in this
 independent repository until the user approves copying into releases.
+
+## Alpha3 experiment and block evaluation — 2026-10-08
+
+Alpha2 blind listening remained insufficient. The authorized alpha3 experiment
+implements the short measured-filter evaluation described in stage 1 using
+Gardner/Martin MIT KEMAR data. Keep alpha2 available for comparison. Next priority:
+blind horizontal localization tests and actual ISR measurements, then decide
+whether 32-tap approximation quality and per-sample timing are sufficient.
+
+The local Workshop_BlockAudioCard reference was read at the user's request. It
+uses 64-frame handoff, core 1 DSP and two-block output scheduling (~2.7 ms), direct
+hardware access rather than ComputerCard and no initial jack normalization. Moving
+here would require explicit restoration of ComputerCard-equivalent normalization,
+clock/reset capture, editor/flash coordination and USB scheduling. No block code
+is copied. For 32-tap FIR, fixed-point direct convolution is a reasonable first
+experiment; grouping samples does not by itself lower the operation count. Longer
+FIRs may justify partitioned convolution or a revised block architecture. Measure
+worst-load deadlines before choosing. Do not treat the compiler/memory report as
+CPU profiling or a claim that the current callback is fast enough.
