@@ -186,3 +186,25 @@ Test the timing fix before another localization test:
    and revert to alpha2 rather than continuing an uncontrolled test.
 
 Original report: Adrian Vos. Test notes © 2026 Adrian Vos (soveda), MIT.
+
+## Alpha4 initial timing/listening report — 2026-10-08
+
+Adrian Vos reports the editor reads peak callback 5 us, peak 64-frame DSP block
+1181 us, linked/free-running, distance 46%. Motion still sounds side to side.
+No full stability duration or complete control regression is claimed by this report.
+
+The callback reading is below its 18 us warning threshold. The block reading uses
+about 88.6% of the 1333.3 us block period: roughly 152 us of deadline margin and
+19 us below the conservative 1200 us warning threshold. This supports the intended
+ISR scheduling improvement but shows limited DSP headroom; it does not certify
+worst-case timing or prove front/back localization.
+
+Next listening comparison: hide display, source A only with bright/broadband audio,
+distance near (Y down, CV2 unpatched), room zero, full spatial strength, X noon.
+Compare front (reset at Main noon) with back (Main either end), then a slow orbit.
+The reported 46% distance was not the near/dry baseline; distance darkening and
+relative room energy may obscure the cue. If the near/dry case still fails,
+optimize the worker before experimenting with longer filters, a different generic
+HRTF or listener/headphone calibration. Do not simply add taps to this workload.
+
+Report: Adrian Vos. Original record © 2026 Adrian Vos (soveda), MIT.
