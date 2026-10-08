@@ -1,14 +1,15 @@
 # Spatial Disorientation — Twin Orbits
 
-**0.1.0-alpha3-hrtf**: experimental measured-filter prototype for Music Thing Modular Workshop
+**0.1.0-alpha4-block-hrtf**: experimental block-rendered HRTF prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs orbit around the listener and mix to binaural
 stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
 **192 MHz / 1.15 V**. Firmware builds and host checks pass. User hardware tests
 on **alpha1** pass for the main controls, left/right movement and editor/persistence;
 front/back cues were weak. Alpha1 stability is ongoing (20 minutes without issues
 reported on 2026-10-08). Alpha2 improved tonal distinction but front/back movement remained insufficient
-with the visual display hidden. Alpha3 HRTF listening, stability and full interrupt
-timing measurements remain pending.
+with the visual display hidden. Alpha3 overran the hardware callback: instant timing LED, uncontrolled fast
+motion and unresponsive knobs. **Do not use alpha3 for continued testing.** Alpha4
+moves HRTF DSP out of that callback; its hardware verification is still pending.
 
 Original code and documentation © 2026 Adrian Vos (soveda), MIT. Hardware/library
 patterns: Chris Johnson and the Workshop Computer contributors. Musical inspiration:
@@ -21,7 +22,7 @@ retain their own attribution terms; original project code remains MIT.
 
 ## Try it
 
-Flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha3-hrtf.uf2` using the usual
+Flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha4-block-hrtf.uf2` using the usual
 Workshop Computer BOOTSEL procedure. Start with a mono sound in Audio 1, both audio
 outputs connected to the left/right sides of a headphone monitoring path, Main and
 X at noon, Y down. Turn X right to start an orbit; turn left for reverse motion.
@@ -53,8 +54,10 @@ nominal, not calibrated position/distance measurements.
 
 Top LED pair shows A's left/right position; middle pair shows B. Equal brightness
 means front **or** back, not necessarily stopped. Bottom left is lit for linked
-motion. Bottom right latches if the measured callback takes at least 18 µs; reset
-clears it. This is a useful warning, not proof of total interrupt timing margin.
+motion. Bottom right latches for a callback of at least 18 µs, a DSP block of at least
+1,200 µs, or an audio queue overrun/underrun. Reset clears it. The editor displays
+peak callback and block times and the warning category. Callback timing excludes
+the framework's surrounding ISR work; measure the full ISR before release.
 
 ## Editor
 
@@ -125,12 +128,34 @@ and opposing previews use both synthetic sources. All include the derived KEMAR
 filters and their Gardner/Martin attribution. Alpha1/alpha2 previews and firmware
 are retained for comparison. No alpha3 stability result is inherited from alpha1.
 
-The 32-tap filters keep this experiment per sample. Workshop_BlockAudioCard was
-reviewed: its reference uses 64-frame blocks, core 1 rendering and two-block
-scheduling (~2.7 ms). It does not directly preserve this card's ComputerCard 0.4.0,
-USB-on-core-1 and jack-probe arrangement. A block adaptation remains an option for
-longer filters or measured timing problems; buffering alone does not reduce FIR
-multiply count. See docs/IMPLEMENTATION_PLAN.md.
+## Alpha4 processing fix
+
+Alpha3's hardware report matched the documented ComputerCard ISR-overrun failure:
+instant timing warning, fast uncontrolled motion and frozen knobs. Alpha4 retains
+the same HRTF bank and rendering but processes captured 64-frame blocks on core 1.
+Core 0's callback only reads controls/inputs, advances orbit positions, captures
+frames and plays completed output. Each frame carries its position and config,
+so clock/reset timing is retained relative to the buffered audio. Extra transport
+latency is 128 frames (2.67 ms). The vendored ComputerCard 0.4.0 is unmodified,
+including normalization and hardware service. The handoff adapts the fixed-ring,
+two-block scheduling pattern from Workshop_BlockAudioCard (Adrian Vos, MIT).
+
+Core 1 prioritizes pending DSP before pumping USB. MIDI TX now uses a bounded
+non-blocking queue instead of a send/wait loop, and the save-mute wait continues
+servicing blocks. Flash writes still occur only after output has faded to silence.
+USB initializes before audio capture begins. Queue misses output silence and
+latch a warning rather than blocking capture or repeating stale audio. This
+protects hardware input cadence; it does not guarantee sufficient DSP throughput.
+
+Open the updated editor for peak **callback µs** and **64-frame block µs**. Warning
+thresholds are 18 and 1,200 µs respectively; the block period is 1,333.3 µs.
+Readouts are clamped to 16,383 µs and reset on reboot. Check controls and these
+readings first, before judging spatial sound. Alpha3 is retained for traceability,
+not as the recommended fallback: use alpha2 if alpha4 fails.
+
+Alpha3 previews still represent alpha4's unchanged spatial DSP, apart from the
+new transport latency. Host tests compare block output sample-for-sample with the
+unbuffered renderer after accounting for its 128-frame delay.
 
 ## Build and verify
 
@@ -143,16 +168,20 @@ cmake --build build -j2
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/dsp_test.cpp -o /tmp/spatial-dsp-test
 /tmp/spatial-dsp-test
 node tests/editor_test.cjs
+clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/block_audio_test.cpp -o /tmp/spatial-block-test
+/tmp/spatial-block-test
+clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/midi_tx_test.cpp -o /tmp/spatial-midi-tx-test
+/tmp/spatial-midi-tx-test
 clang++ -O2 -std=c++17 -Isrc tools/render_preview.cpp -o /tmp/spatial-render
 /tmp/spatial-render previews/alpha3-linked.wav 1
 /tmp/spatial-render previews/alpha3-opposed.wav 0
 /tmp/spatial-render previews/alpha3-front-back.wav front-back
 ```
 
-DSP stays on core 0; USB MIDI/editor stays on core 1. Staggered geometry updates
-avoid recalculating both sources on the same sample. Audio remains per sample;
-this first fixed-point implementation does not need FFT/convolution blocks.
-The program executes from RAM. Build use: 50,880 bytes flash; 65,912 bytes main RAM,
+Hardware service stays on core 0; block DSP and non-blocking USB/editor share
+core 1. Geometry updates remain staggered within blocks. Convolution is direct
+fixed-point FIR inside the block renderer; this is not FFT convolution.
+The program executes from RAM. Build use: 53,436 bytes flash; 79,020 bytes main RAM,
 plus 2 KB in each scratch bank. See [docs/TEST_PROTOCOL.md](docs/TEST_PROTOCOL.md)
 for instrument checks and [docs/PROTOCOL.md](docs/PROTOCOL.md) for editor messages.
 This independent repository is not a Workshop_Computer release submission.

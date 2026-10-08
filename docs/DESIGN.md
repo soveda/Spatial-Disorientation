@@ -96,3 +96,13 @@ and DSP integration: Adrian Vos, MIT. Timing remains analytic; distance darkenin
 is reduced to preserve measured directional detail. Controls/schema are unchanged.
 The user also asked to consider Workshop_BlockAudioCard; its block transport was
 reviewed and deferred pending measured timing needs or longer filters.
+
+## Alpha4 block scheduling correction (2026-10-08)
+
+Alpha3 overran the hardware callback on the user's instrument. Following the
+user's request to consider Workshop_BlockAudioCard, alpha4 adapts its four-slot,
+64-frame/two-block scheduling model while retaining unmodified ComputerCard 0.4.0.
+Hardware/control capture remains on core 0; heavy HRTF processing and non-blocking
+USB share core 1. The DSP bank/settings are unchanged. Added transport latency is
+2.67 ms. Timing diagnostics and over/underrun warnings are part of the test build;
+hardware validation is pending. Original integration: Adrian Vos (soveda), MIT.

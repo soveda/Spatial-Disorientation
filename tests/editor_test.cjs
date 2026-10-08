@@ -21,6 +21,9 @@ const ctx=vm.createContext({document,navigator:{requestMIDIAccess:async()=>midi}
  await get('save').onclick();assert.deepEqual(saved,active);
  await get('disconnect').onclick();assert(get('apply').disabled);assert(!get('connect').disabled);
  await get('connect').onclick();assert.equal(fields[0].value,1024);
+ input.onmidimessage({data:[240,125,83,68,1,68,0,5,0,104,7,247]});
+ assert(get('timing').textContent.includes('5 µs'));
+ assert(get('timing').textContent.includes('1000 µs'));
  input.state='disconnected';await midi.onstatechange();assert(get('save').disabled);
  assert.throws(()=>vm.runInContext('decode([1,0,0,1,0,0,3,0,0,4,0,0,5,0,0,6,4,0])',ctx));
  assert.throws(()=>vm.runInContext('encode([4096,0,0,0,0,4])',ctx));

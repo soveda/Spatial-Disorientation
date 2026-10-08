@@ -43,3 +43,18 @@ Audio core fades to zero and allows DAC pipeline flushing before acknowledging;
 USB core locks out audio core and disables its local interrupts for erase/program.
 RAM execution and a firmware-overlap check are required. A failed/torn save uses
 defaults next boot; this prototype does not promise power-loss recovery of old settings.
+
+## Alpha4 timing diagnostics (compatible extension)
+
+Command 44, sequence 0, four payload bytes: callback peak low/high 7 bits, DSP
+block peak low/high 7 bits, in microseconds, saturated at 16383. Sent alongside
+telemetry at approximately 20 Hz when the bounded TX queue is empty. Peaks reset
+on reboot and ignore intentional flash-save pauses. Callback measurement excludes
+the framework's surrounding ISR; block measurement includes core-1 interruption.
+
+Additional 43 flags: bit 4 block render >=1200 us, bit 5 audio queue miss, bit 6
+callback >=18 us. Bit 2 remains the combined latched warning. These fields do not
+alter parameter IDs, config schema, existing commands or flash records. USB TX is
+non-blocking: if the host does not consume, queued bytes stay bounded; telemetry
+is skipped and an overloaded command client may time out and retry. Commands
+should remain one at a time.

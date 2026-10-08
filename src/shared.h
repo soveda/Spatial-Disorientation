@@ -11,6 +11,8 @@ struct Shared {
     // 0 running; core 1 requests 1; core 0 acknowledges silence with 2.
     alignas(4) volatile uint32_t save = 0;
     volatile uint32_t angle_a=0,angle_b=2048,distance=0,flags=0;
+    volatile uint32_t callback_peak_us=0,block_peak_us=0;
+    volatile uint32_t usb_ready=0;
     bool Consume(Config& cfg) {
         if (!ready) return false;
         __dmb(); cfg=queued; __dmb(); ready=0;

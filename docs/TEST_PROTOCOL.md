@@ -153,3 +153,36 @@ against the generated bank; this is not a perceptual or hardware timing result.
 Alpha1/alpha2 UF2s remain available to revert. No block transport switch is made
 in this experimental pass; see IMPLEMENTATION_PLAN.md for the evaluation.
 Original test notes © 2026 Adrian Vos (soveda), MIT; data attribution as above.
+
+## Alpha3 timing failure and alpha4 replacement — 2026-10-08
+
+Adrian Vos reports alpha3 spins much too fast, does not stop or respond to knobs,
+and lights the bottom-right warning LED immediately. This is consistent with
+ComputerCard audio-ISR overrun and mux/control corruption. Alpha3 fails hardware
+validation; its successful host tests/build did not establish real-time suitability.
+Fallback firmware is alpha2.
+
+Alpha4 moves the unchanged HRTF engine into 64-frame core-1 blocks with a four-slot
+handoff and 128-frame output delay. USB shares core 1 cooperatively with bounded
+non-blocking TX. The unmodified ComputerCard 0.4.0 keeps hardware service, jack
+normalization and sample-rate controls on core 0. See README.md for attribution
+and scheduling details. Host checks cover exact output/latency, queue starvation
+silence/recovery, MIDI TX backpressure/wrap, DSP and editor regression.
+
+Test the timing fix before another localization test:
+1. Flash alpha4, X noon. Confirm sound is stationary, Main and Y respond and the
+   bottom-right LED stays off. Turn X slowly: rate/direction should respond normally.
+2. Open the updated editor and report **peak callback** and **peak block** times.
+   Move all knobs/CVs and apply maximum room/strength/source levels with two sources.
+   Callback should remain below 18 us; block below 1200 us, with no queue warning.
+3. Read/Apply/Save, reset, reconnect and Read. Repeat rapid edits, USB disconnect
+   and reconnect while audio runs. Saving should mute briefly then resume without
+   timing flags or stalled input; it must not block the DSP waiting for USB TX.
+4. Retest clock/reset and switch modes. All buffered audio is delayed by 2.67 ms;
+   controls/clock/reset are captured at sample rate with their corresponding input.
+5. If those pass, perform alpha3's display-hidden front/back listening test and a
+   fresh 30-minute worst-load stability run. Do not infer alpha4 stability from
+   any previous version. If the warning lights, note the editor's category/peaks
+   and revert to alpha2 rather than continuing an uncontrolled test.
+
+Original report: Adrian Vos. Test notes © 2026 Adrian Vos (soveda), MIT.

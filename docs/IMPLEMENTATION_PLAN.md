@@ -84,3 +84,15 @@ experiment; grouping samples does not by itself lower the operation count. Longe
 FIRs may justify partitioned convolution or a revised block architecture. Measure
 worst-load deadlines before choosing. Do not treat the compiler/memory report as
 CPU profiling or a claim that the current callback is fast enough.
+
+## Alpha4 supersedes the per-sample scheduling decision
+
+Alpha3's hardware failure demonstrated that keeping FIR work inside the audio
+callback was unsuitable, despite the short filter count. Alpha4 now adapts the
+Workshop_BlockAudioCard handoff while retaining ComputerCard hardware service.
+The required order is: validate responsive controls and callback/block timings;
+validate cooperative USB/persistence under load; then blind localization and
+stability. Do not extend filters or add 8mu until those deadlines are measured.
+Core 1 now owns both block rendering and bounded USB, so any future host integration
+must preserve audio priority and non-blocking service. The spatial filter bank
+is unchanged from alpha3; this pass corrects scheduling, not localization tuning.

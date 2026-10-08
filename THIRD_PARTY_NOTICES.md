@@ -89,3 +89,16 @@ apply to alpha1/alpha2, not to alpha3's measured spectral bank.
 Workshop_BlockAudioCard (Adrian Vos, MIT) was reviewed as a possible block transport;
 no source was copied into this experiment. Reference:
 https://github.com/soveda/Workshop_BlockAudioCard
+
+## Alpha4 block handoff
+
+The fixed-ring, 64-frame/two-block output scheduling pattern in src/block_audio.h
+is adapted from Adrian Vos's MIT-licensed Workshop_BlockAudioCard reference,
+revision 2802e3692a2e24cb554306ab8c7219ee502650ae:
+https://github.com/soveda/Workshop_BlockAudioCard/tree/2802e3692a2e24cb554306ab8c7219ee502650ae
+
+This integration keeps Chris Johnson's unmodified ComputerCard 0.4.0 for hardware
+service/normalization and uses an original cooperative DSP/USB worker. The
+reference's raw ADC/DAC transport is not copied. Original adaptation, TX queue,
+diagnostics and tests: Adrian Vos (soveda), 2026, MIT. Earlier "reviewed only"
+statements above describe alpha3; alpha4 now adapts the scheduling pattern.

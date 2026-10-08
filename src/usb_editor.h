@@ -4,16 +4,20 @@
 #pragma once
 #include "shared.h"
 #include "storage.h"
+#include "midi_tx.h"
 #include "pico/stdlib.h"
 #include "tusb.h"
 namespace spatial {
 class UsbEditor {
 public:
-    UsbEditor(Shared& shared,Storage& storage,const Config& cfg):shared_(shared),storage_(storage),current_(cfg) {}
+    UsbEditor(Shared& shared,Storage& storage,const Config& cfg,void (*worker)()):shared_(shared),storage_(storage),current_(cfg),worker_(worker) {}
     void Run() {
         tusb_init();
+        __dmb();shared_.usb_ready=1;
         while (true) {
+            worker_();
             tud_task();
+            Pump();
             uint8_t chunk[64];
             if (tud_midi_available()) {
                 uint32_t count=tud_midi_stream_read(chunk,sizeof(chunk));
@@ -29,7 +33,13 @@ public:
                 uint8_t data[7];
                 Pack(shared_.angle_a,data);Pack(shared_.angle_b,data+2);
                 Pack(shared_.distance,data+4);data[6]=shared_.flags&127;
-                Send(0x43,0,data,sizeof(data));
+                if(tx_.Empty()) {
+                    Send(0x43,0,data,sizeof(data));
+                    uint8_t timing[4];
+                    Pack(shared_.callback_peak_us>16383?16383:shared_.callback_peak_us,timing);
+                    Pack(shared_.block_peak_us>16383?16383:shared_.block_peak_us,timing+2);
+                    Send(0x44,0,timing,sizeof(timing));
+                }
             }
             tight_loop_contents();
         }
@@ -41,14 +51,14 @@ private:
         if (n>55 || !tud_midi_mounted()) return false;
         for (size_t i=0;i<n;++i) msg[7+i]=data[i];
         msg[7+n]=0xf7;
-        size_t sent=0,total=n+8;
-        uint32_t started=time_us_32();
-        while (sent<total) {
-            if (!tud_midi_mounted() || time_us_32()-started>100000) return false;
-            sent+=tud_midi_stream_write(0,msg+sent,total-sent);
-            tud_task();
-        }
-        return true;
+        return tx_.Enqueue(msg,n+8);
+    }
+    void Pump() {
+        if(!tud_midi_mounted()){tx_.Clear();return;}
+        size_t count;const uint8_t* data=tx_.Front(count);
+        if(!count)return;
+        // One non-blocking FIFO write; defer remaining bytes to another pass.
+        tx_.Consume(tud_midi_stream_write(0,data,count));
     }
     void Ack(uint8_t cmd,uint8_t seq,uint8_t status) { const uint8_t data[]={cmd,status};Send(0x42,seq,data,2); }
     void Snapshot(uint8_t seq) { uint8_t data[kFields*3];EncodeConfig(current_,data);Send(0x41,seq,data,sizeof(data)); }
@@ -67,7 +77,7 @@ private:
             // the ISR. Zero reaches the DAC before core 0 is locked out.
             __dmb();shared_.save=1;
             uint32_t start=time_us_32();
-            while (shared_.save!=2 && time_us_32()-start<500000) tud_task();
+            while (shared_.save!=2 && time_us_32()-start<500000) { worker_();tud_task();Pump(); }
             bool okay=false;
             if (shared_.save==2) { __dmb();okay=storage_.Save(current_); }
             __dmb();shared_.save=0;
@@ -89,5 +99,7 @@ private:
     size_t length_=0;
     bool active_=false,pending_=false;
     uint32_t last_telemetry_=0;
+    void (*worker_)();
+    MidiTx tx_;
 };
 }

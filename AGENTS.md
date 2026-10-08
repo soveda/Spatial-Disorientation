@@ -16,7 +16,12 @@ Keep ProcessSample under about 20 microseconds; use fixed-point DSP, bounded wor
 and smooth controls. Read hardware inputs only inside ProcessSample.
 Use RAM execution when memory permits, oscillator startup multiplier 64,
 and disabled USB/UART stdio. USB MIDI/editor processing belongs on core 1;
-keep audio DSP on core 0 and use safe bounded communication between cores.
+alpha4 uses the user-authorized block architecture after alpha3 overran the ISR.
+Core 0 services ComputerCard and captures sample-accurate controls/audio; core 1
+renders 64-frame DSP blocks and cooperatively services non-blocking USB. Preserve
+single-writer ownership, bounded queues and the explicit fade/flash handshake.
+Do not put FIR convolution back into ProcessSample. Measure both the callback
+and block deadline; the latter is 1.333 ms, with a 1.2 ms warning threshold.
 Verify APIs against vendor/ComputerCard/ComputerCard.h. Explain borrowed algorithms
 and their musical behaviour. Keep docs, metadata and actual controls consistent.
 Commit meaningful checkpoints, including successful builds. Do not claim hardware
