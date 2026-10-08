@@ -72,3 +72,31 @@ priority: improve front/back cues while preserving the working left/right moveme
 and controls. No firmware change is implied by recording these results.
 
 Report attribution: Adrian Vos (soveda). This test record © 2026 Adrian Vos, MIT.
+
+## Follow-up and alpha2 retest — 2026-10-08
+
+Adrian Vos reports alpha1 remains stable after 20 minutes; the run remains ongoing.
+No 30-minute completion or full interrupt profile is claimed.
+
+Alpha2 changes only spatial DSP and version-labelled delivery/docs. Its stronger
+rear shadowing and smoothly blended 8 kHz spectral notch require a new listening
+and timing/stability pass; alpha1 results do not transfer automatically.
+
+1. With room zero, strength full, Y down, X noon and only a bright/broadband source
+   in Audio 1, reset at Main noon: front. Turn Main to either end: back. Compare
+   brightness/hollow colour, then whether the source actually seems behind you.
+   Test noise, voice and a rich musical source; a low sine tone is a poor spectral
+   cue test. Compare alpha1 and alpha2 with the same settings and monitor level.
+2. Raise room to the default 29% and repeat. Reflections may help or mask direction.
+   Try intermediate spatial strength. At strength zero and room zero, front/back
+   directional colouring should disappear (distance remains active).
+3. Recheck left/right balance, both source paths, fast orbits, reverse, centre stop,
+   reset, distance/CV, clock and saved editor settings. Report tonal changes and
+   perceived spatial improvement separately, including unwanted muffling.
+4. Run alpha2 under the detailed worst-load test for at least 30 minutes. Observe
+   the timing-warning LED, including while applying editor settings and saving.
+   Profile full interrupt timing before release.
+
+The original synthetic comparison preview alternates front/back every 3 seconds;
+see README.md. Report attribution and original test documentation: Adrian Vos
+(soveda), © 2026, MIT. No external HRTF data was used for this pass.

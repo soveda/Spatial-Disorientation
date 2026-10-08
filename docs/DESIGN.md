@@ -74,3 +74,13 @@ this addendum: Adrian Vos (soveda), 2026, MIT; upstream sources in
 The user requested future 8mu integration, including gyroscopic control of sound.
 See OPTIONS.md for candidate mappings and implementation questions. This does not
 change the current Twin Orbits alpha1 firmware or its hardware test scope.
+
+## Alpha2 DSP pass (2026-10-08)
+
+Stronger rear high-frequency shadowing and a rear-weighted three-sample
+feed-forward spectral cue supplement the existing interaural timing/level model.
+No control or settings-schema change. The filter is an original analytical
+approximation by Adrian Vos (soveda), MIT, not a measured HRTF. Tests verify
+low-frequency retention, high-frequency rear attenuation and strength-zero bypass;
+headphone perception and hardware timing/stability remain to be retested.
+See IMPLEMENTATION_PLAN.md for the remaining staged work.

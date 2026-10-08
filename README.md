@@ -1,12 +1,13 @@
 # Spatial Disorientation — Twin Orbits
 
-**0.1.0-alpha1**: first listening-test prototype for Music Thing Modular Workshop
+**0.1.0-alpha2**: second listening-test prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs orbit around the listener and mix to binaural
 stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
-**192 MHz / 1.15 V**. Firmware builds and host checks pass. Initial user hardware tests pass for the
-main controls, left/right movement and editor/persistence. Front/back cues remain
-weak; stability testing is ongoing (10 minutes without issues reported on
-2026-10-08). Full interrupt timing has not been measured.
+**192 MHz / 1.15 V**. Firmware builds and host checks pass. User hardware tests
+on **alpha1** pass for the main controls, left/right movement and editor/persistence;
+front/back cues were weak. Alpha1 stability is ongoing (20 minutes without issues
+reported on 2026-10-08). Alpha2 listening/stability tests and full interrupt timing
+measurements remain pending.
 
 Original code and documentation © 2026 Adrian Vos (soveda), MIT. Hardware/library
 patterns: Chris Johnson and the Workshop Computer contributors. Musical inspiration:
@@ -16,7 +17,7 @@ This is an independent implementation; no Quasar DSP or measured HRTF data is us
 
 ## Try it
 
-Flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha1.uf2` using the usual
+Flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha2.uf2` using the usual
 Workshop Computer BOOTSEL procedure. Start with a mono sound in Audio 1, both audio
 outputs connected to the left/right sides of a headphone monitoring path, Main and
 X at noon, Y down. Turn X right to start an orbit; turn left for reverse motion.
@@ -83,7 +84,7 @@ Disorientation and startup function selection remain future work.
 ## What it sounds like
 
 Each source has fractional arrival delays, level differences between the ears,
-far-ear and rear filtering, distance attenuation and short feed-forward room
+far-ear and stronger rear filtering, a smoothly blended rear spectral notch, distance attenuation and short feed-forward room
 reflections. Delays and gains move smoothly. Front/back differentiation is subtle
 and listener dependent; this is an approximate binaural model, not a measured
 personal HRTF. Stereo speakers reduce the intended binaural effect.
@@ -93,6 +94,23 @@ a 220 Hz harmonic tone on A and noise percussion on B. Both are 12 seconds, ster
 48 kHz/16 bit, with identical levels, settings and source signals. One uses linked
 motion and one opposing motion. They simulate DSP only, without the physical
 ADC/DAC, USB activity or hardware timing. Generation source: `tools/render_preview.cpp`.
+
+## Alpha2 listening comparison
+
+Rear positions now blend in a short three-sample feed-forward filter (first
+cancellation at 8 kHz), alongside stronger rear high-frequency shadowing. The
+front should sound open/bright; the rear darker and more hollow. Low-frequency
+level is largely retained. Spatial strength scales both cues and zero bypasses
+directional colouring. This is an analytical approximation, not measured pinna
+filtering; a tonal distinction does not guarantee externalized rear perception.
+Controls, parameter IDs and saved settings format are unchanged from alpha1.
+
+`previews/alpha2-front-back.wav` alternates **front / back / front / back** every
+3 seconds, using the same broadband noise segment, room zero, distance near,
+stationary A only. Compare on headphones. The linked/opposing files are retained
+alpha1 references; `alpha2-linked.wav` and `alpha2-opposed.wav` use the revised DSP.
+The previous UF2 is retained for A/B comparison. Alpha1's reported stability does
+not establish alpha2 stability. See docs/IMPLEMENTATION_PLAN.md for remaining work.
 
 ## Build and verify
 
@@ -106,14 +124,15 @@ clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/ds
 /tmp/spatial-dsp-test
 node tests/editor_test.cjs
 clang++ -O2 -std=c++17 -Isrc tools/render_preview.cpp -o /tmp/spatial-render
-/tmp/spatial-render previews/twin-orbits-linked.wav 1
-/tmp/spatial-render previews/twin-orbits-opposed.wav 0
+/tmp/spatial-render previews/alpha2-linked.wav 1
+/tmp/spatial-render previews/alpha2-opposed.wav 0
+/tmp/spatial-render previews/alpha2-front-back.wav front-back
 ```
 
 DSP stays on core 0; USB MIDI/editor stays on core 1. Staggered geometry updates
 avoid recalculating both sources on the same sample. Audio remains per sample;
 this first fixed-point implementation does not need FFT/convolution blocks.
-The program executes from RAM. Build use: 43,784 bytes flash; 57,728 bytes main RAM,
+The program executes from RAM. Build use: 44,064 bytes flash; 58,064 bytes main RAM,
 plus 2 KB in each scratch bank. See [docs/TEST_PROTOCOL.md](docs/TEST_PROTOCOL.md)
 for instrument checks and [docs/PROTOCOL.md](docs/PROTOCOL.md) for editor messages.
 This independent repository is not a Workshop_Computer release submission.

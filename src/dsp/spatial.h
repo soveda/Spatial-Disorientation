@@ -39,6 +39,10 @@ public:
         int32_t base_q8 = (64 << 8) + distance * 20; // ~1.3 to 8 ms.
         room_target_ = (room * (512 + ((distance * 1536) >> 12))) >> 12;
         base_target_ = base_q8;
+        // Analytical rear spectral cue, not a measured pinna/HRTF response.
+        // A 3-sample feed-forward pair has its first cancellation at 8 kHz.
+        // Blend up to 75% towards that pair at the back, scaled by strength.
+        rear_target_ = (((rear * strength) >> 12) * 3) >> 2;
         for (int32_t ear = 0; ear < 2; ++ear) {
             int32_t away = ear == 0 ? lateral : -lateral;
             // Far ear arrives up to 32 samples later (~0.67 ms).
@@ -47,7 +51,7 @@ public:
             int32_t pan = 4096 - ((away * 2500) >> 12);
             gain_target_[ear] = (((direct * pan) >> 12) * level) >> 12;
             tone_target_[ear] = Clamp(24000 - ((distance * 10000) >> 12)
-                - ((((rear * strength) >> 12) * 8000) >> 12)
+                - ((((rear * strength) >> 12) * 12000) >> 12)
                 - ((away > 0 ? away * 10000 : 0) >> 12), 1800, 28000);
             level_target_ = level;
         }
@@ -57,7 +61,14 @@ public:
         int32_t q8 = Clamp(input,-2048,2047)*256;
         dc_ = q8 - previous_ + dc_ - (dc_ >> 10);
         previous_ = q8;
-        line_.Write(dc_ >> 8);
+        int32_t sample = Clamp(dc_ >> 8,-4096,4095);
+        rear_mix_ = Slew(rear_mix_,rear_target_,256);
+        int32_t delayed = rear_history_[rear_index_];
+        rear_history_[rear_index_] = sample;
+        if (++rear_index_ == 3) rear_index_ = 0;
+        // Convex feed-forward mix: unity DC gain, no feedback or boost.
+        // Integer-sample history avoids changing the interaural delay geometry.
+        line_.Write(sample + (((delayed-sample)*rear_mix_) >> 13));
         base_ = Slew(base_,base_target_,256);
         room_ = Slew(room_,room_target_,512);
         level_ = Slew(level_,level_target_,512);
@@ -81,6 +92,7 @@ public:
 private:
     Delay line_;
     int32_t previous_=0,dc_=0;
+    int32_t rear_history_[3]={},rear_index_=0,rear_mix_=0,rear_target_=0;
     int32_t base_=64<<8,base_target_=64<<8,room_=0,room_target_=0,level_=0,level_target_=0;
     int32_t delay_[2]={64<<8,64<<8},delay_target_[2]={64<<8,64<<8};
     int32_t gain_[2]={},gain_target_[2]={},shadow_[2]={};
