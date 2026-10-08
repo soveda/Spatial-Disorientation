@@ -106,3 +106,15 @@ Hardware/control capture remains on core 0; heavy HRTF processing and non-blocki
 USB share core 1. The DSP bank/settings are unchanged. Added transport latency is
 2.67 ms. Timing diagnostics and over/underrun warnings are part of the test build;
 hardware validation is pending. Original integration: Adrian Vos (soveda), MIT.
+
+## Alpha5 optimization and longer-filter comparison (2026-10-08)
+
+The user reports alpha4 front/back localization is possibly very subtle and
+requested optimization followed by a longer filter/profile comparison. Alpha5
+shares distance/filter state and FIR input history between ears, uses compact
+paired MACs, then supplies interaural timing with a short stereo delay. The 32-tap
+bank is unchanged; a same-gain 64-tap KEMAR bank is added as a separate test UF2.
+Timing telemetry identifies the active tap count. Controls, saved configuration,
+block size and output scheduling remain unchanged. Hardware validation is pending.
+Measured source data remains credited to Gardner/Martin (MIT Media Lab, 1994);
+original optimization/integration by Adrian Vos (soveda), MIT.

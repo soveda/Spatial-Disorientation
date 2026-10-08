@@ -1,6 +1,6 @@
 # Spatial Disorientation — Twin Orbits
 
-**0.1.0-alpha4-block-hrtf**: experimental block-rendered HRTF prototype for Music Thing Modular Workshop
+**0.1.0-alpha5**: optimized 32/64-tap HRTF comparison prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs orbit around the listener and mix to binaural
 stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
 **192 MHz / 1.15 V**. Firmware builds and host checks pass. User hardware tests
@@ -9,7 +9,9 @@ front/back cues were weak. Alpha1 stability is ongoing (20 minutes without issue
 reported on 2026-10-08). Alpha2 improved tonal distinction but front/back movement remained insufficient
 with the visual display hidden. Alpha3 overran the hardware callback: instant timing LED, uncontrolled fast
 motion and unresponsive knobs. **Do not use alpha3 for continued testing.** Alpha4
-moves HRTF DSP out of that callback; its hardware verification is still pending.
+moved HRTF DSP out of that callback. User readings on alpha4 were 5 µs callback
+and 1,181 µs/block, with front/back localization still very subtle. Alpha5 hardware
+timing and listening results are pending.
 
 Original code and documentation © 2026 Adrian Vos (soveda), MIT. Hardware/library
 patterns: Chris Johnson and the Workshop Computer contributors. Musical inspiration:
@@ -22,7 +24,7 @@ retain their own attribution terms; original project code remains MIT.
 
 ## Try it
 
-Flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha4-block-hrtf.uf2` using the usual
+First flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha5-opt32.uf2` using the usual
 Workshop Computer BOOTSEL procedure. Start with a mono sound in Audio 1, both audio
 outputs connected to the left/right sides of a headphone monitoring path, Main and
 X at noon, Y down. Turn X right to start an orbit; turn left for reverse motion.
@@ -108,6 +110,56 @@ motion and one opposing motion. They simulate DSP only, without the physical
 ADC/DAC, USB activity or hardware timing. Later version-labelled files use that
 version's renderer. Generation source: `tools/render_preview.cpp`.
 
+## Alpha5: test optimization, then longer filters
+
+Two versioned UF2s are included; both retain 64-frame block processing, ComputerCard
+0.4.0, 192 MHz, the existing controls/settings and 128-frame (2.67 ms) scheduling
+latency. Reload the editor: the timing readout now identifies the running tap count.
+
+| Build | Purpose | Flash / main RAM |
+|---|---|---|
+| `0.1.0-alpha5-opt32` | Measure optimization against alpha4's 1,181 µs/block | 54,644 / 80,220 bytes |
+| `0.1.0-alpha5-hrtf64` | Compare longer measured filters after timing check | 63,092 / 89,180 bytes |
+
+Start with **opt32**. Confirm controls, centre stop, USB/editor/persistence and no
+warning LED. Run two sources with fast movement, CV and room active; report peak
+callback/block times. Then try **hrtf64** and repeat those checks. Keep callback
+below 18 µs and block render below 1,200 µs with no queue warnings. These are
+experimental builds; actual speed savings and 64-tap suitability need the card's
+measurements. Alpha4 is retained as the measured comparison; alpha2 is the fallback
+if a timing/control problem occurs. Avoid alpha3, which failed ISR timing.
+
+For listening, use the same bright mono source, room zero, Y down/CV2 unpatched,
+full strength and a hidden editor. Reset Main noon for front; turn Main to either
+end for back, then try a slow orbit. Keep settings and monitoring levels the same
+between builds. Judge whether the sound is in front/behind separately from colour.
+Only add room and distance after comparing the near/dry baseline.
+
+The optimized renderer shares mono distance delay/filtering, uses one FIR history
+for both ears, stores coefficients as int16 and performs paired unrolled MACs.
+The separate short ear delays supply ITD after the HRTF. For fixed settings these
+linear operations commute; moving settings can produce small transient differences.
+The shared Q3 distance filter removes the former duplicated 64-bit multiplies.
+Settled, stationary HRTF coefficients stop recalculating, and room-zero avoids
+unneeded reflection reads; moving/full-room timing remains the relevant worst case.
+The ISR and USB/block handoff remain unchanged.
+
+The 32-tap coefficients are unchanged from alpha4. A deterministic stationary
+noise comparison at four cardinal directions and three distances differed by at
+most one 12-bit step (0.142-step RMS). Both banks use the same gain scale for A/B.
+The 64-tap bank retains more measured detail: 1–12 kHz RMS magnitude approximation
+error is 0.42 dB, compared with 1.05 dB for 32 taps; 95th-percentile absolute error
+is 0.52 versus 1.77 dB. These are numerical filter metrics, not localization scores.
+The longer bank is still a generic horizontal minimum-phase approximation, with
+analytic ITD and no elevation/personal ear calibration.
+
+`previews/alpha5-opt32-front-back.wav` and `alpha5-hrtf64-front-back.wav` alternate
+front/back every three seconds using identical broadband noise, room zero, distance
+near. `alpha5-hrtf64-opposed.wav` uses both original synthetic musical sources.
+All derived filters/previews credit Bill Gardner and Keith Martin, MIT Media
+Laboratory (1994); see vendor/KEMAR/SOURCE_TERMS.md. These previews do not exercise
+hardware scheduling, USB or the ADC/DAC. Alpha1–alpha4 artifacts remain available.
+
 ## Alpha3 HRTF listening comparison
 
 Use a bright mono signal in Audio 1, Audio 2 empty, X noon, Y down, room zero and
@@ -165,25 +217,30 @@ Requires an installed Raspberry Pi Pico SDK (this build: 2.3.0), CMake and
 ARM GCC (this build: 15.2.1).
 
 ```sh
-cmake -S . -B build -DPICO_SDK_PATH=/path/to/pico-sdk
+cmake -S . -B build -DPICO_SDK_PATH=/path/to/pico-sdk -DSPATIAL_HRTF_TAPS=32
 cmake --build build -j2
+cmake -S . -B build_hrtf64 -DPICO_SDK_PATH=/path/to/pico-sdk -DSPATIAL_HRTF_TAPS=64
+cmake --build build_hrtf64 -j2
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/dsp_test.cpp -o /tmp/spatial-dsp-test
 /tmp/spatial-dsp-test
+clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -DSPATIAL_HRTF_TAPS=64 -Isrc tests/dsp_test.cpp -o /tmp/spatial-dsp64-test
+/tmp/spatial-dsp64-test
 node tests/editor_test.cjs
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/block_audio_test.cpp -o /tmp/spatial-block-test
 /tmp/spatial-block-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/midi_tx_test.cpp -o /tmp/spatial-midi-tx-test
 /tmp/spatial-midi-tx-test
 clang++ -O2 -std=c++17 -Isrc tools/render_preview.cpp -o /tmp/spatial-render
-/tmp/spatial-render previews/alpha3-linked.wav 1
-/tmp/spatial-render previews/alpha3-opposed.wav 0
-/tmp/spatial-render previews/alpha3-front-back.wav front-back
+/tmp/spatial-render previews/alpha5-opt32-front-back.wav front-back
+clang++ -O2 -std=c++17 -DSPATIAL_HRTF_TAPS=64 -Isrc tools/render_preview.cpp -o /tmp/spatial-render64
+/tmp/spatial-render64 previews/alpha5-hrtf64-opposed.wav 0
+/tmp/spatial-render64 previews/alpha5-hrtf64-front-back.wav front-back
 ```
 
 Hardware service stays on core 0; block DSP and non-blocking USB/editor share
 core 1. Geometry updates remain staggered within blocks. Convolution is direct
 fixed-point FIR inside the block renderer; this is not FFT convolution.
-The program executes from RAM. Build use: 53,436 bytes flash; 79,020 bytes main RAM,
+The program executes from RAM. Build sizes are listed above,
 plus 2 KB in each scratch bank. See [docs/TEST_PROTOCOL.md](docs/TEST_PROTOCOL.md)
 for instrument checks and [docs/PROTOCOL.md](docs/PROTOCOL.md) for editor messages.
 This independent repository is not a Workshop_Computer release submission.

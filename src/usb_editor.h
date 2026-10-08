@@ -5,6 +5,7 @@
 #include "shared.h"
 #include "storage.h"
 #include "midi_tx.h"
+#include "dsp/hrtf_table.h"
 #include "pico/stdlib.h"
 #include "tusb.h"
 namespace spatial {
@@ -35,9 +36,10 @@ public:
                 Pack(shared_.distance,data+4);data[6]=shared_.flags&127;
                 if(tx_.Empty()) {
                     Send(0x43,0,data,sizeof(data));
-                    uint8_t timing[4];
+                    uint8_t timing[5];
                     Pack(shared_.callback_peak_us>16383?16383:shared_.callback_peak_us,timing);
                     Pack(shared_.block_peak_us>16383?16383:shared_.block_peak_us,timing+2);
+                    timing[4]=kHrtfTaps;
                     Send(0x44,0,timing,sizeof(timing));
                 }
             }

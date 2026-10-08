@@ -208,3 +208,35 @@ optimize the worker before experimenting with longer filters, a different generi
 HRTF or listener/headphone calibration. Do not simply add taps to this workload.
 
 Report: Adrian Vos. Original record © 2026 Adrian Vos (soveda), MIT.
+
+## Alpha5: optimized 32-tap and 64-tap comparison — 2026-10-08
+
+Adrian Vos subsequently describes alpha4 front/back localization as possibly very
+subtle, rather than an adequate pass, and authorizes the optimization/longer-filter
+experiment. Alpha4's reported timing baseline is 5 us callback / 1181 us block.
+
+1. Flash alpha5-opt32 and reload the editor; it should identify 32 taps. Test
+   controls/centre stop, fast orbits, CV, full room and two sources, then Read/Apply/
+   Reset to init/Save/reset/reconnect. Record peak callback and block times and any
+   queue/slow-block warning. Do not compare only the cheaper stationary/dry case.
+2. If controls and deadlines pass, flash alpha5-hrtf64 with identical settings.
+   Editor should identify 64 taps. Repeat the same worst-load test and measurements.
+   Thresholds remain callback 18 us / DSP block 1200 us, block period 1333.3 us.
+3. Hide the display, dry bright A-only source, distance near, strength full. Compare
+   stationary front/rear and slow orbits across the 32/64 builds. Use the same
+   monitor level and settings. Record spatial placement separately from tonal
+   differences, then retest both sources, distance and room.
+4. Run at least 30 minutes on the preferred build under load. Recheck USB/save
+   behaviour and warnings throughout. A longer filter's numerical accuracy does
+   not prove useful localization, and host tests do not measure RP2040 headroom.
+
+Host validation covers both tap counts with sanitizer-backed DSP/config/orbit tests,
+paired FIR versus an independent int64 scalar reference (every direction/ear,
+full-range input, impulse/tail and ring wrap), block output equivalence/128-frame
+latency/starvation recovery, MIDI TX and editor/tap-ID regression. Stationary 32-tap
+output comparison against alpha4 was <=1 12-bit step, 0.142 step RMS, across four
+cardinal angles and three distances. Dynamic delay/filter order differs slightly;
+listen for clicks or changed motion. Alpha4 is retained for comparison; alpha2 is
+available if the new build has timing/control trouble. No alpha5 hardware pass is
+claimed. Dataset attribution: Gardner/Martin, MIT Media Laboratory, 1994; original
+notes © 2026 Adrian Vos (soveda), MIT.

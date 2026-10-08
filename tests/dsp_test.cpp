@@ -35,16 +35,35 @@ int main() {
         Hrtf h;
         uint32_t phase=static_cast<uint32_t>((static_cast<uint64_t>(direction)<<32)/72+1);
         h.Geometry(phase,4095);
-        for(int i=0;i<4096;++i){h.Update();h.Process(0,0);h.Process(1,0);}
-        for(int i=0;i<40;++i) {
+        for(int i=0;i<4096;++i){h.Update();h.Process(0);}
+        for(int i=0;i<kHrtfTaps+8;++i) {
             h.Update();
+            auto pair=h.Process(i==0?1024:0);
             for(int ear=0;ear<2;++ear) {
-                int got=h.Process(ear,i==0?1024:0);
-                int measured=i<32?kHrtf[direction][ear][i]:0;
+                int got=ear==0?pair.left:pair.right;
+                int measured=i<kHrtfTaps?kHrtf[direction][ear][i]:0;
                 int neutral=i==0?16384:0;
                 int coefficient=neutral+(((measured-neutral)*4095)>>12);
                 int expected=(1024*coefficient)>>14;
                 assert(std::abs(got-expected)<=1);
+            }
+        }
+        // Compare paired/unrolled MACs with an independent scalar int64 FIR
+        // on full-range deterministic input, including repeated ring wrap.
+        int32_t history[kHrtfTaps]={};uint32_t seed=direction+1;
+        for(int i=0;i<256;++i){
+            seed=seed*1664525u+1013904223u;
+            for(int n=kHrtfTaps-1;n>0;--n)history[n]=history[n-1];
+            history[0]=static_cast<int32_t>(seed&8191)-4096;
+            h.Update();auto pair=h.Process(history[0]);
+            for(int ear=0;ear<2;++ear){
+                int64_t accumulator=0;
+                for(int n=0;n<kHrtfTaps;++n){
+                    int neutral=n==0?16384:0;
+                    int coefficient=neutral+(((kHrtf[direction][ear][n]-neutral)*4095)>>12);
+                    accumulator+=static_cast<int64_t>(history[n])*coefficient;
+                }
+                assert(std::abs((ear==0?pair.left:pair.right)-static_cast<int>(accumulator>>14))<=1);
             }
         }
     }

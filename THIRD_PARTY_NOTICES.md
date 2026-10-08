@@ -102,3 +102,12 @@ service/normalization and uses an original cooperative DSP/USB worker. The
 reference's raw ADC/DAC transport is not copied. Original adaptation, TX queue,
 diagnostics and tests: Adrian Vos (soveda), 2026, MIT. Earlier "reviewed only"
 statements above describe alpha3; alpha4 now adapts the scheduling pattern.
+
+## Alpha5 paired renderer and longer bank
+
+The original optimized paired FIR/shared-distance renderer is by Adrian Vos
+(soveda), 2026, MIT. The 32/64-tap generated tables and previews derive from the
+same Bill Gardner / Keith Martin, MIT Media Laboratory, copyright 1994 dataset,
+with the source terms above retained. No new third-party convolver implementation
+or filter dataset is copied. Generator metrics and processing are documented in
+vendor/KEMAR; both banks use the same gain scale for comparison.

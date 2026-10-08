@@ -96,3 +96,14 @@ stability. Do not extend filters or add 8mu until those deadlines are measured.
 Core 1 now owns both block rendering and bounded USB, so any future host integration
 must preserve audio priority and non-blocking service. The spatial filter bank
 is unchanged from alpha3; this pass corrects scheduling, not localization tuning.
+
+## Alpha5: current experiment
+
+Optimize repeated per-ear work, then compare matched-gain 32- and 64-tap banks.
+The source archive is unchanged; no additional HRTF profile is introduced yet.
+First measure worst-load savings on opt32 against alpha4's 1181 us/block. Then
+measure the longer bank before accepting any listening improvement. The 64-tap
+bank reduces numerical magnitude error, but should be kept only if it helps blind
+localization and retains timing margin. Continue with other generic profiles or
+listener calibration if longer filters still do not provide sufficient cues.
+8mu and other function work remains behind this timing/listening checkpoint.

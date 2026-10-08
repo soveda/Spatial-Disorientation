@@ -58,3 +58,10 @@ alter parameter IDs, config schema, existing commands or flash records. USB TX i
 non-blocking: if the host does not consume, queued bytes stay bounded; telemetry
 is skipped and an overloaded command client may time out and retry. Commands
 should remain one at a time.
+
+## Alpha5 tap identity
+
+Timing command 44 may append a fifth payload byte: active FIR taps, 32 or 64.
+The updated editor accepts both alpha4's four-byte and alpha5's five-byte form.
+The config schema and parameter IDs remain unchanged. Tap count is a compile-time
+comparison profile, not a saved editor setting.

@@ -32,6 +32,8 @@ const ctx=vm.createContext({document,navigator:{requestMIDIAccess:async()=>midi}
  input.onmidimessage({data:[240,125,83,68,1,68,0,5,0,104,7,247]});
  assert(get('timing').textContent.includes('5 µs'));
  assert(get('timing').textContent.includes('1000 µs'));
+ input.onmidimessage({data:[240,125,83,68,1,68,0,5,0,104,7,64,247]});
+ assert(get('timing').textContent.includes('HRTF: 64 taps'));
  input.state='disconnected';await midi.onstatechange();assert(get('save').disabled);assert(get('init').disabled);
  assert.throws(()=>vm.runInContext('decode([1,0,0,1,0,0,3,0,0,4,0,0,5,0,0,6,4,0])',ctx));
  assert.throws(()=>vm.runInContext('encode([4096,0,0,0,0,4])',ctx));

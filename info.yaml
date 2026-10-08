@@ -1,10 +1,10 @@
 draft: true
 Name: "Spatial Disorientation"
 short-description: "Two-source binaural spatializer inspired by Neuzeit Instruments Quasar"
-summary: "Twin Orbits experimental short KEMAR HRTF prototype: two independent sources with linked/opposing binaural orbits, clock/reset, distance and USB editor. Hardware validation pending."
+summary: "Twin Orbits optimized 32/64-tap KEMAR HRTF experiment: two independent sources with linked/opposing binaural orbits, clock/reset, distance and USB editor. Hardware validation pending."
 Language: "C++ (Pico SDK)"
 Creator: soveda
-Version: "0.1.0-alpha4-block-hrtf"
+Version: "0.1.0-alpha5"
 Status: WIP
 License: MIT
 date-created: 2026-10-07
