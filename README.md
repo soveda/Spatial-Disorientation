@@ -6,8 +6,9 @@ stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
 **192 MHz / 1.15 V**. Firmware builds and host checks pass. User hardware tests
 on **alpha1** pass for the main controls, left/right movement and editor/persistence;
 front/back cues were weak. Alpha1 stability is ongoing (20 minutes without issues
-reported on 2026-10-08). Alpha2 listening/stability tests and full interrupt timing
-measurements remain pending.
+reported on 2026-10-08). Alpha2 listening reports substantially clearer front/back cues, weaker at greater
+distance, with some influence from the visual path display. Further listening,
+alpha2 stability testing and full interrupt timing measurements remain pending.
 
 Original code and documentation © 2026 Adrian Vos (soveda), MIT. Hardware/library
 patterns: Chris Johnson and the Workshop Computer contributors. Musical inspiration:

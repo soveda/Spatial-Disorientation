@@ -100,3 +100,24 @@ and timing/stability pass; alpha1 results do not transfer automatically.
 The original synthetic comparison preview alternates front/back every 3 seconds;
 see README.md. Report attribution and original test documentation: Adrian Vos
 (soveda), © 2026, MIT. No external HRTF data was used for this pass.
+
+## Alpha2 listening report — 2026-10-08
+
+Adrian Vos reports front/back is much more evident. Perceived position is slightly
+influenced by observing the path in the editor, and positional distinction is less
+obvious as the source becomes further away. No additional stability duration,
+timing measurement or full regression completion was supplied with this report.
+
+Follow-up listening check: hide the editor or close eyes, compare stationary front
+and rear at near/middle/far distance with the same bright source. Repeat with room
+zero and then the usual room setting. Keep monitor volume fixed first; optionally
+compare at matched perceived loudness to distinguish reduced level from loss of
+directional cues. Record tonal difference and perceived location separately.
+
+The current renderer darkens the direct path and increases relative reflections
+with distance, which may mask the high-frequency front/back cues; this is a DSP
+interpretation to test, not a measured explanation of the listening report.
+Consider retaining more directional detail at distance only after those comparisons.
+Firmware remains alpha2; no DSP change is made by this record.
+
+Listening observations: Adrian Vos (soveda). Original record © 2026 Adrian Vos, MIT.
