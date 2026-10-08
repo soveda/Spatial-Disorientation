@@ -3,8 +3,10 @@
 **0.1.0-alpha1**: first listening-test prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs orbit around the listener and mix to binaural
 stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
-**192 MHz / 1.15 V**. Firmware builds and host checks pass; hardware timing,
-listening and USB/flash persistence still need testing on the instrument.
+**192 MHz / 1.15 V**. Firmware builds and host checks pass. Initial user hardware tests pass for the
+main controls, left/right movement and editor/persistence. Front/back cues remain
+weak; stability testing is ongoing (10 minutes without issues reported on
+2026-10-08). Full interrupt timing has not been measured.
 
 Original code and documentation © 2026 Adrian Vos (soveda), MIT. Hardware/library
 patterns: Chris Johnson and the Workshop Computer contributors. Musical inspiration:

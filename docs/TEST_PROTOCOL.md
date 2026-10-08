@@ -51,3 +51,24 @@ Record board revision, card capacity, monitoring headphones, firmware version,
 clock source/rate, LED warning state, and audible observations. Prioritize left/right
 motion, two-source independence, reset playability, centre stop and distance before
 judging front/back realism. Do not move to releases until hardware tests pass.
+
+## User hardware report — 2026-10-08
+
+Results reported by Adrian Vos for Twin Orbits 0.1.0-alpha1. Numbers below refer
+explicitly to the nine-step conversational test list, whose ordering differs from
+this document's detailed list:
+
+- Steps 1, 3, 4, 5, 6, 7 and 8 passed: boot/reset, orbit speed, two-source movement,
+  phase reset, distance/CV, clock and editor/persistence.
+- Step 2 position: left/right positioning works; front/back differences are not
+  really audible. Front/back differentiation remains a listening limitation.
+- Step 9 stability: ongoing, with no issues reported after 10 minutes. The full
+  30-minute run has not yet been reported complete.
+
+Board revision, card capacity, headphones, individual timing-warning LED readings
+and full interrupt profiling were not separately supplied. This report does not
+establish every additional check in the detailed protocol above. Next DSP listening
+priority: improve front/back cues while preserving the working left/right movement
+and controls. No firmware change is implied by recording these results.
+
+Report attribution: Adrian Vos (soveda). This test record © 2026 Adrian Vos, MIT.
