@@ -346,3 +346,12 @@ No simultaneous web editor is needed. Use alpha7 as the stable fallback.
    overwritten saved configuration. Reset also clears timing peaks/warnings.
 
 No alpha8 hardware pass is claimed by the build/host tests.
+
+Alpha8 host/build checkpoint: warning-free firmware build, 78,144 bytes flash /
+108,432 bytes main RAM plus 2 KB per scratch bank and startup driver FIFO
+allocations. Address/undefined sanitizer tests pass for pickup/mapping/motion,
+DSP, room and block scheduling; editor regressions pass. The fast detach/attach
+case resets ownership using a connection generation even if no disconnected
+snapshot reaches core 0. RP2040 UF2 structure and all firmware SHA256s verified.
+Linked host delay calls were inspected to confirm the cooperative audio hook.
+Actual 8mu USB/audio deadlines and axes remain pending hardware testing.

@@ -172,7 +172,7 @@ cooperative audio worker. TinyUSB enumeration waits also render waiting blocks.
 Original mappings, takeover and tests: Adrian Vos (soveda), 2026, MIT. See
 [vendor/EightMU/SOURCE.md](vendor/EightMU/SOURCE.md) for source revision and edits,
 and [the offline test protocol](docs/TEST_PROTOCOL.md#alpha8-offline-8mu-test).
-Build size: 77,968 bytes flash / 108,244 bytes main RAM, plus 2 KB per scratch
+Build size: 78,144 bytes flash / 108,432 bytes main RAM, plus 2 KB per scratch
 bank and the driver's small startup FIFO allocations. Build, sanitizer tests for
 mapping/DSP/room/block transport, and editor regressions pass.
 Alpha7 is retained as the stable fallback. Firmware/host tests do not certify
