@@ -187,3 +187,16 @@ settings and panel-placement presets remain future work. 8mu follows knob roles;
 C is unused in Mixer, and panel Down selects B rather than recentering motion.
 Original design/code/docs: Adrian Vos (soveda), 2026, MIT. WaveSeq pickup examples,
 ComputerCard and KEMAR provenance remain in ../THIRD_PARTY_NOTICES.md.
+
+## Alpha10 Spatial Mixer 8mu control (2026-10-09)
+
+User reports alpha9 Mixer tests pass, at callback/block peaks 7/1021 and 8/996 us,
+32 taps. User requests Mixer 8mu compatibility next, explicitly without accelerometer.
+Faders 1/2/3 control selected distance/level/position; 4–7 remain room/A trim/B trim/
+strength; 8 is unused. A/B select their named sources, C unused, D timing diagnostics.
+Motion data is ignored. Source changes rearm source faders against stored placement;
+shared faders keep pickup. Panel selection becomes gesture-based to permit remote
+selection while the switch is left Up. USB/panel handback rearms panel pickup.
+LED 8 identifies A steady / B blinking. No persistence change. Twin Orbits mapping
+is unchanged. Original mapping/integration: Adrian Vos (soveda), 2026, MIT; existing
+WaveSeq/EightMU/rppicomidi credits remain in ../THIRD_PARTY_NOTICES.md.

@@ -176,3 +176,12 @@ near/crossing pickup implementation extends this project's existing 8mu controls
 No new external code or measurements are introduced. Existing ComputerCard 0.4.0,
 EightMU/rppicomidi and Gardner/Martin MIT KEMAR notices remain applicable. The
 Disorientation selector position is intentionally reserved, not implemented DSP.
+
+## Alpha10 Mixer 8mu mapping
+
+Original selected-source fader mapping, source-aware pickup, controller handback,
+button selection, LED feedback, tests and documentation: Adrian Vos (soveda), 2026,
+MIT. src/mixer_mu_controls.h reuses this project's original MuControls pickup;
+USB host and default CC/note transport continue to use the attributed adapted
+EightMU header and rppicomidi driver. No new external source/data is introduced.
+No motion data is used for Mixer; Twin Orbits' existing integration is unchanged.

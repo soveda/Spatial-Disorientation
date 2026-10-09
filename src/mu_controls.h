@@ -57,6 +57,9 @@ public:
         }
         return reset;
     }
+    // Re-arm only source-specific faders when changing Mixer source. The next
+    // snapshot cannot invent a crossing from the other source's last value.
+    void Rearm(uint32_t mask){picked_&=~mask;have_faders_=false;}
     uint32_t Picked() const {return picked_;}
     bool Motion() const {return motion_;}
 private:

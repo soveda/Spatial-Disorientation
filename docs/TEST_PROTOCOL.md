@@ -1,6 +1,6 @@
 # Spatial Disorientation test protocols
 
-For the current build, start with **Alpha9: startup selector and Spatial Mixer**
+For the current build, start with **Alpha10: Spatial Mixer standalone 8mu test**
 at the end of this document. Earlier sections record version-specific tests.
 
 ## Twin Orbits alpha1
@@ -441,3 +441,44 @@ User reports the supplied Mixer test passes, with 32-tap peak callback/block tim
 readings are unspecified; separate alpha9 8mu and full Twin Orbits regression
 results remain unreported. Source: user hardware report in this conversation.
 Record: Adrian Vos (soveda), 2026, MIT.
+
+## Alpha10: Spatial Mixer standalone 8mu test
+
+Original protocol: Adrian Vos (soveda), 2026, MIT; platform/controller source credits
+in ../THIRD_PARTY_NOTICES.md. Use the alpha10-mixer-8mu UF2. Test without the editor:
+
+1. Connect the 8mu before reset on Rev 1.1 hardware. Hold Down, Main noon, confirm
+   the three left LEDs, release to middle. Use two distinct sounds. Start with
+   panel Main noon, X minimum, Y halfway. LED 8 on the 8mu should be steady for A.
+2. Pick A up: fader 1 near minimum, fader 2 halfway, fader 3 halfway. LEDs 1–3 stop
+   blinking as each reaches its target. Fader 3 moves only A position, 1 only A
+   distance, 2 only A level. Set a clear position, distance and nonzero level.
+3. Press B, then release. LED 8 blinks; card bottom-left is off. Neither sound
+   should jump. Pick B's defaults up: fader 1 minimum, 2 maximum, 3 minimum/back.
+   Set B to a different position/distance/level. A must retain its settings.
+4. Press A: A remains where you left it; faders 1–3 wait for A's stored values.
+   Press B again and verify its settings remain. Shared faders 4–7 should retain
+   pickup when switching sources. Held A/B must not repeatedly reset pickup.
+5. Fader 4 changes room, 5/6 change A/B trims, 7 changes spatial strength. Keep
+   panel levels nonzero to hear the trims. Move/rotate/shake the 8mu: no position
+   or level change. Button C and fader 8 must cause no sound changes.
+6. Leave the panel switch Up and select B using the 8mu: B stays selected. Move
+   panel to middle then Up: A selected. Press panel Down: B selected, middle retains
+   B. Each actual source change rearms faders 1–3. The latest gesture wins.
+7. Hold D: timing LED bands, then release: source/fader feedback returns. With no
+   warning, LED 8 stays dark during D-held diagnostics when peak block <1050 us;
+   it lights above that band. Flashing all LEDs during D indicates a latched warning.
+8. Disconnect the 8mu: placements retain their last values. Panel knobs must pick
+   up those stored values before editing, without a jump on disconnect. Shared
+   trims return to saved settings. Reconnect: no unexpected source change, and
+   faders need pickup again. If USB does not enumerate, reset with 8mu attached.
+9. Run 15 minutes with two inputs, rapid A/B selection, fader moves and CV. Check
+   D timing diagnostics and card warning LED regularly. No warning or audio dropout.
+   Reconnect computer and reset into Mixer separately to measure callback/block
+   timing; aim <18 us / <1200 us, no queue faults. This reset does not measure the
+   earlier host-role peak: D is the host-role diagnostic when editor is unavailable.
+10. Normal boot into Twin Orbits: confirm original fader mapping, B motion toggle,
+    A recenter, held C stop/release, D diagnostics and manual/CV/clock behavior.
+
+Report which steps pass, pickup/selection jumps, any audio glitches, D warning
+behavior and separately measured device-role timing. Alpha9 remains the fallback.

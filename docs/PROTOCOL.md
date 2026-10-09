@@ -131,3 +131,13 @@ Reserved Disorientation presets are rejected, and export is disabled while that
 mode runs. Flash remains one shared six-field v1 record. Mode, source selection,
 panel position/distance/level and pickup are volatile, excluded from JSON/flash.
 This supersedes the alpha8-only format status above, not existing parameter IDs.
+
+## Alpha10 Mixer 8mu feedback (internal)
+
+No SysEx or flash schema change. Internal shared.mu_feedback bits 0–6 are Mixer
+fader pickup, bit 9 selected B (clear A), bit 10 Mixer mapping. Bit 8 remains
+Twin Orbits motion enabled, but is never set by Mixer. LED 8 in Mixer overrides
+its unused fader: steady A / blinking B; D-held diagnostics retain priority.
+A/B buttons select A/B; motion, C and fader 8 are ignored. Source selection from
+panel uses settled switch transitions so a held panel Up cannot veto remote B.
+Original extension: Adrian Vos (soveda), 2026, MIT; existing dependency credits apply.

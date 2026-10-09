@@ -1,6 +1,6 @@
 # Spatial Disorientation
 
-**0.1.0-alpha9**: startup mode selection and an initial Spatial Mixer, using the 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
+**0.1.0-alpha10**: dedicated fader/button 8mu controls for Spatial Mixer, using the 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs can orbit around the listener or stay at
 individual placements, mixed to binaural stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
 **192 MHz / 1.15 V**. Firmware builds and host checks pass. User hardware tests
@@ -47,7 +47,7 @@ vendor notices/measurement terms with redistributed source or firmware packages.
 
 ## Try it
 
-First flash `uf2/Spatial_Disorientation_0.1.0-alpha9-mixer.uf2` using the usual
+First flash `uf2/Spatial_Disorientation_0.1.0-alpha10-mixer-8mu.uf2` using the usual
 Workshop Computer BOOTSEL procedure. Start with a mono sound in Audio 1, both audio
 outputs connected to the left/right sides of a headphone monitoring path, Main and
 X at noon, Y down. Turn X right to start an orbit; turn left for reverse motion.
@@ -158,13 +158,47 @@ disabled in the Mixer editor, but retained for Twin Orbits. Reset to init resets
 editor settings, not stored panel placements. Mixer presets contain the same six
 editor settings, not the panel placements; per-mode storage is a later pass.
 
-8mu fader 1 takes over **X/distance**, fader 2 **Y/selected source level**, and
-motion takes over **Main/selected source position**. Mixer pickup also applies to
-the effective fader controls after a source change. Fader 3 is unused in Mixer;
-faders 4–7 retain room, A/B trims and strength. A recenters motion; B toggles it;
-C has no Mixer function; D timing diagnostics are unchanged. Panel Down selects
-B rather than recentering. For reliable selection/pickup testing, start with
-motion disabled. Live mixer controls are not saved by the editor or 8mu.
+### Alpha10: Spatial Mixer with 8mu
+
+Connect the 8mu before reset. Hold Down through startup, select Mixer with Main
+(left-column LEDs), then release. This works without a web editor connection on
+Rev 1.1 hardware; earlier boards retain device/editor operation. USB host setup
+and identify/default-bank behavior are unchanged from alpha8.
+
+| 8mu control | Spatial Mixer behavior |
+|---|---|
+| Fader 1 | Selected source distance (X) |
+| Fader 2 | Selected source panel level (Y) |
+| Fader 3 | Selected source position (Main): noon front, minimum/maximum back |
+| Fader 4 | Shared room reflections |
+| Fader 5 / 6 | Source A / B level trims |
+| Fader 7 | Shared spatial strength |
+| Fader 8 | Unused |
+| Button A / B | Select source A / B |
+| Button C | Unused |
+| Button D, held | Show peak block-time bands; flashing all LEDs means a timing/queue warning |
+| Accelerometer / gyro | Unused; moving the 8mu does not change Mixer sound |
+
+Faders 1–3 pick up the selected source's stored distance/level/position, rather
+than the physical knob locations. Switching sources rearms those three pickups;
+the other source stays put and faders 4–7 retain control. Move a fader to or through
+its stored value. Fader LEDs 1–7 blink while waiting and show level after pickup.
+**LED 8 is steady for A and blinks for B**; it is a source indicator, not fader-8
+pickup. Card bottom-left LED also identifies A (on) or B (off).
+
+Panel selection works on switch gestures: Up selects A; Down selects B; middle
+retains the last selection. A switch left Up does not override an 8mu B selection;
+move it away and back Up to select A again. The latest selection gesture wins;
+if panel and 8mu select simultaneously, the 8mu button takes precedence.
+While a fader owns a control, its corresponding panel knob is inactive. Disconnect
+returns that control to panel pickup, preserving the source placement until the
+knob reaches its stored value. Shared editor trims return to saved settings on
+disconnect, as in Twin Orbits. Replug may need reset if enumeration fails.
+
+No motion takeover/recenter is used in Mixer. Twin Orbits retains its alpha8
+motion/button mappings. Saved schema, six-field preset files and volatile Mixer
+placements remain unchanged. Alpha10 builds/host checks pass; hardware/8mu
+validation remains pending. The user-tested alpha9 Mixer UF2 is retained as fallback.
 
 Original selector/mixer code and guide: Adrian Vos (soveda), 2026, MIT. Source
 selection/pickup patterns were reviewed in Chris Johnson's WaveSeq; renderer,
@@ -442,6 +476,8 @@ clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/st
 /tmp/spatial-startup-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/modes_test.cpp -o /tmp/spatial-modes-test
 /tmp/spatial-modes-test
+clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/mixer_mu_controls_test.cpp -o /tmp/spatial-mixer-mu-test
+/tmp/spatial-mixer-mu-test
 node tests/editor_test.cjs
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/block_audio_test.cpp -o /tmp/spatial-block-test
 /tmp/spatial-block-test

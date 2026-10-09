@@ -27,7 +27,7 @@ int main(){
     m.Controls(Mode::Mixer,3072,0,3000,512,2047,false,cfg);
     auto cv=m.Advance();assert(cv.angle[0]==0x80000000u&&cv.angle[1]==0&&cv.distance==4094&&cv.distance_b==4095);
     m.Controls(Mode::Mixer,3072,0,3000,0,0,false,cfg);assert(m.Advance().distance_b==1600);
-    // Motion takes over position even if the panel is waiting for pickup.
-    m.Controls(Mode::Mixer,2000,2000,2000,0,0,false,cfg,1,true);assert(m.Pickup()&1);assert(m.Advance().angle[1]==static_cast<uint32_t>(2000-2048)*1048576u);
-    std::puts("PASS: exact Twin Orbits regression, source selection retention, independent mixer position/distance/level, near/crossing pickup, common CV restoration and motion takeover");
+    // An already-picked-up remote position bypasses panel pickup.
+    m.Controls(Mode::Mixer,2000,2000,2000,0,0,false,cfg,1,1);assert(m.Pickup()&1);assert(m.Advance().angle[1]==static_cast<uint32_t>(2000-2048)*1048576u);
+    std::puts("PASS: exact Twin Orbits regression, source selection retention, independent mixer position/distance/level, near/crossing pickup, common CV restoration and remote takeover");
 }

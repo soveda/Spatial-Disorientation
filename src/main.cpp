@@ -7,6 +7,7 @@
 #include "hardware/vreg.h"
 #include "pico/multicore.h"
 #include "modes.h"
+#include "mixer_mu_controls.h"
 #include "block_audio.h"
 #include "usb_editor.h"
 #include "mu_host.h"
@@ -52,6 +53,7 @@ private:
         uint32_t start=time_us_32();
         bool saving=shared.save!=0;
         bool reset=false;
+        int mixer_source=-1;
         if (++scan_==48) {
             scan_=0;
             shared.Consume(config_);
@@ -62,6 +64,8 @@ private:
             else if (stable_count_<5 && ++stable_count_==5) {
                 reset=raw==Switch::Down && settled_;
                 selected_=raw;
+                if(raw==Switch::Up)mixer_source=0;
+                else if(raw==Switch::Down)mixer_source=1;
                 settled_=true;
             }
             if (selected_!=Switch::Down) linked_=selected_==Switch::Up;
@@ -71,12 +75,22 @@ private:
             if(mu_age_==150)mu_input_.yaw=0; // No stale integrated motion during USB waits.
             effective_=config_;
             bool orbits=boot_.Selected()==spatial::Mode::Orbits;
-            if(boot_.Ready())reset=mu_controls_.Apply(mu_input_,main,x,y,effective_,
-                orbits&&reset,orbits)||reset;
-            shared.mu_feedback=mu_controls_.Picked()|(mu_controls_.Motion()?256:0);
-            if(boot_.Ready())modes_.Controls(boot_.Selected(),main,x,y,
-                Connected(Input::CV1)?CVIn1():0,Connected(Input::CV2)?CVIn2():0,linked_,effective_,
-                selected_==Switch::Up?0:(selected_==Switch::Down?1:-1),mu_controls_.Motion());
+            bool mixer=boot_.Selected()==spatial::Mode::Mixer;
+            uint32_t takeover=0;bool motion=false;
+            if(boot_.Ready()){
+                if(mixer){
+                    modes_.SelectMixer(mixer_source,main,x,y);
+                    takeover=mixer_mu_.Apply(mu_input_,modes_,main,x,y,effective_);
+                    shared.mu_feedback=mixer_mu_.Feedback();
+                }else{
+                    reset=mu_controls_.Apply(mu_input_,main,x,y,effective_,orbits&&reset,orbits)||reset;
+                    motion=mu_controls_.Motion();
+                    shared.mu_feedback=mu_controls_.Picked()|(motion?256:0);
+                }
+                modes_.Controls(boot_.Selected(),main,x,y,
+                    Connected(Input::CV1)?CVIn1():0,Connected(Input::CV2)?CVIn2():0,linked_,effective_,
+                    -1,takeover);
+            }
             CVOut1(0);CVOut2(0);PulseOut1(false);PulseOut2(false);
         }
         modes_.Pulse(Connected(Input::Pulse1),PulseIn1RisingEdge(),
@@ -119,6 +133,7 @@ private:
     spatial::Config config_,effective_;
     spatial::MuInput mu_input_;
     spatial::MuControls mu_controls_;
+    spatial::MixerMuControls mixer_mu_;
     spatial::Modes modes_;
     spatial::StartupMode boot_;
     uint32_t startup_=0,led_tick_=0;

@@ -3,8 +3,8 @@
 Updated 2026-10-09. Original plan © 2026 Adrian Vos (soveda), MIT.
 User requirements and hardware reports are the basis for this plan. Platform/API
 sources and musical inspiration are credited in ../THIRD_PARTY_NOTICES.md.
-The stages below record the original plan and subsequent checkpoints. Alpha9 is
-the current selector/Mixer pass; historical checkpoints follow. Disorientation is
+The stages below record the original plan and subsequent checkpoints. Alpha10 is
+the current Mixer 8mu pass; historical checkpoints follow. Disorientation is
 reserved at the user’s request.
 
 ## 1. Finish the Twin Orbits listening/timing pass
@@ -159,3 +159,14 @@ calibration remain separate possible DSP work. Keep the tested alpha8 UF2 availa
 This checkpoint supersedes older planned selector/default behavior above.
 Original checkpoint: Adrian Vos (soveda), 2026, MIT; source credits in
 ../THIRD_PARTY_NOTICES.md.
+
+## Alpha10 current checkpoint (2026-10-09)
+
+The user prioritizes Spatial Mixer 8mu compatibility ahead of mode-specific storage,
+and explicitly excludes accelerometer control. Implemented selected-source fader
+position/distance/level, A/B buttons, source-aware pickup, panel handback and offline
+LED selection feedback. Hardware validation pending; host/build checks pass.
+Next is the standalone 8mu test protocol, with Twin Orbits regressions separately.
+Mode-specific storage and fuller Mixer presets remain possible later work, not part
+of this pass. Disorientation stays reserved. Original record: Adrian Vos, MIT;
+existing source licenses in ../THIRD_PARTY_NOTICES.md.
