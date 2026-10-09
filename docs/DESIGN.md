@@ -154,3 +154,12 @@ from 8mu. USB role is chosen at boot using ComputerCard's Rev1.1 power detection
 older boards retain editor mode. This first host pass needs hardware timing and
 motion-polarity validation. Original integration: Adrian Vos, MIT; EightMU and
 rppicomidi provenance/edits are in vendor/EightMU/SOURCE.md.
+
+## Preset editor pass (2026-10-09)
+
+User reports alpha8 tests pass and authorizes preset import/export next. Implement
+named, versioned Twin Orbits JSON files with the six stable configuration IDs.
+Import stages edits, preserves them on connect and requires Apply/Save explicitly;
+export captures displayed values. Files work offline; live controls/motion state
+are excluded. No firmware/schema/UF2 change. Original implementation and document:
+Adrian Vos (soveda), 2026, MIT; source conventions in THIRD_PARTY_NOTICES.md.

@@ -76,3 +76,39 @@ Clock division remains its saved value. Offline 8mu diagnostics use LEDs rather
 than SysEx; no simultaneous editor connection is required. Implementation/source
 credit: Adrian Vos (soveda), 2026, MIT; Chris Johnson's WaveSeq/EightMU and the
 rppicomidi driver are credited in ../vendor/EightMU/SOURCE.md.
+
+## Preset file format v1 (editor, 2026-10-09)
+
+Original format and implementation: Adrian Vos (soveda), 2026, MIT. This is a
+local editor file, independent of the unchanged version-1 SysEx/storage protocol.
+
+```json
+{
+  "format": "spatial-disorientation-preset",
+  "version": 1,
+  "function": "twin-orbits",
+  "name": "Twin Orbits",
+  "parameters": {
+    "1": 2048,
+    "2": 1200,
+    "3": 2048,
+    "4": 2048,
+    "5": 4095,
+    "6": 4
+  }
+}
+```
+
+Parameter IDs retain the table above: 1 separation, 2 room, 3 A level, 4 B level,
+5 spatial strength (integer 0–4095); 6 clock division (1, 2, 4, 8 or 16). Exactly
+these six IDs are required. Name is nonblank, at most 80 characters, with no control
+characters. Function and format/version must match; future functions require their
+own validation. Additional top-level metadata may be ignored; unknown parameter
+IDs are rejected. Import limit is 16 KB. Bad files change nothing.
+
+Export writes displayed values, even if they have not been applied. Import stages
+values only and marks them dirty. Connecting/reconnecting reads the card but
+preserves staged edits; explicit Read discards them. Apply must succeed before
+Save can persist imported values. Neither import nor export sends MIDI by itself.
+Name, physical controls, CV, phase, live 8mu overrides and motion calibration are
+not part of saved card configuration. Firmware and its UF2 remain alpha8.

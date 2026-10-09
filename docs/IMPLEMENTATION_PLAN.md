@@ -130,3 +130,14 @@ pickup, recenter/toggle, axis polarity/rate behaviour, disconnect recovery and f
 load without warnings. Confirm editor mode separately after reset. USB work shares
 core 1 with DSP; host enumeration waits must service the worker. Mapping presets,
 sensitivity options, startup functions and other spatial modes remain planned.
+
+## Preset import/export implemented (2026-10-09)
+
+The user reports alpha8 8mu tests pass. The current editor pass adds named v1 JSON
+import/export for Twin Orbits' six configuration fields, with strict ranges/function
+validation, offline staging, reconnect preservation and explicit Apply/Save. It
+runs against alpha8 firmware without a reflash. Browser export/import and simulated
+MIDI regressions pass; verify Apply/Save/power-cycle on the user's card. Multi-preset
+libraries, live 8mu snapshots and other function settings remain outside this pass.
+Next planned feature: define/implement Spatial Mixer and then function selection.
+Original checkpoint note: Adrian Vos (soveda), 2026, MIT.

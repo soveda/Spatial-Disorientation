@@ -131,3 +131,11 @@ WaveSeq (Workshop Computer releases/801_WaveSeq, same revision). Voder's paired
 motion handling was also reviewed; its DSP/control code was not copied.
 Original pickup/mapping, SPSC snapshot, offline LED diagnostics and enumeration
 worker integration: Adrian Vos (soveda), 2026, MIT. KEMAR attribution is unchanged.
+
+## Preset editor pass
+
+Original JSON preset format, import/export, validation and lifecycle tests:
+Adrian Vos (soveda), 2026, MIT. Workshop Computer Read/Apply/Save conventions and
+Chris Johnson's WaveSeq file import/export UI were reviewed as examples; no new
+third-party library or preset data was copied. Existing transport and HRTF source
+credits above remain unchanged. Firmware remains the tested alpha8 build.

@@ -355,3 +355,32 @@ case resets ownership using a connection generation even if no disconnected
 snapshot reaches core 0. RP2040 UF2 structure and all firmware SHA256s verified.
 Linked host delay calls were inspected to confirm the cooperative audio hook.
 Actual 8mu USB/audio deadlines and axes remain pending hardware testing.
+
+## Preset editor pass (2026-10-09)
+
+The user reports alpha8 8mu tests pass. This editor-only pass uses that firmware;
+no reflash is needed. Original protocol: Adrian Vos (soveda), 2026, MIT.
+
+1. Reload web/index.html. Without MIDI enabled, edit settings, give them a name
+   and Export preset. Change the sliders, then Import the file: all six values
+   and the name should return. Apply/Save remain unavailable until connected.
+2. Connect/read the card: imported edits must remain displayed, with a status
+   explaining they are staged. Audio must remain at the card's previous settings.
+   Apply auditions them; Save only becomes available after successful Apply.
+3. Save, reset/reconnect and Read: verify the six settings persist. Export after
+   Read if you want an exact record of the applied settings. Name stays a file
+   label; physical knobs, CV and live motion are not preset data.
+4. Import malformed JSON, wrong format/version/function, missing/extra IDs,
+   out-of-range/non-integer values or invalid clock division. Reject them without
+   changing controls/name, sending MIDI or enabling Save. Reject files over 16 KB.
+5. Import while connected: no sound change until Apply. Explicit Read must discard
+   imported edits. Reconnect must retain staged edits. Re-selecting the same file
+   should work. Export captures unapplied edits as displayed, not stale card state.
+6. For offline 8mu operation: Apply/Save the preset using the editor, swap the cable
+   to 8mu and reset. Saved values should be the starting points for fader pickup.
+
+Regression tests cover offline round trips, atomic invalid-file rejection, staged
+connect, explicit Apply/Save and Read discard plus prior lifecycle/init behaviour.
+A real browser check confirms offline export and file-chooser import, correct
+labels/values, disabled Apply/Save without a card, and the preset controls' layout.
+Hardware persistence for this editor pass remains to be verified by the user.

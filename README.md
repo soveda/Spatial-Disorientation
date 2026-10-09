@@ -16,8 +16,9 @@ and 1,181 µs/block, with front/back localization still very subtle. Alpha5 user
 returns to 32 taps and changes the room cues. The user reports 5 µs callback /
 1,015 µs block, less inside-head sound, clearer circling and no echoes. The user accepted 13 minutes with rapid CV changes as a stability pass. Alpha7 reduces free-running X speed to 75% of alpha6
 (maximum 1.5 turns/sec); clock-driven rates and the alpha6 DSP remain unchanged.
-The user reports alpha7 passes. Alpha8 adds direct 8mu control; host-mode
-hardware timing, connection and motion tests are pending.
+The user reports alpha7 and alpha8 8mu tests pass. Alpha8 adds direct 8mu
+control. The editor now supports preset import/export (2026-10-09); this update
+uses the tested alpha8 firmware without a reflash.
 
 Original code and documentation © 2026 Adrian Vos (soveda), MIT. Hardware/library
 patterns: Chris Johnson and the Workshop Computer contributors. Musical inspiration:
@@ -116,6 +117,31 @@ motion and one opposing motion. They simulate DSP only, without the physical
 ADC/DAC, USB activity or hardware timing. Later version-labelled files use that
 version's renderer. Generation source: `tools/render_preview.cpp`.
 
+## Preset import/export (editor pass, 2026-10-09)
+
+Give the displayed settings a preset name and click **Export preset** to download
+one JSON file. This exports the current editor values, including unapplied edits.
+Use **Read** first if you want the card's applied configuration instead. Export
+works without MIDI access or a card connection.
+
+**Import preset** validates a file and loads its six settings into the editor.
+Nothing is sent to the card. You can import offline, then connect: staged edits
+are preserved. Click **Apply** to audition, then **Save to card** to persist.
+Save stays disabled until Apply succeeds. Explicit Read replaces staged values
+with the card's settings. Preset names are file/editor labels, not saved card data.
+
+Files include separation, room, A/B levels, strength and clock division. Main/X/Y,
+CV, orbit phase, 8mu fader overrides, motion depth/on-off state and calibration are
+live controls and are not captured. To use a preset with 8mu, first Apply/Save in
+editor mode, then connect the 8mu and reset. Faders still require pickup.
+
+Preset format v1 uses stable parameter IDs, a Twin Orbits function tag and the
+firmware's exact ranges; unsupported/invalid files leave all editor/card settings
+unchanged. Files over 16 KB are rejected. See [docs/PROTOCOL.md](docs/PROTOCOL.md)
+for the format. Original preset code/documentation: Adrian Vos (soveda), 2026, MIT;
+Workshop Computer editor conventions and sources: THIRD_PARTY_NOTICES.md. No new
+third-party libraries or DSP/data are introduced.
+
 ## Alpha8: direct 8mu control
 
 Use a USB-C data cable between the 8mu and Workshop Computer. Connect it before
@@ -175,8 +201,9 @@ and [the offline test protocol](docs/TEST_PROTOCOL.md#alpha8-offline-8mu-test).
 Build size: 78,144 bytes flash / 108,432 bytes main RAM, plus 2 KB per scratch
 bank and the driver's small startup FIFO allocations. Build, sanitizer tests for
 mapping/DSP/room/block transport, and editor regressions pass.
-Alpha7 is retained as the stable fallback. Firmware/host tests do not certify
-host-mode hardware deadlines or physical gesture polarity.
+The user reports the alpha8 hardware tests pass (2026-10-09). Alpha7 remains
+available as a fallback. Numeric host-mode timing was not supplied; offline
+diagnostics remain available.
 
 ## Alpha7 speed range
 
