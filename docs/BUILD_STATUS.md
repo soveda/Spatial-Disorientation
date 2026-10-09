@@ -54,3 +54,6 @@ panel handback; Mixer ignores motion, C and fader 8. No DSP or storage change.
 Alpha10 hardware validation is pending. Alpha9's user Mixer pass is historical,
 not an 8mu result for this build. Original record: Adrian Vos (soveda), 2026, MIT;
 source/dependency attribution in ../THIRD_PARTY_NOTICES.md.
+
+Alpha10 Mixer 8mu tests reported passed by the user on 2026-10-09. No new timing
+readings supplied. Record: Adrian Vos (soveda), 2026, MIT.

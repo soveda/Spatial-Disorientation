@@ -482,3 +482,6 @@ in ../THIRD_PARTY_NOTICES.md. Use the alpha10-mixer-8mu UF2. Test without the ed
 
 Report which steps pass, pickup/selection jumps, any audio glitches, D warning
 behavior and separately measured device-role timing. Alpha9 remains the fallback.
+
+Alpha10 Mixer 8mu tests reported passed by the user on 2026-10-09. No new timing
+readings supplied. Record: Adrian Vos (soveda), 2026, MIT.

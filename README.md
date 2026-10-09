@@ -499,3 +499,6 @@ The program executes from RAM. Build sizes are listed above,
 plus 2 KB in each scratch bank. See [docs/TEST_PROTOCOL.md](docs/TEST_PROTOCOL.md)
 for instrument checks and [docs/PROTOCOL.md](docs/PROTOCOL.md) for editor messages.
 This independent repository is not a Workshop_Computer release submission.
+
+Alpha10 Mixer 8mu tests reported passed by the user on 2026-10-09. No new timing
+readings supplied. Record: Adrian Vos (soveda), 2026, MIT.
