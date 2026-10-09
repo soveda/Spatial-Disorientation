@@ -3,7 +3,7 @@
 **0.1.0-alpha13**: Fig8 8mu fader/motion control, alongside Twin Orbits and Spatial Mixer, using the 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs can orbit, trace crossing loops or stay at
 individual placements, mixed to binaural stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
-**192 MHz / 1.15 V**. Firmware builds and host checks pass; alpha13 8mu hardware validation is pending.
+**192 MHz / 1.15 V**. Firmware builds and host checks pass; the user reports alpha13 Fig8 8mu tests pass (2026-10-09).
 The user reports alpha12 Fig8 tests pass (2026-10-09). User hardware tests
 on **alpha1** pass for the main controls, left/right movement and editor/persistence;
 front/back cues were weak. Alpha1 stability is ongoing (20 minutes without issues
@@ -188,7 +188,8 @@ rearms faders and starts with motion off; held A/B on attachment do not trigger.
 Live 8mu changes do not write flash and are excluded from preset export/Save;
 use the editor separately for persistent settings. Reset selects USB role again.
 
-Hardware timing and motion polarity still need the [alpha13 offline test](docs/TEST_PROTOCOL.md#alpha13-fig8-8mu-hardware-test).
+The user reports the [alpha13 offline test](docs/TEST_PROTOCOL.md#alpha13-fig8-8mu-hardware-test) passes (2026-10-09).
+No new timing readings or run duration were supplied.
 The user-tested alpha12 UF2 is retained as fallback. Original mapping, bounded
 motion and handback implementation/documentation: Adrian Vos (soveda), 2026,
 MIT. Reuses this project's tested pickup/host integration adapted from Chris

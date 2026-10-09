@@ -210,9 +210,10 @@ Preserve normal Orbits startup, independent banks and existing Mixer mappings.
 
 User authorizes the next 8mu pass following alpha12 hardware acceptance. Initial
 fader/motion/buttons, source-independent pickup, panel handback and offline LED
-feedback are implemented. Build and host checks pass; hardware validation is
-pending. Next collect offline motion polarity, pickup, freeze/reset and timing/
-stability results before deciding any further path/settings or release work.
+feedback are implemented. Build and host checks pass; the user reports the
+alpha13 8mu protocol passes (2026-10-09). No new timings or run duration supplied.
+Next review remaining release requirements and documentation before a release
+candidate; additional path/settings work needs a separate design decision.
 No new editor parameters, persistence fields or pendulum path in this pass.
 Original implementation/plan: Adrian Vos (soveda), 2026, MIT; existing sources
 credited in ../THIRD_PARTY_NOTICES.md.

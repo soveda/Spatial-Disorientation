@@ -625,7 +625,8 @@ Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
 ## Alpha13 Fig8 8mu hardware test
 
 Original protocol: Adrian Vos (soveda), 2026, MIT. Platform/dependency credits
-remain in ../THIRD_PARTY_NOTICES.md. Hardware results for alpha13 are pending.
+remain in ../THIRD_PARTY_NOTICES.md. The user reports alpha13 tests pass (2026-10-09);
+see the validation record below.
 Use `Spatial_Disorientation_0.1.0-alpha13-fig8-8mu.uf2`; alpha12 is retained as
 fallback. This test needs no simultaneous editor connection.
 
@@ -676,3 +677,12 @@ fallback. This test needs no simultaneous editor connection.
 Report any motion polarity/range issue, pickup jump or freeze/reset anomaly,
 plus timing/LED observations and run duration. Host tests cover these control
 contracts and bounds; only hardware can validate USB performance and sound.
+
+## Alpha13 user validation — 2026-10-09
+
+The user reports "tests pass" following the alpha13 Fig8 8mu hardware protocol.
+Record this as the user-reported alpha13 8mu pass. No new callback/block timings,
+LED-band measurements or run duration were supplied; do not infer specific
+values from the confirmation or previous builds. Firmware remains unchanged.
+Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
+2026, MIT; existing platform/dependency attribution remains applicable.

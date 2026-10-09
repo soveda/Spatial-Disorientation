@@ -131,3 +131,12 @@ firmware checksums verified. Alpha13 hardware/offline 8mu timing and stability
 remain pending; alpha12 hardware acceptance does not validate this build.
 Original verification notes: Adrian Vos (soveda), 2026, MIT; external sources
 credited in ../THIRD_PARTY_NOTICES.md with preserved license/measurement terms.
+
+## Alpha13 user validation — 2026-10-09
+
+The user reports "tests pass" following the alpha13 Fig8 8mu hardware protocol.
+Record this as the user-reported alpha13 8mu pass. No new callback/block timings,
+LED-band measurements or run duration were supplied; do not infer specific
+values from the confirmation or previous builds. Firmware remains unchanged.
+Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
+2026, MIT; existing platform/dependency attribution remains applicable.
