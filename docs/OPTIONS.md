@@ -115,3 +115,14 @@ and define how simultaneous control sources interact.
 This is future work; 8mu control is not implemented in Twin Orbits alpha1.
 Concept requested by Adrian Vos; this note © 2026 Adrian Vos (soveda), MIT.
 No device protocol or compatibility claim has been verified for this planning note.
+
+## Staged refinement: headphone elevation (2026-10-10)
+
+The user requests keeping up/down binaural rendering as a future refinement.
+Start with a small measured elevation bank and stationary blind listening tests,
+then validate timing/RAM before defining saved controls, 8mu mappings or vertical
+movement paths. The current firmware remains horizontal; this does not block
+alpha14 release work. Detailed stages and acceptance criteria:
+[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md#future-refinement-elevation-rendering-staged-2026-10-10).
+Original option record: Adrian Vos (soveda), 2026, MIT. Gardner/Martin KEMAR data
+and research attribution are recorded in that plan and THIRD_PARTY_NOTICES.md.

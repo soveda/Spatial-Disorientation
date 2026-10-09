@@ -229,3 +229,43 @@ Next review release requirements, documentation, attribution, metadata and
 packaging before a release candidate. Further paths need a separate design pass.
 Original plan/implementation: Adrian Vos (soveda), 2026, MIT; sources credited in
 ../THIRD_PARTY_NOTICES.md with all existing notices preserved.
+
+## Future refinement: elevation rendering (staged 2026-10-10)
+
+User requests staging up/down localization as a future refinement. This is
+planned work, not implemented in alpha14 and not a prerequisite for its release.
+Keep the current two headphone outputs and tested horizontal renderer as baseline.
+Original plan: Adrian Vos (soveda), 2026, MIT; research/data sources below retain
+their own ownership and terms.
+
+1. Evaluate a small bank of measured below/level/above HRTFs from the existing
+   Gardner/Martin KEMAR data. Verify the exact source measurements and preserve
+   their attribution terms. Start with stationary positions and a separate
+   experimental build, before adding vertical movement or control mappings.
+2. Generate 32-tap elevation profiles using the existing offline workflow, then
+   implement bounded fixed-point selection/interpolation in the block worker.
+   Retain the horizontal option for direct comparison; additional direction
+   profiles do not imply longer filters. Profile actual RAM, callback/block time
+   and USB host/device load rather than assuming unchanged processing cost.
+3. Run blind headphone comparisons with broad-spectrum/percussive and harmonic
+   sources. Separate perceived height from simple brightness changes. Generic
+   HRTFs may not match the listener's ears; ordinary stereo-speaker playback is
+   not the acceptance target. Proceed only if elevation is useful by ear.
+4. If that experiment passes listening, timing and stability tests, design
+   elevation range/amount, editor persistence/preset migration and possible
+   8mu control. Then add optional vertical components to movement paths without
+   changing the existing horizontal defaults. Exact mappings remain undecided.
+
+Acceptance: useful above/level/below contrast without visual cues, no regression
+of horizontal placement or existing modes, callback below 18 us warning and
+64-frame block below 1200 us warning (1333.3 us deadline), no queue faults and
+hardware stability in editor and offline 8mu roles. Alpha14's reported 13/997 us
+is the comparison baseline, not a prediction of elevation performance.
+
+Research attribution: Bill Gardner, binaural spectral cues and nonindividualized
+HRTF listening tests, [thesis](https://sound.media.mit.edu/Papers/gardner_thesis.pdf);
+Bill Gardner and Keith Martin, MIT Media Laboratory (1994),
+[KEMAR measurements](https://sound.media.mit.edu/resources/KEMAR.html).
+Measurement/elevation overview: [SOFA project](https://www.sofaconventions.org/mediawiki/index.php/General_information_on_SOFA).
+Existing measurement terms: ../vendor/KEMAR/SOURCE_TERMS.md; full dependency
+notices remain in ../THIRD_PARTY_NOTICES.md. No additional data/code imported here.

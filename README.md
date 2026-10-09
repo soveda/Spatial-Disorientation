@@ -375,7 +375,7 @@ horizontal filters derive from Gardner and Martin's diffuse-field-equalized MIT
 KEMAR data. The short minimum-phase filters replace alpha2's rear notch, panning
 law and direction-dependent one-pole shadow filter; interaural delay remains
 analytic. Mild distance darkening retains more high-frequency directional detail.
-No elevation or individual ear calibration is implemented. Generic short HRTFs
+Elevation is staged as a [future refinement](docs/IMPLEMENTATION_PLAN.md#future-refinement-elevation-rendering-staged-2026-10-10); no elevation or individual ear calibration is implemented. Generic short HRTFs
 may still produce front/back confusion; test by ear with the display hidden.
 
 The original alpha1 previews in `previews/` use the actual alpha1 C++ DSP with original synthetic sources:
