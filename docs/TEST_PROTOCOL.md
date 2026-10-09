@@ -532,3 +532,12 @@ Report migration, isolation, preset roundtrip and restore/8mu pickup separately,
 plus timing and stability. Alpha10 is retained as fallback, but cannot read v2
 flash records: it uses defaults. Do not Save with old firmware if you want the
 v2 record available when returning to alpha11; retain exported presets for recovery.
+
+## Alpha11 user validation — 2026-10-09
+
+The user reports "alpha 11 passes" after the supplied combined settings/preset
+protocol. Record this as the user-reported alpha11 pass, without inferring new
+timing numbers or a specific run duration. No firmware change. Disorientation
+remains reserved; agree its design before implementing the third mode.
+Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
+2026, MIT; existing platform/dependency attribution remains applicable.

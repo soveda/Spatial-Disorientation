@@ -69,3 +69,12 @@ hardware verification is pending. User reported no editor reply while developmen
 changed the page to v2; old firmware responses now show an explicit upgrade message.
 Original verification notes: Adrian Vos (soveda), 2026, MIT; sources credited in
 ../THIRD_PARTY_NOTICES.md. Firmware packaging includes preserved notices.
+
+## Alpha11 user validation — 2026-10-09
+
+The user reports "alpha 11 passes" after the supplied combined settings/preset
+protocol. Record this as the user-reported alpha11 pass, without inferring new
+timing numbers or a specific run duration. No firmware change. Disorientation
+remains reserved; agree its design before implementing the third mode.
+Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
+2026, MIT; existing platform/dependency attribution remains applicable.

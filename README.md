@@ -270,8 +270,9 @@ Save gesture in this pass. To set its starting scene, Apply/Save through the edi
 then connect 8mu and reset. Twin Orbits knob position, phase, motion on/off/depth
 and calibration remain outside presets.
 
-The user reports alpha10 8mu tests pass. Alpha11 build/host tests pass; actual
-flash migration, mode independence, pickup and hardware timing remain to be tested.
+The user reports alpha10 8mu tests and the alpha11 validation pass (2026-10-09).
+Alpha11 build/host checks also pass. No new alpha11 timing readings were supplied;
+earlier measurements remain labeled by their tested version.
 Original storage/preset code and documentation: Adrian Vos (soveda), 2026, MIT;
 existing platform/editor and KEMAR credits remain in THIRD_PARTY_NOTICES.md.
 
