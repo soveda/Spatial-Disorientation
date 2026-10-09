@@ -33,6 +33,7 @@ public:
         for(int i=1;i<5;++i)cfg.value[i]=mapped.value[i]; // Keep unused separation intact.
         return takeover;
     }
+    void Rearm(){controls_.Rearm(7);}
     uint32_t Feedback()const{return (controls_.Picked()&127u)|(source_?512u:0u)|1024u;}
 private:
     MuControls controls_;

@@ -200,3 +200,18 @@ selection while the switch is left Up. USB/panel handback rearms panel pickup.
 LED 8 identifies A steady / B blinking. No persistence change. Twin Orbits mapping
 is unchanged. Original mapping/integration: Adrian Vos (soveda), 2026, MIT; existing
 WaveSeq/EightMU/rppicomidi credits remain in ../THIRD_PARTY_NOTICES.md.
+
+## Alpha11 separate settings and fuller presets (2026-10-09)
+
+The user reports Mixer 8mu passes and previously authorized this combined next
+pass upon that confirmation. Add two independent six-setting banks and six raw
+Mixer placement fields. V1 flash settings seed both banks with default placements;
+v2 flash is written only on Save. Read captures actual panel placements using an
+SPSC snapshot handshake serviced at 1 kHz; core 1 keeps rendering while waiting.
+Save captures placements, retains inactive settings and preserves mute/lockout.
+Restoration/Apply rearms pickup; normal boot still selects Orbits. JSON v2 extends
+Mixer to twelve IDs, retaining v1 import with defined default placements. New
+editor requires SysEx v2 firmware. Runtime 8mu trim overrides and motion/phase are
+not automatically saved. No host-role Save gesture; editing/saving and 8mu use
+remain separate sessions. Original implementation/design: Adrian Vos, 2026, MIT;
+existing external source/measurement attributions remain unchanged.

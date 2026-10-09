@@ -1,11 +1,12 @@
 // Copyright (c) 2026 Adrian Vos (soveda). SPDX-License-Identifier: MIT
 #pragma once
-#include "config.h"
+#include "settings.h"
 #include "mu_controls.h"
 #include "hardware/sync.h"
 namespace spatial {
 struct Shared {
-    Config queued;
+    Settings queued,snapshot;
+    alignas(4) volatile uint32_t snapshot_request=0; // 1 request, 2 coherent response.
     // SPSC mailbox: core 1 fills then publishes; core 0 consumes then clears.
     // Naturally aligned 32-bit flags plus barriers avoid locks in the audio ISR.
     alignas(4) volatile uint32_t ready = 0;
@@ -27,12 +28,12 @@ struct Shared {
         if(mu_ready)return;
         mu_queued=input;__dmb();mu_ready=1;
     }
-    bool Consume(Config& cfg) {
+    bool Consume(Settings& cfg) {
         if (!ready) return false;
         __dmb(); cfg=queued; __dmb(); ready=0;
         return true;
     }
-    void Publish(const Config& cfg) {
+    void Publish(const Settings& cfg) {
         queued=cfg; __dmb(); ready=1;
     }
 };

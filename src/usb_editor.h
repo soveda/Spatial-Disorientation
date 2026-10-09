@@ -11,7 +11,7 @@
 namespace spatial {
 class UsbEditor {
 public:
-    UsbEditor(Shared& shared,Storage& storage,const Config& cfg,void (*worker)()):shared_(shared),storage_(storage),current_(cfg),worker_(worker) {}
+    UsbEditor(Shared& shared,Storage& storage,const Settings& cfg,void (*worker)()):shared_(shared),storage_(storage),current_(cfg),worker_(worker) {}
     void Run() {
         tud_init(0); // Only the selected role starts on the single USB controller.
         __dmb();shared_.usb_ready=1;
@@ -49,7 +49,7 @@ public:
 private:
     static void Pack(uint32_t v,uint8_t* dest) { dest[0]=v&127;dest[1]=(v>>7)&127; }
     bool Send(uint8_t command,uint8_t seq,const uint8_t* data,size_t n) {
-        uint8_t msg[64]={0xf0,0x7d,0x53,0x44,kVersion,command,seq};
+        uint8_t msg[64]={0xf0,0x7d,0x53,0x44,kProtocolVersion,command,seq};
         if (n>55 || !tud_midi_mounted()) return false;
         for (size_t i=0;i<n;++i) msg[7+i]=data[i];
         msg[7+n]=0xf7;
@@ -63,20 +63,32 @@ private:
         tx_.Consume(tud_midi_stream_write(0,data,count));
     }
     void Ack(uint8_t cmd,uint8_t seq,uint8_t status) { const uint8_t data[]={cmd,status};Send(0x42,seq,data,2); }
-    void Snapshot(uint8_t seq) { uint8_t data[kFields*3];EncodeConfig(current_,data);Send(0x41,seq,data,sizeof(data)); }
+    bool Capture(){
+        shared_.snapshot_request=1;uint32_t start=time_us_32();
+        while(shared_.snapshot_request!=2&&time_us_32()-start<500000){worker_();tud_task();Pump();}
+        bool okay=shared_.snapshot_request==2;
+        if(okay){__dmb();current_=shared_.snapshot;}
+        __dmb();shared_.snapshot_request=0;return okay;
+    }
+    void Snapshot(uint8_t seq) {
+        if(shared_.mode>1||!Capture()){Ack(1,seq,4);return;}
+        uint8_t data[37];size_t n=EncodeSettings(current_,shared_.mode,data);Send(0x41,seq,data,n);
+    }
     void Message() {
         if (length_<6 || rx_[0]!=0x7d || rx_[1]!=0x53 || rx_[2]!=0x44) return;
         uint8_t command=rx_[4],seq=rx_[5];
-        if (rx_[3]!=kVersion) { Ack(command,seq,2);return; }
+        if (rx_[3]!=kProtocolVersion) { Ack(command,seq,2);return; }
         if (pending_) { Ack(command,seq,4);return; }
         if (command==1 && length_==6) Snapshot(seq);
         else if (command==2) {
-            Config cfg;
-            if (!DecodeConfig(rx_+6,length_-6,cfg)) { Ack(command,seq,3);return; }
+            if(!Capture()){Ack(command,seq,4);return;}
+            Settings cfg=current_;uint32_t mode;
+            if (!DecodeSettings(rx_+6,length_-6,cfg,mode)||mode!=shared_.mode) { Ack(command,seq,3);return; }
             pending_cfg_=cfg;pending_seq_=seq;pending_=true;shared_.Publish(cfg);
         } else if (command==3 && length_==6) {
             // Explicit Save creates a brief audio pause, never a flash write in
             // the ISR. Zero reaches the DAC before core 0 is locked out.
+            if(shared_.mode>1||!Capture()){Ack(command,seq,4);return;}
             __dmb();shared_.save=1;
             uint32_t start=time_us_32();
             while (shared_.save!=2 && time_us_32()-start<500000) { worker_();tud_task();Pump(); }
@@ -96,7 +108,7 @@ private:
     }
     Shared& shared_;
     Storage& storage_;
-    Config current_,pending_cfg_;
+    Settings current_,pending_cfg_;
     uint8_t rx_[64]={},pending_seq_=0;
     size_t length_=0;
     bool active_=false,pending_=false;

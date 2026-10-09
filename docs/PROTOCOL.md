@@ -1,4 +1,7 @@
-# Spatial Disorientation editor protocol v1
+# Spatial Disorientation editor protocol
+
+Current alpha11 uses **SysEx/storage/presets v2**, defined in the final section.
+The v1 sections below are retained for migration/history.
 
 © 2026 Adrian Vos (soveda), MIT. SysEx/editor transport structure follows Chris
 Johnson's ComputerCard web_interface example. See [../THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
@@ -141,3 +144,46 @@ its unused fader: steady A / blinking B; D-held diagnostics retain priority.
 A/B buttons select A/B; motion, C and fader 8 are ignored. Source selection from
 panel uses settled switch transitions so a held panel Up cannot veto remote B.
 Original extension: Adrian Vos (soveda), 2026, MIT; existing dependency credits apply.
+
+## Alpha11 current protocol and storage v2
+
+Original contract/integration: Adrian Vos (soveda), 2026, MIT. This supersedes
+v1 SysEx/flash sections above; existing source/dependency licenses remain applicable.
+
+Frame: `F0 7D 53 44 02 command sequence payload F7`. Commands/ack status values
+retain their IDs. Read (01) has empty payload; Snapshot (41) begins with mode byte
+0 Orbits / 1 Mixer, then six/twelve parameter triples. Apply (02) uses the same
+mode-tagged payload and is rejected if it differs from the running startup mode.
+Save (03) has empty payload and saves a coherent audio-core snapshot of current
+base settings and live Mixer placements. Reserved mode cannot Read/Apply/Save.
+Telemetry 43/44 fields are unchanged, but use frame version 2. Maximum settings
+payload is 37 bytes, complete frame 45 bytes; bounded 64-byte buffers remain.
+Old v1 SysEx clients are rejected; update the editor alongside firmware.
+
+IDs 1–6 keep the original ranges. Mixer adds 7 A position, 8 A distance, 9 A panel
+level, 10 B position, 11 B distance, 12 B panel level: all integers 0–4095. Position
+uses Main units (2048 front, 0/4095 back, 1024 left, 3072 right). Defaults:
+A [2048,0,4095], B [0,0,4095]. Distance/level are clamped knob units; CV and current
+rendered angle/delay are not stored. Apply restores all displayed placements and
+rearms panel/source-fader pickup. Other mode's configuration is preserved.
+
+Core 1 requests a snapshot with an aligned flag; core 0 copies all base settings
+and current raw placements, publishes with barriers and never waits. Core 1 waits
+at most 500 ms while servicing blocks and USB. Read/Apply/Save use this snapshot;
+Save then performs the existing fade/flash handshake. Runtime 8mu trim overrides
+are excluded; no host-role Save gesture is introduced.
+
+Flash v2: uint32 magic 0x314f4453, uint32 version 2, uint32 checksum; 36-byte payload
+containing Orbits six uint16 values, Mixer six uint16 values, then six uint16 Mixer
+placement values. Record is 48 bytes. Checksum is existing FNV-1a over the payload.
+Last-sector/page location and lockout/verification remain unchanged. Valid v1
+records migrate their six settings to BOTH mode banks with default placements;
+no boot write. Invalid/truncated/unknown records use defaults. Old firmware cannot
+read v2. Power-loss behavior is unchanged: a failed/torn record may use defaults.
+
+JSON format retains `spatial-disorientation-preset` and function tags, version now
+2. Parameters contain IDs 1–6 for Orbits or 1–12 for Mixer. Import accepts v1 six-ID
+files: Orbits values unchanged; Mixer gets default placements. Names, limits and
+atomic validation remain unchanged. Export always emits v2, displayed values only.
+Function-mismatched imports can be staged but cannot Apply. Preset files and both
+saved banks do not change normal startup's Twin Orbits default.

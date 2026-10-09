@@ -3,8 +3,8 @@
 Updated 2026-10-09. Original plan © 2026 Adrian Vos (soveda), MIT.
 User requirements and hardware reports are the basis for this plan. Platform/API
 sources and musical inspiration are credited in ../THIRD_PARTY_NOTICES.md.
-The stages below record the original plan and subsequent checkpoints. Alpha10 is
-the current Mixer 8mu pass; historical checkpoints follow. Disorientation is
+The stages below record the original plan and subsequent checkpoints. Alpha11 is
+the current separate-settings/preset pass; historical checkpoints follow. Disorientation is
 reserved at the user’s request.
 
 ## 1. Finish the Twin Orbits listening/timing pass
@@ -170,3 +170,14 @@ Next is the standalone 8mu test protocol, with Twin Orbits regressions separatel
 Mode-specific storage and fuller Mixer presets remain possible later work, not part
 of this pass. Disorientation stays reserved. Original record: Adrian Vos, MIT;
 existing source licenses in ../THIRD_PARTY_NOTICES.md.
+
+## Alpha11 current checkpoint (2026-10-09)
+
+User reports alpha10 Mixer 8mu passes, triggering the previously authorized combined
+mode settings/save/export pass. Implemented independent banks, saved/restored Mixer
+placements, v2 mode-tagged editor protocol, coherent live Read/Save, v1 flash/preset
+migration and twelve-field Mixer JSON. Build/host tests pass; hardware validation
+pending. Prioritize old-save migration, per-mode isolation, restore pickup, preset
+roundtrip and editor/flash timing. Then agree the Disorientation design before
+implementing its reserved slot. Offline 8mu save is not part of this pass.
+Original checkpoint: Adrian Vos (soveda), 2026, MIT; external source credits retained.

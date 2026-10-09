@@ -1,6 +1,6 @@
 // Copyright (c) 2026 Adrian Vos (soveda). SPDX-License-Identifier: MIT
 #pragma once
-#include "config.h"
+#include "settings.h"
 #include <cstring>
 #include "hardware/flash.h"
 #include "hardware/sync.h"
@@ -16,20 +16,15 @@ public:
         offset_=valid_ ? bytes-4096 : 0;
         valid_=valid_ && reinterpret_cast<uintptr_t>(&__flash_binary_end)<XIP_BASE+offset_;
     }
-    Config Load() const {
-        Config cfg;
-        if (!valid_) return cfg;
-        Record record;
-        std::memcpy(&record,Address(),sizeof(record));
-        if (record.magic==kMagic && record.version==kVersion && record.cfg.Valid()
-            && record.checksum==Checksum(reinterpret_cast<const uint8_t*>(&record.cfg),sizeof(Config))) cfg=record.cfg;
-        return cfg; // Invalid/blank/torn records use defaults; no startup write.
+    Settings Load() const {
+        if(!valid_)return {};
+        return LoadRecord(Address(),sizeof(Record)); // Migrates v1 in RAM; never writes at boot.
     }
     // Core 1 only, after core 0 acknowledges muted audio. Both cores execute
     // from RAM; lock out core 0 and disable local interrupts around flash access.
-    bool Save(const Config& cfg) {
+    bool Save(const Settings& cfg) {
         if (!valid_ || !cfg.Valid()) return false;
-        Record record{kMagic,kVersion,Checksum(reinterpret_cast<const uint8_t*>(&cfg),sizeof(Config)),cfg};
+        Record record=MakeRecord(cfg);
         if (std::memcmp(Address(),&record,sizeof(record))==0) return true;
         std::memset(page_,0xff,sizeof(page_));
         std::memcpy(page_,&record,sizeof(record));
@@ -42,8 +37,6 @@ public:
         return std::memcmp(Address(),&record,sizeof(record))==0;
     }
 private:
-    static constexpr uint32_t kMagic=0x314f4453; // SDO1.
-    struct Record { uint32_t magic,version,checksum; Config cfg; };
     const uint8_t* Address() const { return reinterpret_cast<const uint8_t*>(XIP_BASE+offset_); }
     alignas(4) uint8_t page_[FLASH_PAGE_SIZE]={};
     uint32_t offset_=0;

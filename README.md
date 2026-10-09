@@ -1,6 +1,6 @@
 # Spatial Disorientation
 
-**0.1.0-alpha10**: dedicated fader/button 8mu controls for Spatial Mixer, using the 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
+**0.1.0-alpha11**: separate saved mode settings and Mixer placement presets, using the 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs can orbit around the listener or stay at
 individual placements, mixed to binaural stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
 **192 MHz / 1.15 V**. Firmware builds and host checks pass. User hardware tests
@@ -47,7 +47,7 @@ vendor notices/measurement terms with redistributed source or firmware packages.
 
 ## Try it
 
-First flash `uf2/Spatial_Disorientation_0.1.0-alpha10-mixer-8mu.uf2` using the usual
+First flash `uf2/Spatial_Disorientation_0.1.0-alpha11-mode-presets.uf2` using the usual
 Workshop Computer BOOTSEL procedure. Start with a mono sound in Audio 1, both audio
 outputs connected to the left/right sides of a headphone monitoring path, Main and
 X at noon, Y down. Turn X right to start an orbit; turn left for reverse motion.
@@ -116,8 +116,8 @@ reserved. Reflashing may replace or invalidate saved settings; Read afterwards.
 
 Twin Orbits and Spatial Mixer run in alpha9. Disorientation is a reserved startup
 slot, with silent output and steady right-column LEDs. Elevation remains planned.
-The six saved editor settings are shared between modes for now; startup choice
-and mixer panel positions/distances/levels are not saved or exported.
+Alpha11 saves separate editor settings for each working mode and Mixer source
+positions/distances/levels. Startup choice is never saved; normal boot is Twin Orbits.
 
 ## Alpha9 startup and Spatial Mixer
 
@@ -143,10 +143,11 @@ In **Spatial Mixer**, the sources stay where you put them:
 | Pulse inputs | Unused; no clock movement or phase reset |
 | Audio inputs / outputs | Same two sources and binaural stereo mix as Twin Orbits |
 
-The initially selected source takes the current knobs. The unedited source starts
-near, at full panel level, with A front or B back. Up selects A on entry; releasing
+Mixer starts with saved placements. Without a valid saved record, both start
+near at full panel level, A front and B back. Panel controls require pickup of
+those placements; their boot positions do not overwrite the scene. Up selects A on entry; releasing
 the startup gesture to middle starts with A. Each source retains its three values
-until reset. After switching sources, move each knob to or through that source's
+until another placement is applied or restored. After switching sources, move each knob to or through that source's
 stored value to pick it up; tolerance is about 1.6% of travel. The selected top
 (A) or middle (B) LED pair blinks until all three controls are picked up, then shows
 position steadily. Bottom left is on for editing A and off for B. Bottom right
@@ -155,8 +156,8 @@ retains the timing warning. CV modulation never overwrites stored panel values.
 Editor A/B levels act as trims multiplied by the individual Y levels. Room and
 spatial strength remain shared. Separation and clock division are unused and
 disabled in the Mixer editor, but retained for Twin Orbits. Reset to init resets
-editor settings, not stored panel placements. Mixer presets contain the same six
-editor settings, not the panel placements; per-mode storage is a later pass.
+the active mode, including Mixer placements. Apply/Save affects only the active
+mode’s settings; the other mode is retained. See the alpha11 section below.
 
 ### Alpha10: Spatial Mixer with 8mu
 
@@ -196,9 +197,9 @@ knob reaches its stored value. Shared editor trims return to saved settings on
 disconnect, as in Twin Orbits. Replug may need reset if enumeration fails.
 
 No motion takeover/recenter is used in Mixer. Twin Orbits retains its alpha8
-motion/button mappings. Saved schema, six-field preset files and volatile Mixer
-placements remain unchanged. Alpha10 builds/host checks pass; hardware/8mu
-validation remains pending. The user-tested alpha9 Mixer UF2 is retained as fallback.
+motion/button mappings. Alpha10 kept shared settings and volatile placements; alpha11 adds the
+mode-specific save/preset behavior below. The user reports alpha10 Mixer 8mu
+tests pass; no new timing readings were supplied. The user-tested alpha9 Mixer UF2 is retained as fallback.
 
 Original selector/mixer code and guide: Adrian Vos (soveda), 2026, MIT. Source
 selection/pickup patterns were reviewed in Chris Johnson's WaveSeq; renderer,
@@ -222,32 +223,57 @@ motion and one opposing motion. They simulate DSP only, without the physical
 ADC/DAC, USB activity or hardware timing. Later version-labelled files use that
 version's renderer. Generation source: `tools/render_preview.cpp`.
 
-## Preset import/export (editor pass, 2026-10-09)
+## Alpha11: separate settings, placement save and presets
 
-Give the displayed settings a preset name and click **Export preset** to download
-one JSON file. This exports the current editor values, including unapplied edits.
-Use **Read** first if you want the card's applied configuration instead. Export
-works without MIDI access or a card connection.
+Reflash alpha11 **and reload the updated editor**. SysEx now uses version 2;
+older editors/firmware are not compatible with this page. Existing v1 JSON preset
+files still import. The startup gesture and normal Twin Orbits default are unchanged.
 
-**Import preset** validates a file and loads its six settings into the editor.
-Nothing is sent to the card. You can import offline, then connect: staged edits
-are preserved. Click **Apply** to audition, then **Save to card** to persist.
-Save stays disabled until Apply succeeds. Explicit Read replaces staged values
-with the card's settings. Preset names are file/editor labels, not saved card data.
+Each mode keeps its own separation, room, A/B trims, strength and clock division.
+Mixer additionally keeps A/B position, distance and panel level. Separation/clock
+remain unused in Mixer. The editor shows six extra placement sliders in Mixer.
+Applied/imported/restored placements rearm panel and source-fader pickup. Main/X/Y
+and 8mu can edit them after pickup. CV modulates the placements without being saved.
 
-Files include separation, room, A/B levels, strength and clock division. Main/X/Y,
-CV, orbit phase, 8mu fader overrides, motion depth/on-off state and calibration are
-live controls and are not captured. To use a preset with 8mu, first Apply/Save in
-editor mode, then connect the 8mu and reset. Faders still require pickup.
+- **Read** captures the active mode’s applied base settings and current Mixer
+  placements. Use it before export to capture what the physical knobs are doing.
+- **Apply** auditions the displayed settings and, in Mixer, both displayed
+  placements. Read first if you want to keep panel edits while changing room/trims.
+- **Save to card** captures current Mixer placements plus applied base settings,
+  retaining the inactive mode’s settings. It briefly fades audio, writes flash and
+  refreshes the editor. Unsaved page edits must be applied first.
+- **Reset to init** resets only the active mode, including Mixer placements.
+  Use Save separately to retain the reset.
+- **Export preset** downloads the displayed values, including unapplied edits.
+  It works offline and does not Read or Save automatically.
+- **Import preset** validates and stages a named JSON file; nothing is sent.
+  Connecting retains staged edits. Choose the matching startup mode, Apply then
+  Save. Read discards staged edits. Preset names are not stored on the card.
 
-Preset format v1 uses stable parameter IDs, a Twin Orbits or Spatial Mixer function tag and the
-firmware's exact ranges; unsupported/invalid files leave all editor/card settings
-unchanged. A preset for the other working mode can be staged offline, but Apply
-is disabled until that mode is selected at startup. Disorientation presets are
-unsupported until its effect is implemented. Files over 16 KB are rejected. See [docs/PROTOCOL.md](docs/PROTOCOL.md)
-for the format. Original preset code/documentation: Adrian Vos (soveda), 2026, MIT;
-Workshop Computer editor conventions and sources: THIRD_PARTY_NOTICES.md. No new
-third-party libraries or DSP/data are introduced.
+V2 files have six parameters for Twin Orbits or twelve for Mixer, with stable
+IDs and a function tag. V1 Twin Orbits files retain their six settings. V1 Mixer
+files retain six settings and use default placements (A front, B back, both near
+and full panel level), because older files had no placements. Invalid files change
+nothing; limit 16 KB. Schema details: [docs/PROTOCOL.md](docs/PROTOCOL.md).
+
+A valid old flash record migrates in RAM: its six settings seed both modes,
+with default Mixer placements. No boot-time write occurs. Save writes v2 to the
+same final 4 KB sector; corrupt/blank records use defaults. Older firmware cannot
+read a v2 record and will use defaults; export files before saving with a fallback
+firmware if you need to recover settings. Reflashing this alpha11 UF2 does not
+include the saved sector, but Read after any reflash to check your settings.
+
+8mu trim/room/strength overrides are live and not saved automatically. Mixer
+placements changed by 8mu are also live until saved via the editor; switching USB
+roles requires reset, which restores the last saved placements. There is no 8mu
+Save gesture in this pass. To set its starting scene, Apply/Save through the editor,
+then connect 8mu and reset. Twin Orbits knob position, phase, motion on/off/depth
+and calibration remain outside presets.
+
+The user reports alpha10 8mu tests pass. Alpha11 build/host tests pass; actual
+flash migration, mode independence, pickup and hardware timing remain to be tested.
+Original storage/preset code and documentation: Adrian Vos (soveda), 2026, MIT;
+existing platform/editor and KEMAR credits remain in THIRD_PARTY_NOTICES.md.
 
 ## Direct 8mu control — Twin Orbits mapping
 
@@ -478,6 +504,8 @@ clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/mo
 /tmp/spatial-modes-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/mixer_mu_controls_test.cpp -o /tmp/spatial-mixer-mu-test
 /tmp/spatial-mixer-mu-test
+clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/settings_test.cpp -o /tmp/spatial-settings-test
+/tmp/spatial-settings-test
 node tests/editor_test.cjs
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/block_audio_test.cpp -o /tmp/spatial-block-test
 /tmp/spatial-block-test

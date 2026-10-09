@@ -45,7 +45,7 @@ static void UsbCore() {
 
 class Card : public ComputerCard {
 public:
-    void Configure(const spatial::Config& cfg) { config_=cfg;effective_=cfg; }
+    void Configure(const spatial::Settings& cfg) { settings_=cfg;config_=cfg.config[0];effective_=config_; }
     uint32_t Capacity() const { return FlashSizeBytes(); }
     bool HostMode() { return USBPowerState()==DFP; }
 private:
@@ -56,7 +56,7 @@ private:
         int mixer_source=-1;
         if (++scan_==48) {
             scan_=0;
-            shared.Consume(config_);
+            bool restored=shared.Consume(settings_);
             boot_.Tick(SwitchVal()==Switch::Down,KnobVal(Knob::Main));
             shared.mode=static_cast<uint32_t>(boot_.Selected());
             Switch raw=SwitchVal();
@@ -73,6 +73,11 @@ private:
             if(shared.ConsumeMu(mu_input_))mu_age_=0;
             else if(mu_age_<150)++mu_age_;
             if(mu_age_==150)mu_input_.yaw=0; // No stale integrated motion during USB waits.
+            if(boot_.Ready()&&!mode_started_){restored=true;mode_started_=true;}
+            if(boot_.Ready()&&boot_.Selected()==spatial::Mode::Mixer&&restored){
+                modes_.RestoreMixer(settings_.mixer,main,x,y);mixer_mu_.Rearm();
+            }
+            config_=settings_.config[boot_.Selected()==spatial::Mode::Mixer?1:0];
             effective_=config_;
             bool orbits=boot_.Selected()==spatial::Mode::Orbits;
             bool mixer=boot_.Selected()==spatial::Mode::Mixer;
@@ -90,6 +95,11 @@ private:
                 modes_.Controls(boot_.Selected(),main,x,y,
                     Connected(Input::CV1)?CVIn1():0,Connected(Input::CV2)?CVIn2():0,linked_,effective_,
                     -1,takeover);
+            }
+            if(shared.snapshot_request==1&&boot_.Ready()){
+                spatial::Settings snapshot=settings_;
+                if(mixer)snapshot.mixer=modes_.MixerPlacement();
+                shared.snapshot=snapshot;__dmb();shared.snapshot_request=2;
             }
             CVOut1(0);CVOut2(0);PulseOut1(false);PulseOut2(false);
         }
@@ -130,7 +140,9 @@ private:
             if(elapsed>=18){overrun_=true;callback_slow_=true;}
         }
     }
+    spatial::Settings settings_;
     spatial::Config config_,effective_;
+    bool mode_started_=false;
     spatial::MuInput mu_input_;
     spatial::MuControls mu_controls_;
     spatial::MixerMuControls mixer_mu_;
@@ -153,7 +165,7 @@ int main() {
     sleep_ms(150);
     host_mode=card.HostMode();
     storage.Init(card.Capacity());
-    spatial::Config initial=storage.Load();
+    spatial::Settings initial=storage.Load();
     card.Configure(initial);
     static spatial::UsbEditor usb(shared,storage,initial,RenderBlock);
     editor=&usb;

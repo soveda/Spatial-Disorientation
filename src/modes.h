@@ -3,6 +3,7 @@
 #pragma once
 #include "startup_mode.h"
 #include "orbits.h"
+#include "settings.h"
 namespace spatial {
 class Modes {
 public:
@@ -14,6 +15,14 @@ public:
             int32_t knobs[3]={main,x,y};
             for(int i=0;i<3;++i)value_[selected_][i]=previous_[i]=Clamp(knobs[i],0,4095);
         }else if(source>=0&&source!=selected_){selected_=source;picked_=0;}
+    }
+    void RestoreMixer(const Placement& placement,int32_t main,int32_t x,int32_t y){
+        initialized_=true;picked_=owner_=0;
+        for(int e=0;e<2;++e)for(int i=0;i<3;++i)value_[e][i]=placement.value[e*3+i];
+        previous_[0]=main;previous_[1]=x;previous_[2]=y;
+    }
+    Placement MixerPlacement()const{
+        Placement p;for(int e=0;e<2;++e)for(int i=0;i<3;++i)p.value[e*3+i]=value_[e][i];return p;
     }
     int32_t MixerValue(int parameter)const{return value_[selected_][parameter];}
     // source: 0 selects A, 1 selects B, -1 retains the last selection.

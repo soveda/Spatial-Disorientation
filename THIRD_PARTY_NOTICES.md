@@ -185,3 +185,11 @@ MIT. src/mixer_mu_controls.h reuses this project's original MuControls pickup;
 USB host and default CC/note transport continue to use the attributed adapted
 EightMU header and rppicomidi driver. No new external source/data is introduced.
 No motion data is used for Mixer; Twin Orbits' existing integration is unchanged.
+
+## Alpha11 mode settings and placement presets
+
+Original separate-bank record/migration, coherent snapshot handshake, placement
+restore/pickup, mode-tagged SysEx/JSON v2, v1 import conversion and tests/docs:
+Adrian Vos (soveda), 2026, MIT. No additional external code or dataset is introduced.
+The existing ComputerCard/web_interface, WaveSeq/EightMU/rppicomidi, block scheduling,
+Pico SDK/TinyUSB and Gardner/Martin KEMAR notices and retained licenses still apply.

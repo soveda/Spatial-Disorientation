@@ -57,3 +57,15 @@ source/dependency attribution in ../THIRD_PARTY_NOTICES.md.
 
 Alpha10 Mixer 8mu tests reported passed by the user on 2026-10-09. No new timing
 readings supplied. Record: Adrian Vos (soveda), 2026, MIT.
+
+## Alpha11 mode-settings build — 2026-10-09
+
+Firmware build passes: flash image 82,892 bytes, main RAM 116,528 bytes and 2,048
+bytes in each scratch bank. 192 MHz / 1.15 V, 48 kHz, 32 taps; ComputerCard 0.4.0
+unmodified. Nine sanitizer-backed host suites and actual editor-script lifecycle /
+preset tests pass. Native browser checks confirm the default page loads and hides
+Mixer-only fields. Storage migration/isolation and restored pickup pass host checks;
+hardware verification is pending. User reported no editor reply while development
+changed the page to v2; old firmware responses now show an explicit upgrade message.
+Original verification notes: Adrian Vos (soveda), 2026, MIT; sources credited in
+../THIRD_PARTY_NOTICES.md. Firmware packaging includes preserved notices.

@@ -1,6 +1,6 @@
 # Spatial Disorientation test protocols
 
-For the current build, start with **Alpha10: Spatial Mixer standalone 8mu test**
+For the current build, start with **Alpha11: separate settings, save and export**
 at the end of this document. Earlier sections record version-specific tests.
 
 ## Twin Orbits alpha1
@@ -485,3 +485,50 @@ behavior and separately measured device-role timing. Alpha9 remains the fallback
 
 Alpha10 Mixer 8mu tests reported passed by the user on 2026-10-09. No new timing
 readings supplied. Record: Adrian Vos (soveda), 2026, MIT.
+
+## Alpha11: separate settings, save and export
+
+Original protocol: Adrian Vos (soveda), 2026, MIT. Existing attribution is in
+../THIRD_PARTY_NOTICES.md. Update BOTH UF2 and web/index.html; old editors are
+incompatible. Tests must use the editor and 8mu in separate USB-role sessions.
+
+1. If a v1 save exists, note its six settings/export a v1 preset before flashing.
+   On alpha11, normal boot -> Read should retain those settings. Down/Main-middle
+   boot -> Mixer Read should show the same six migrated settings, default placements
+   A front/B back, near/full panel level. Without a record, init defaults apply.
+2. In Mixer set A/B to distinct placements using panel knobs after pickup. Read:
+   six placement sliders must match the stored panel values. CV should affect sound
+   but not those Read values. Move a knob after Read; Save then Read should capture
+   the latest position/distance/level. Save requires applied page edits.
+3. Put panel knobs away from those saved values and reset back into Mixer. Both
+   placements return, without a startup jump to the knobs. Pick each source up;
+   verify LEDs and independent editing. Power-cycle and repeat.
+4. In Mixer set room to a distinctive value, Apply/Save. Reset normally into Twin
+   Orbits, set a DIFFERENT room and A/B trims, Apply/Save. Alternate modes/reset:
+   each retains its own settings and Mixer placements. Saving Orbits must not alter
+   Mixer; saving Mixer must not alter Orbits. Normal boot always defaults to Orbits.
+5. Mixer Read -> Export: JSON version 2 contains twelve parameters. Change all six
+   placements/settings, then import the file: stage only; no sound change. Apply:
+   restore both placements, rearm pickup. Save/power-cycle/Read matches the file.
+   Repeat six-field Twin Orbits export/import. Offline import/reconnect keeps edits.
+6. Import v1 Twin Orbits JSON: six values retained. Import v1 Mixer JSON: those six
+   values retained and explicitly default placements shown. Invalid values, missing
+   IDs or reserved/foreign modes rejected without changing page/card. Import the
+   other working mode: Apply disabled until booting the matching mode. Read discards.
+7. Reset to init affects only active mode (including Mixer placements). Save and
+   confirm after reset. Other mode must retain its prior saved settings.
+8. Apply/Save/Read repeatedly with two inputs, rapid CV/knob changes. Brief Save
+   mute is expected; no latched queue/timing fault on return. Record callback and
+   64-frame peaks, aim <18/<1200 us with no queue faults. Callback snapshot/restore
+   work is new; measure under repeated Read as well as steady audio.
+9. Set/save a Mixer starting scene in editor mode. Connect 8mu and reset into Mixer:
+   restore saved placements; faders 1–3 pick up those values, A/B retain source
+   settings, motion ignored. Recheck Twin Orbits 8mu separately. Neither role writes
+   automatically; reset after live 8mu changes restores the last saved scene.
+10. Run at least 15 minutes each in editor and host role, with two sources and rapid
+    controls/CV. Record warnings/dropouts and timing; D gives host timing bands.
+
+Report migration, isolation, preset roundtrip and restore/8mu pickup separately,
+plus timing and stability. Alpha10 is retained as fallback, but cannot read v2
+flash records: it uses defaults. Do not Save with old firmware if you want the
+v2 record available when returning to alpha11; retain exported presets for recovery.
