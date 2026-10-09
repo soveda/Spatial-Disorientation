@@ -433,3 +433,11 @@ for alpha9: reflash `Spatial_Disorientation_0.1.0-alpha9-mixer.uf2` and run:
    callback <18 us, block <1200 us, no queue misses. Actual block deadline 1333.3 us.
    Recheck headphone placement with screen hidden. Build success is not a timing
    or listening pass; report results for each mode and USB role.
+
+### Alpha9 Spatial Mixer result — 2026-10-09
+
+User reports the supplied Mixer test passes, with 32-tap peak callback/block times
+7/1021 us and 8/996 us. Both are below warning thresholds. USB roles for these
+readings are unspecified; separate alpha9 8mu and full Twin Orbits regression
+results remain unreported. Source: user hardware report in this conversation.
+Record: Adrian Vos (soveda), 2026, MIT.

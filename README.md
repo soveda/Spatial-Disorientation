@@ -20,7 +20,10 @@ The user reports alpha7 and alpha8 8mu tests pass. Alpha8 adds direct 8mu
 control. The editor now supports preset import/export (2026-10-09); this update
 uses the tested alpha8 firmware without a reflash. The user reports preset tests pass.
 Alpha9 adds the boot selector and Spatial Mixer; Disorientation is reserved by
-user request. Alpha9 hardware tests are pending.
+user request. The user reports the Spatial Mixer test protocol passes (2026-10-09):
+peak callback/block readings **7 / 1,021 µs** and **8 / 996 µs**, both at 32 taps.
+Both are below the 18 µs callback / 1,200 µs block warning thresholds.
+Separate alpha9 8mu and full Twin Orbits regression results are not reported.
 
 Original code and documentation © 2026 Adrian Vos (soveda), [MIT](LICENSE).
 Third-party code and measurement data retain their own notices and terms; the
