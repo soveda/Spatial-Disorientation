@@ -3,7 +3,7 @@
 **0.1.0-alpha12**: first Disorientation Fig8 path, alongside Twin Orbits and Spatial Mixer, using the 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs can orbit, trace crossing loops or stay at
 individual placements, mixed to binaural stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
-**192 MHz / 1.15 V**. Firmware builds and host checks pass; alpha12 hardware validation is pending. User hardware tests
+**192 MHz / 1.15 V**. Firmware builds and host checks pass; the user reports alpha12 Fig8 tests pass (2026-10-09). User hardware tests
 on **alpha1** pass for the main controls, left/right movement and editor/persistence;
 front/back cues were weak. Alpha1 stability is ongoing (20 minutes without issues
 reported on 2026-10-08). Alpha2 improved tonal distinction but front/back movement remained insufficient
@@ -130,8 +130,9 @@ export existing presets before saving if you may downgrade.
 
 This first Fig8 pass uses panel/CV/editor controls. 8mu performance controls are
 unused in this mode; D-held timing diagnostics remain available. Twin Orbits and
-Mixer retain their existing 8mu mappings. Hardware timing and blind listening
-remain to be tested; alpha11’s timings are not measurements of this build.
+Mixer retain their existing 8mu mappings. The user reports the alpha12 Fig8 test protocol passes (2026-10-09). No new
+timing readings or run duration were supplied; alpha11’s timings are not
+measurements of this build.
 
 Original path, lookup tables, integration and documentation: Adrian Vos (soveda),
 2026, MIT. Tables derive from mathematical sine/atan/radius functions, with no new

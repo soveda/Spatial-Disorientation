@@ -195,13 +195,13 @@ Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
 
 User authorizes the first Fig8; no separate pendulum is needed for this pass.
 Panel/CV path, held freeze, clock/reset, third settings bank and tagged presets
-are implemented. Build and host checks pass; hardware tests remain pending.
+are implemented. Build and host checks pass; the user reports the alpha12
+Fig8 hardware tests pass (2026-10-09), without new timing numbers or run duration.
 Original implementation/plan: Adrian Vos (soveda), 2026, MIT; external credits in
 ../THIRD_PARTY_NOTICES.md.
 
-Next, collect blind listening and worst-load callback/block measurements using
-TEST_PROTOCOL.md. Adjust path range only if those results justify it. After the
-panel path is accepted, agree and implement a mode-specific 8mu mapping and test
-its pickup/ownership offline. Further path variants or additional Fig8 editor
+The first panel path is accepted. Next, agree and implement a mode-specific 8mu
+mapping and test its pickup/ownership offline. Collect timing readings when
+available; adjust path range only if new listening results justify it. Further path variants or additional Fig8 editor
 shape settings need a separate design pass; they are not implemented here.
 Preserve normal Orbits startup, independent banks and existing Mixer mappings.

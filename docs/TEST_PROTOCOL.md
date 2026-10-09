@@ -556,7 +556,8 @@ Record: Adrian Vos (soveda), 2026, MIT.
 Original protocol: Adrian Vos (soveda), 2026, MIT. Source/dependency notices remain
 in ../THIRD_PARTY_NOTICES.md. Flash `Spatial_Disorientation_0.1.0-alpha12-fig8.uf2`
 and reload the editor. Alpha11 is retained as fallback; export its presets before
-saving v3 if you may downgrade. Hardware results for this build are pending.
+saving v3 if you may downgrade. The user reports these tests pass (2026-10-09);
+see the validation record below.
 
 1. **Startup/regression.** Normal reset still chooses Twin Orbits. Down held plus
    Main middle selects Mixer with left LEDs. Down held plus Main upper third
@@ -609,3 +610,14 @@ rear-reaching lobes, crossing, collapsed excursion, phase freeze/resume, clock,
 reset, CV clamping, independent source distance, bounded audio and frame-exact
 block transport through Fig8 changes. They cannot establish perceived localization
 or hardware timing. Do not infer an alpha12 pass from alpha11’s timings.
+
+## Alpha12 user validation — 2026-10-09
+
+The user reports "tests pass" following the alpha12 Fig8 hardware protocol.
+Record this as the user-reported first Fig8 pass. No new callback/block timing
+readings, detailed listening observations or run duration were supplied; do not
+infer those from this confirmation or from alpha11 results. Firmware is unchanged.
+Fig8 8mu performance mapping remains future work; panel/CV/editor controls and
+D-held timing diagnostics are the current implementation.
+Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
+2026, MIT; existing platform/dependency attribution remains applicable.

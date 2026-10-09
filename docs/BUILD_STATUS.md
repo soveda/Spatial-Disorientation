@@ -104,3 +104,14 @@ available as fallback. First Fig8 performance controls are panel/CV/editor; 8mu
 D timing feedback remains, with no Fig8 fader/motion mapping yet.
 Original verification record: Adrian Vos (soveda), 2026, MIT; platform and measured
 HRTF attribution retained in ../THIRD_PARTY_NOTICES.md.
+
+## Alpha12 user validation — 2026-10-09
+
+The user reports "tests pass" following the alpha12 Fig8 hardware protocol.
+Record this as the user-reported first Fig8 pass. No new callback/block timing
+readings, detailed listening observations or run duration were supplied; do not
+infer those from this confirmation or from alpha11 results. Firmware is unchanged.
+Fig8 8mu performance mapping remains future work; panel/CV/editor controls and
+D-held timing diagnostics are the current implementation.
+Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
+2026, MIT; existing platform/dependency attribution remains applicable.
