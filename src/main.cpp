@@ -8,6 +8,7 @@
 #include "pico/multicore.h"
 #include "modes.h"
 #include "mixer_mu_controls.h"
+#include "fig8_mu_controls.h"
 #include "block_audio.h"
 #include "usb_editor.h"
 #include "mu_host.h"
@@ -96,7 +97,10 @@ private:
                     reset=mu_controls_.Apply(mu_input_,main,x,y,effective_,orbits&&reset,orbits)||reset;
                     motion=mu_controls_.Motion();
                     shared.mu_feedback=mu_controls_.Picked()|(motion?256:0);
-                }else shared.mu_feedback=2048; // Fig8 has panel/editor controls in this pass.
+                }else{
+                    reset=fig8_mu_.Apply(mu_input_,main,x,y,effective_);
+                    shared.mu_feedback=fig8_mu_.Feedback(selected_==Switch::Down);
+                }
                 modes_.Controls(boot_.Selected(),main,x,y,
                     Connected(Input::CV1)?CVIn1():0,Connected(Input::CV2)?CVIn2():0,linked_,effective_,
                     -1,takeover);
@@ -106,12 +110,12 @@ private:
                 if(mixer)snapshot.mixer=modes_.MixerPlacement();
                 shared.snapshot=snapshot;__dmb();shared.snapshot_request=2;
             }
-            shared.frozen=boot_.Selected()==spatial::Mode::Disorientation&&selected_==Switch::Down;
+            shared.frozen=boot_.Selected()==spatial::Mode::Disorientation&&(selected_==Switch::Down||fig8_mu_.Frozen());
             modes_.Freeze(shared.frozen);
             CVOut1(0);CVOut2(0);PulseOut1(false);PulseOut2(false);
         }
         modes_.Pulse(Connected(Input::Pulse1),PulseIn1RisingEdge(),
-            (boot_.Selected()==spatial::Mode::Orbits&&reset) || (Connected(Input::Pulse2) && PulseIn2RisingEdge()));
+            (boot_.Selected()!=spatial::Mode::Mixer&&reset) || (Connected(Input::Pulse2) && PulseIn2RisingEdge()));
         spatial::Scene scene=boot_.Ready()?modes_.Advance():spatial::Scene{};
         auto output=blocks.Tick(Connected(Input::Audio1)?AudioIn1():0,
                                     Connected(Input::Audio2)?AudioIn2():0,scene,effective_);
@@ -157,6 +161,7 @@ private:
     spatial::MuInput mu_input_;
     spatial::MuControls mu_controls_;
     spatial::MixerMuControls mixer_mu_;
+    spatial::Fig8MuControls fig8_mu_;
     spatial::Modes modes_;
     spatial::StartupMode boot_;
     uint32_t startup_=0,led_tick_=0;

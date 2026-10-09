@@ -115,3 +115,19 @@ Fig8 8mu performance mapping remains future work; panel/CV/editor controls and
 D-held timing diagnostics are the current implementation.
 Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
 2026, MIT; existing platform/dependency attribution remains applicable.
+
+## Alpha13 Fig8 8mu build — 2026-10-09
+
+Build passes: flash image 88,336 bytes, main RAM 124,248 bytes, 2,048 bytes in each
+scratch bank. 192 MHz / 1.15 V, 48 kHz, 32 taps, unmodified ComputerCard 0.4.0.
+Eleven address/undefined-sanitizer host suites and actual editor-script lifecycle
+tests pass. New control tests cover independent fader pickup/mapping, held phase
+freeze/resume, reset edges, bounded tilt/gyro depth, motion amount, panel handback
+and fresh USB session safety. Existing Orbits/Mixer control/DSP tests pass.
+
+No renderer, flash, JSON or SysEx schema change; host controls remain volatile.
+UF2 block headers, RP2040 family/address bounds, saved-sector exclusion and all
+firmware checksums verified. Alpha13 hardware/offline 8mu timing and stability
+remain pending; alpha12 hardware acceptance does not validate this build.
+Original verification notes: Adrian Vos (soveda), 2026, MIT; external sources
+credited in ../THIRD_PARTY_NOTICES.md with preserved license/measurement terms.

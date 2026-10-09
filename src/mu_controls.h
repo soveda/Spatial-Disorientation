@@ -14,6 +14,7 @@ public:
     bool Apply(const MuInput& in,int32_t& main,int32_t& x,int32_t& y,Config& cfg,bool panelReset=false,bool orbitStop=true){
         if(!in.connected){
             picked_=0;connected_=false;motion_=false;previous_buttons_=0;
+            depth_=4095;
             return false;
         }
         if(!connected_||session_!=in.session){
@@ -39,6 +40,7 @@ public:
             have_faders_=true;
         }
         x=target[0];y=target[1];
+        depth_=target[7];
         for(int i=0;i<5;++i)cfg.value[i]=static_cast<uint16_t>(target[i+2]);
         if(orbitStop&&(in.buttons&4))x=2048; // Hold C to stop the orbit; release resumes it.
         if(motion_){
@@ -62,12 +64,13 @@ public:
     void Rearm(uint32_t mask){picked_&=~mask;have_faders_=false;}
     uint32_t Picked() const {return picked_;}
     bool Motion() const {return motion_;}
+    int32_t MotionDepth() const {return depth_;}
 private:
     void Recenter(int32_t main,int32_t roll){
         anchor_=static_cast<uint32_t>(main)*1048576u;angle_=anchor_;yaw_phase_=0;
         roll_zero_=Clamp(roll,-2032,2032);
     }
-    int32_t previous_[8]={},roll_zero_=0;
+    int32_t previous_[8]={},roll_zero_=0,depth_=4095;
     uint32_t picked_=0,previous_buttons_=0,anchor_=0,angle_=0,yaw_phase_=0,session_=0;
     bool connected_=false,have_faders_=false,motion_=false;
 };

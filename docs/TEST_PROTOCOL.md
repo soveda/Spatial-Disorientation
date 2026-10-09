@@ -621,3 +621,58 @@ Fig8 8mu performance mapping remains future work; panel/CV/editor controls and
 D-held timing diagnostics are the current implementation.
 Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
 2026, MIT; existing platform/dependency attribution remains applicable.
+
+## Alpha13 Fig8 8mu hardware test
+
+Original protocol: Adrian Vos (soveda), 2026, MIT. Platform/dependency credits
+remain in ../THIRD_PARTY_NOTICES.md. Hardware results for alpha13 are pending.
+Use `Spatial_Disorientation_0.1.0-alpha13-fig8-8mu.uf2`; alpha12 is retained as
+fallback. This test needs no simultaneous editor connection.
+
+1. **Boot.** Connect 8mu before reset. Hold Down, select upper Main third (right
+   LEDs), release into Fig8. Headphones, different sources in Audio1/2, Main
+   around 3 o’clock, Y high, X just right of noon. Motion initially off. Before
+   testing host mode, optionally Read the saved Fig8 bank with the editor in a
+   separate session; change cable/role and reset. No preset conversion needed.
+2. **Independent fader pickup.** Sweep faders across their current targets until
+   their waiting LEDs stop blinking. Fader1 controls speed/direction (centre
+   stops), 2 excursion, 3 source path-phase separation, 4 room, 5/6 A/B trims,
+   7 spatial strength. Verify each separately; unpicked faders must not cause
+   jumps or take over unrelated controls. Pick up fader8 at its maximum first.
+3. **Motion depth.** Press/release B at a comfortable held pose. LED8 becomes
+   steady bright. Tilt roll to deepen/flatten the loops; gyro yaw rotation should
+   move the base depth, holding when rotation stops. Main should be inactive
+   while motion owns depth. Try both directions and sustained extremes: depth
+   must stop at limits, never wrap to the other end. CV1 still adds depth.
+4. **Motion amount/recentre.** Lower fader8: tilt/rate sensitivity decreases. At
+   zero both stop affecting depth; the held gyro base remains (a prior tilt
+   offset can recede). Press A: phase resets to the front crossing and motion
+   recaptures the physical Main value/current pose. Holding A must not repeatedly
+   reset; subsequent movement should work normally. CV modulation still applies.
+5. **Held freeze.** C stops phase without changing speed or toggling a latch;
+   release resumes. LED8 bright-blinks while frozen. Panel Down does the same.
+   Hold both, release either: still frozen; release both: resumes. Faders, motion
+   and CV still reshape the held position. A/Pulse2 reset even while frozen.
+   Up/middle retains linked/opposing traversal, and Down never recentres.
+6. **Handback/pickup.** Toggle B off while physical Main differs from motion
+   depth: depth stays until Main reaches/crosses it, then follows Main. Disconnect
+   with faders owning speed/excursion: those values hold until X/Y pick up. Motion
+   and C freeze must release on disconnect. Shared room/phase separation/trims/
+   strength return to saved Fig8 values. Reconnect: motion off, faders rearmed;
+   held A/B at attachment should not trigger. Reset if re-enumeration fails.
+7. **Offline timing/stability.** Hold D to display block-time bands (one LED per
+   150 us); flashing all LEDs indicates a timing/queue warning. Exercise both
+   inputs, high room/strength, full-size deep Fig8, motion, all faders and rapid
+   CV for at least 20 minutes. Card bottom-right must remain off; controls must
+   remain responsive without silence bursts, uncontrolled speed or lockups.
+   If available, measure separately with the editor role: callback below 18 us,
+   block below 1200 us warning / 1333 us deadline. Editor timings cannot measure
+   the disconnected 8mu session; report D bands and warnings for that session.
+8. **Regression/persistence.** Reset into Orbits and Mixer and briefly recheck
+   their existing 8mu mappings (Mixer motion remains unused). Later reconnect
+   editor/reset, Read all three banks and Mixer placements: host runtime changes
+   must not have written flash. Normal boot remains Twin Orbits.
+
+Report any motion polarity/range issue, pickup jump or freeze/reset anomaly,
+plus timing/LED observations and run duration. Host tests cover these control
+contracts and bounds; only hardware can validate USB performance and sound.

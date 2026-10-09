@@ -203,3 +203,12 @@ existing helpers and retains the existing sine-table use credited to You spin me
 round above. Fig8 uses the same ComputerCard/block transport and Gardner/Martin
 KEMAR/room renderer; their notices/terms are unchanged. No Quasar code or data
 has been introduced.
+
+## Alpha13 Fig8 8mu additions
+
+`src/fig8_mu_controls.h` and its tests/documentation are original Adrian Vos
+(soveda), 2026, MIT. Reuses this project's `MuControls` pickup engine and the
+existing bounded host adaptation. WaveSeq's pickup/buttons/motion implementation
+was reviewed again; no additional external code or data was introduced. Existing
+Chris Johnson WaveSeq/EightMU, rppicomidi, ComputerCard, Pico SDK/TinyUSB and
+Gardner/Martin KEMAR notices and terms remain applicable and preserved.

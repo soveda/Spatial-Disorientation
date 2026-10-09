@@ -237,3 +237,22 @@ SysEx/JSON stay v2 and accept mode/tag 2/disorientation. Telemetry includes work
 resolved positions and a freeze byte. First pass excludes Fig8 8mu performance
 mapping; D diagnostics still work. Two existing modes/mappings remain supported.
 Hardware listening/timing verification is pending; see TEST_PROTOCOL.md.
+
+## Alpha13 Fig8 8mu pass (2026-10-09)
+
+User authorizes Fig8 8mu integration after reporting alpha12 tests pass. Reuse
+the Twin Orbits eight-fader layout: speed/excursion/phase separation/room/A/B/
+strength/motion amount. A resets phase and recaptures Main/pose; B toggles motion
+depth takeover; C held freezes phase; D diagnostics. Panel Down and C combine
+with OR; release both to resume. CV remains additive after depth/excursion.
+
+Fig8 depth is bounded, unlike circular Main position in Orbits. Roll offsets
+anchored depth; yaw rate integrates a saturated Q12 base at 1 kHz, with smoothed
+clamped output. Motion amount scales tilt and rate; no trigonometry or HRTF work
+is added to the ISR. Turning motion off/disconnecting preserves owned Main/X/Y
+until panel pickup; fresh USB sessions discard fader/motion ownership. Saved
+configuration/schema and existing mode mappings remain unchanged. No autosave.
+
+Original implementation/design: Adrian Vos (soveda), 2026, MIT. Uses this project's
+MuControls and bounded WaveSeq/EightMU/rppicomidi host adaptation; all attribution
+and notices remain in ../THIRD_PARTY_NOTICES.md. Hardware tests are pending.

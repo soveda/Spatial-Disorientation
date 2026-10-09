@@ -1,9 +1,10 @@
 # Spatial Disorientation
 
-**0.1.0-alpha12**: first Disorientation Fig8 path, alongside Twin Orbits and Spatial Mixer, using the 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
+**0.1.0-alpha13**: Fig8 8mu fader/motion control, alongside Twin Orbits and Spatial Mixer, using the 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs can orbit, trace crossing loops or stay at
 individual placements, mixed to binaural stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
-**192 MHz / 1.15 V**. Firmware builds and host checks pass; the user reports alpha12 Fig8 tests pass (2026-10-09). User hardware tests
+**192 MHz / 1.15 V**. Firmware builds and host checks pass; alpha13 8mu hardware validation is pending.
+The user reports alpha12 Fig8 tests pass (2026-10-09). User hardware tests
 on **alpha1** pass for the main controls, left/right movement and editor/persistence;
 front/back cues were weak. Alpha1 stability is ongoing (20 minutes without issues
 reported on 2026-10-08). Alpha2 improved tonal distinction but front/back movement remained insufficient
@@ -47,7 +48,7 @@ vendor notices/measurement terms with redistributed source or firmware packages.
 
 ## Try it
 
-First flash `uf2/Spatial_Disorientation_0.1.0-alpha12-fig8.uf2` using the usual
+First flash `uf2/Spatial_Disorientation_0.1.0-alpha13-fig8-8mu.uf2` using the usual
 Workshop Computer BOOTSEL procedure. Start with a mono sound in Audio 1, both audio
 outputs connected to the left/right sides of a headphone monitoring path, Main and
 X at noon, Y down. Turn X right to start an orbit; turn left for reverse motion.
@@ -88,7 +89,7 @@ the framework's surrounding ISR work; measure the full ISR before release.
 
 ## Alpha12: first Disorientation Fig8 pass
 
-Flash **alpha12 and reload the editor**. Hold Down at startup, turn Main to its
+Flash **alpha13 and reload the editor**. Hold Down at startup, turn Main to its
 upper third (right-column LEDs), then release. Start with Audio 1 alone on
 headphones, Main around 3 o’clock, Y high and X just right of its centre deadband.
 Keep movement slow for the first listening test. See [the Fig8 test protocol](docs/TEST_PROTOCOL.md#alpha12-fig8-hardware-test).
@@ -128,9 +129,8 @@ v3: old v1/v2 records migrate in RAM, retaining previous banks/placements and
 initializing Fig8 defaults. Only Save writes v3. Alpha11 cannot read a v3 record;
 export existing presets before saving if you may downgrade.
 
-This first Fig8 pass uses panel/CV/editor controls. 8mu performance controls are
-unused in this mode; D-held timing diagnostics remain available. Twin Orbits and
-Mixer retain their existing 8mu mappings. The user reports the alpha12 Fig8 test protocol passes (2026-10-09). No new
+The alpha12 first Fig8 pass used panel/CV/editor controls. Alpha13 adds the
+8mu mapping below. Twin Orbits and Mixer retain their existing 8mu mappings. The user reports the alpha12 Fig8 test protocol passes (2026-10-09). No new
 timing readings or run duration were supplied; alpha11’s timings are not
 measurements of this build.
 
@@ -138,6 +138,62 @@ Original path, lookup tables, integration and documentation: Adrian Vos (soveda)
 2026, MIT. Tables derive from mathematical sine/atan/radius functions, with no new
 external measurement data. Existing ComputerCard, block scheduling, EightMU,
 Pico SDK/TinyUSB and Gardner/Martin KEMAR attributions and notices remain applicable.
+
+## Alpha13: Fig8 with 8mu
+
+Connect 8mu before reset, hold Down and choose Fig8 with Main (upper third,
+right LEDs), then release. Editor and 8mu are used in separate sessions, as with
+the other modes. No additional editor setting or flash/preset schema change.
+
+| 8mu control | Fig8 behaviour |
+|---|---|
+| Fader 1 | X: signed traversal speed, centre stops |
+| Fader 2 | Y: overall excursion |
+| Fader 3 | Source phase separation along the path |
+| Fader 4 | Room amount |
+| Faders 5 / 6 | A / B level trims |
+| Fader 7 | Spatial strength |
+| Fader 8 | Motion amount for tilt and rotation-rate control of loop depth |
+| A, press | Reset traversal phase to the front crossing; recapture physical Main and current pose for motion |
+| B, press | Toggle motion takeover of Main depth; initially off |
+| C, held | Freeze traversal; release resumes, unless panel Down is still held |
+| D, held | Offline peak block-time bands / timing-warning display |
+
+Faders engage independently when near or crossing the corresponding panel/saved
+value (about 1.6% tolerance). Their LEDs blink while waiting, then show the fader
+level. Fader 8 initially picks up at full scale. **LED 8 is steady bright while
+motion is enabled; bright blinking means phase freeze** (C or panel Down).
+D diagnostics take priority over both. LED 8's motion/freeze status overrides
+its normal pickup/level display; it still controls motion amount.
+
+B captures Main's current depth and the 8mu pose. Roll tilts the depth around that
+anchor; gyro yaw is a rate, integrated to a held base depth. Stop rotating to hold
+that base. Depth clamps at either end, without circular wrap. Full gyro rate and
+motion amount traverse the entire depth range in approximately two seconds.
+Lower fader 8 reduces both tilt sensitivity and rotation rate; zero suppresses
+both, retaining the integrated base, so reducing amount may remove a tilt offset.
+CV1 still adds depth after motion; CV2 still adds excursion. Main cannot change
+depth while motion owns it; A deliberately recaptures the physical Main setting.
+
+C and panel Down freeze **phase only**: motion, CV and faders can still reshape
+the held positions. A and Pulse2 reset even while frozen. Releasing one freeze
+control does not resume until the other is released. Up/middle retain linked/
+opposing traversal; Down does not reset or recenter Fig8.
+
+Turning motion off holds its last depth until Main reaches or crosses it.
+Disconnect/session replacement drops motion and fader ownership: Main/X/Y hold
+any previously owned values until their physical knobs pick them up. Room,
+separation and trims return to the saved Fig8 bank on disconnect. Reconnection
+rearms faders and starts with motion off; held A/B on attachment do not trigger.
+Live 8mu changes do not write flash and are excluded from preset export/Save;
+use the editor separately for persistent settings. Reset selects USB role again.
+
+Hardware timing and motion polarity still need the [alpha13 offline test](docs/TEST_PROTOCOL.md#alpha13-fig8-8mu-hardware-test).
+The user-tested alpha12 UF2 is retained as fallback. Original mapping, bounded
+motion and handback implementation/documentation: Adrian Vos (soveda), 2026,
+MIT. Reuses this project's tested pickup/host integration adapted from Chris
+Johnson's WaveSeq/EightMU; rppicomidi and all renderer/platform credits remain
+in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## Editor
 
@@ -558,6 +614,8 @@ clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/mo
 /tmp/spatial-modes-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/mixer_mu_controls_test.cpp -o /tmp/spatial-mixer-mu-test
 /tmp/spatial-mixer-mu-test
+clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/fig8_mu_controls_test.cpp -o /tmp/spatial-fig8-mu-test
+/tmp/spatial-fig8-mu-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/fig8_test.cpp -o /tmp/spatial-fig8-test
 /tmp/spatial-fig8-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/settings_test.cpp -o /tmp/spatial-settings-test

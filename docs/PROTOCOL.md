@@ -214,3 +214,13 @@ V1 files cannot describe Fig8 and are rejected for that tag. Existing v1/v2
 Orbits/Mixer imports retain their migration rules. Panel depth/excursion, traversal
 rate, phase, CV and freeze are excluded from Read/Save/preset files. Startup mode
 continues to be selected only physically and normal boot continues to be Orbits.
+
+## Alpha13 Fig8 8mu feedback
+
+No SysEx, flash or preset schema change. Internal mu_feedback bit 11 (2048)
+now identifies the Fig8 mapping; bits 0–7 are fader pickup, bit 8 motion enabled,
+bit 12 (4096) phase frozen by C or panel Down. LED8 bright-blinks while frozen,
+otherwise steady bright while motion enabled, otherwise normal pickup/level.
+D diagnostics have priority. Telemetry 43 byte 11 reports the combined freeze.
+No 8mu Save gesture or forwarding editor connection is added. Original extension:
+Adrian Vos (soveda), 2026, MIT; existing source/dependency credits apply.

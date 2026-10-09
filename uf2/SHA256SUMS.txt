@@ -11,3 +11,4 @@ cca5bd9aff3ea19daa0f4d5fde0f25759aa79e0740091163aead36bd423b5d93  uf2/Spatial_Di
 61c26533e71d67b890ebafa95f15631b6ad1a05f5e69975f1138ba8d96081fa0  uf2/Spatial_Disorientation_0.1.0-alpha10-mixer-8mu.uf2
 212d0ba41a28ca8ced1c314327f21cc0eab945fce2496cabc40858192fb0a747  uf2/Spatial_Disorientation_0.1.0-alpha11-mode-presets.uf2
 1ea3f133d2c576a5792f28e4d1114237ba6a869122e4dadc57dea66c7e36080a  uf2/Spatial_Disorientation_0.1.0-alpha12-fig8.uf2
+1c1c4f5a45566ac627a7e56a3056f7ab68fcf8ee91965cd63a0bc61d4a7143fd  uf2/Spatial_Disorientation_0.1.0-alpha13-fig8-8mu.uf2
