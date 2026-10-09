@@ -60,11 +60,14 @@ public:
         }
     }
     void Freeze(bool held){frozen_=held;}
-    void Pulse(bool connected,bool edge,bool reset){if(mode_!=Mode::Mixer)orbits_.Pulse(connected,edge,reset);}
+    void SetMovement(uint32_t movement){
+        if(movement<3&&movement!=movement_){movement_=movement;++path_epoch_;}
+    }
+    void Pulse(bool connected,bool edge,bool reset){if(mode_!=Mode::Mixer){if(reset)++path_epoch_;orbits_.Pulse(connected,edge,reset);}}
     Scene Advance(){
         if(mode_==Mode::Mixer)return fixed_;
         Scene s=orbits_.Advance(mode_==Mode::Disorientation&&frozen_);
-        if(mode_==Mode::Disorientation){s.fig8=true;s.shape=shape_;s.excursion=excursion_;}
+        if(mode_==Mode::Disorientation){s.fig8=true;s.shape=shape_;s.excursion=excursion_;s.movement=movement_;s.path_epoch=path_epoch_;}
         return s;
     }
     bool ClockLocked()const{return mode_!=Mode::Mixer&&orbits_.ClockLocked();}
@@ -74,6 +77,7 @@ private:
     Orbits orbits_;Scene fixed_;
     Mode mode_=Mode::Orbits;
     int32_t shape_=0,excursion_=0;bool frozen_=false;
+    uint32_t movement_=0,path_epoch_=0;
     // Unedited source defaults: A front, B back, near, full panel level.
     int32_t value_[2][3]={{2048,0,4095},{0,0,4095}},previous_[3]={};
     int selected_=0;uint32_t picked_=0,owner_=0;bool initialized_=false;

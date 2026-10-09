@@ -23,6 +23,7 @@ struct Shared {
     // Core 1 owns resolved Fig8 geometry; core 0 uses it for LEDs/telemetry only.
     volatile uint32_t resolved_a=0,resolved_b=2048,resolved_distance_a=0,resolved_distance_b=0;
     volatile uint32_t frozen=0;
+    volatile uint32_t movement=0;
     bool ConsumeMu(MuInput& input){
         if(!mu_ready)return false;
         __dmb();input=mu_queued;__dmb();mu_ready=0;return true;

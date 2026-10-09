@@ -256,3 +256,20 @@ configuration/schema and existing mode mappings remain unchanged. No autosave.
 Original implementation/design: Adrian Vos (soveda), 2026, MIT. Uses this project's
 MuControls and bounded WaveSeq/EightMU/rppicomidi host adaptation; all attribution
 and notices remain in ../THIRD_PARTY_NOTICES.md. Hardware tests are pending.
+
+## Alpha14 Pendulum, Wander and D selection (2026-10-10)
+
+User requests Pendulum and Wander in addition to Fig8, and specifies D press
+instead of the proposed chord. Implement tap-on-release (<500ms) cycle and retain
+D-hold diagnostics, with LED 1/2/3 identification. No A/B/C remapping.
+Pendulum uses a sinusoidal angular arc (Main centre front→back, Y width±90°),
+fixed distance 1024. Wander uses original hashed Cartesian nodes, cosine easing,
+extended phase segments, reversible traversal and reset epochs. Main scales
+front/back depth; Y excursion. All geometry stays in the block worker; existing
+HRTF/room renderer and fixed-point control paths remain. Fig8 geometry unchanged.
+
+Add saved movement ID 13 to Disorientation only, SysEx/JSONv3 and flashv4 with
+migration of all prior records/presets. 8mu choices remain volatile, preserve
+phase/pickup and revert to saved choice on disconnect. Hardware tests pending.
+Original design/code/docs: Adrian Vos (soveda), 2026, MIT; no new external code or
+data; existing source/measurement notices in ../THIRD_PARTY_NOTICES.md apply.

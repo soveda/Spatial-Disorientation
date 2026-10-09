@@ -212,3 +212,12 @@ existing bounded host adaptation. WaveSeq's pickup/buttons/motion implementation
 was reviewed again; no additional external code or data was introduced. Existing
 Chris Johnson WaveSeq/EightMU, rppicomidi, ComputerCard, Pico SDK/TinyUSB and
 Gardner/Martin KEMAR notices and terms remain applicable and preserved.
+
+## Alpha14 movement additions
+
+`src/dsp/movements.h`, its tests, D tap/hold selection, schema migrations and
+documentation are original Adrian Vos (soveda), 2026, MIT. Pendulum is mathematical
+sine; Wander uses an original deterministic integer hash and cosine easing. No
+additional external algorithm implementation or dataset is copied. Existing
+sine-table, ComputerCard, WaveSeq/EightMU/rppicomidi, block transport, Pico SDK/
+TinyUSB and Gardner/Martin KEMAR notices remain preserved and applicable.

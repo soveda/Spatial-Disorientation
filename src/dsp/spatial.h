@@ -2,7 +2,7 @@
 #pragma once
 #include <cstdint>
 #include "fixed.h"
-#include "fig8.h"
+#include "movements.h"
 #include "hrtf.h"
 #include "../config.h"
 namespace spatial {
@@ -11,7 +11,8 @@ struct Scene {
     uint32_t angle[2] = {0, 0x80000000u}; // 0 front; quarter turn right.
     int32_t distance = 0;
     int32_t level_a = 4096, level_b = 4096; // Panel gain; unity for Twin Orbits.
-    uint16_t shape=0,excursion=0;bool fig8=false;
+    uint16_t shape=0,excursion=0;bool fig8=false; // Dynamic Disorientation path.
+    uint8_t movement=0;uint32_t path_epoch=0;
     int32_t distance_b = -1; // Negative shares A distance; otherwise independent B.
 };
 class Delay {
@@ -119,7 +120,12 @@ public:
         if(e>=0){
             uint32_t angle=scene_.angle[e];
             int32_t distance=e&&scene_.distance_b>=0?scene_.distance_b:scene_.distance;
-            if(scene_.fig8){auto point=FigureEight(angle,scene_.shape,scene_.excursion);angle=point.angle;distance=point.distance;}
+            if(scene_.fig8){
+                auto point=scene_.movement==1?Pendulum(angle,scene_.shape,scene_.excursion):
+                    scene_.movement==2?wander_[e].Point(angle,scene_.shape,scene_.excursion,scene_.path_epoch):
+                    FigureEight(angle,scene_.shape,scene_.excursion);
+                angle=point.angle;distance=point.distance;
+            }
             rendered_.angle[e]=angle;
             if(e)rendered_.distance_b=distance;else rendered_.distance=distance;
             int32_t level=e?scene_.level_b:scene_.level_a;
@@ -133,6 +139,7 @@ private:
     Scene scene_,rendered_;
     Config config_;
     Source source_[2];
+    Wander wander_[2];
     uint32_t count_=0;
 };
 }

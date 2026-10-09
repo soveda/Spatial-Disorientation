@@ -3,8 +3,8 @@
 Updated 2026-10-09. Original plan © 2026 Adrian Vos (soveda), MIT.
 User requirements and hardware reports are the basis for this plan. Platform/API
 sources and musical inspiration are credited in ../THIRD_PARTY_NOTICES.md.
-The stages below record the original plan and subsequent checkpoints. Alpha13 is
-the current Fig8 8mu pass; historical checkpoints follow. Disorientation now
+The stages below record the original plan and subsequent checkpoints. Alpha14 is
+the current movement-selection pass; historical checkpoints follow. Disorientation now
 has a panel/CV-controlled crossing path.
 
 ## 1. Finish the Twin Orbits listening/timing pass
@@ -217,3 +217,14 @@ candidate; additional path/settings work needs a separate design decision.
 No new editor parameters, persistence fields or pendulum path in this pass.
 Original implementation/plan: Adrian Vos (soveda), 2026, MIT; existing sources
 credited in ../THIRD_PARTY_NOTICES.md.
+
+## Alpha14 Pendulum/Wander checkpoint (2026-10-10)
+
+User requests two new movements and short D press selection. Implemented Pendulum,
+Wander, live D tap cycle, retained D-hold timing, LED identification, editor saved
+movement and schema/preset migrations. Build/host tests pass; hardware pending.
+Next run the alpha14 protocol, concentrating on slow listening, switching artefacts,
+D gestures, offline 8mu and worst-load timing. Keep alpha13 available as fallback.
+Do not add further paths or package a release candidate until this pass is accepted.
+Original plan/implementation: Adrian Vos (soveda), 2026, MIT; sources credited in
+../THIRD_PARTY_NOTICES.md with all existing notices preserved.

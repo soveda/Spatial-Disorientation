@@ -63,5 +63,15 @@ int main(){
     ++fresh.in.session;fresh.in.buttons=3;assert(!fresh.Tick());assert(!fresh.mu.Motion()&&fresh.main==old&&fresh.mu.Picked()==0);
     // C and panel freeze are composable; feedback does not depend on editor.
     assert(fresh.mu.Feedback(true)&4096);assert(fresh.mu.Feedback()&2048);
+    // D taps cycle once on release, while a long hold only shows diagnostics.
+    Rig select;select.in.connected=1;select.Tick();assert(select.mu.Movement()==0);
+    for(int expected=1;expected<=3;++expected){
+        select.in.buttons=8;for(int i=0;i<80;++i)select.Tick();assert(select.mu.Movement()==uint32_t(expected-1)%3);
+        select.in.buttons=0;select.Tick();assert(select.mu.Movement()==uint32_t(expected)%3);
+    }
+    select.in.buttons=8;for(int i=0;i<600;++i)select.Tick();assert(select.mu.Feedback()&32768);
+    select.in.buttons=0;select.Tick();assert(select.mu.Movement()==0);
+    select.in.connected=0;select.Tick();assert(select.mu.Movement()==0);
+    select.in.connected=1;select.in.buttons=8;++select.in.session;select.Tick();select.in.buttons=0;select.Tick();assert(select.mu.Movement()==0);
     std::puts("PASS: Fig8 fader mapping/pickup, held phase freeze/resume, reset edges, bounded motion/depth amount, panel handback and fresh-session safety");
 }

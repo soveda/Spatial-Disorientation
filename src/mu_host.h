@@ -10,6 +10,7 @@ inline void RunMuHost(Shared& shared,void (*worker)()){
     board_init();tuh_init(0);
     __dmb();shared.usb_ready=1;
     uint32_t last_input=0,last_led=0;
+    uint32_t last_movement=3,movement_notice=0;
     while(true){
         worker(); // Render the oldest waiting block before servicing USB.
         mu.Poll();
@@ -26,9 +27,13 @@ inline void RunMuHost(Shared& shared,void (*worker)()){
         if(mu.Connected()&&now-last_led>=20000){
             last_led=now;
             uint32_t feedback=shared.mu_feedback;
+            uint32_t movement=(feedback>>13)&3;
+            if((feedback&2048)&&movement!=last_movement){last_movement=movement;movement_notice=now;}
+            bool notice=(feedback&2048)&&now-movement_notice<1000000;
             for(int i=0;i<8;++i){
                 int32_t brightness;
-                if(mu.Button(3)){
+                if(notice)brightness=static_cast<uint32_t>(i)==movement?4095:0;
+                else if(mu.Button(3)&&(!(feedback&2048)||(feedback&32768))){
                     // Each LED is a 150-us band of the peak DSP block time.
                     brightness=shared.block_peak_us>static_cast<uint32_t>(i*150)?2048:0;
                     if(shared.flags&4)brightness=(now/125000)&1?4095:0;

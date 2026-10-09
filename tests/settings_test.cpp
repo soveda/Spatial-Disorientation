@@ -26,7 +26,14 @@ int main(){
     n=EncodeSettings(bank,0,data);assert(n==19&&DecodeSettings(data,n,target,mode)&&mode==0&&target.config[1].value[1]==3000);
     data[0]=3;assert(!DecodeSettings(data,n,target,mode));
     bank.config[2].value[1]=700;n=EncodeSettings(bank,2,data);
-    assert(n==19&&DecodeSettings(data,n,target,mode)&&mode==2&&target.config[2].value[1]==700&&target.config[1].value[1]==3000);
+    assert(n==22&&DecodeSettings(data,n,target,mode)&&mode==2&&target.config[2].value[1]==700&&target.config[1].value[1]==3000);
+    bank.movement=2;n=EncodeSettings(bank,2,data);assert(data[19]==13&&DecodeSettings(data,n,target,mode)&&target.movement==2);
+    data[20]=3;assert(!DecodeSettings(data,n,target,mode)&&target.movement==2);
+    data[20]=1;data[19]=7;assert(!DecodeSettings(data,n,target,mode));
+    V3Settings prior{{bank.config[0],bank.config[1],bank.config[2]},bank.mixer};
+    V3Record v3{kRecordMagic,3,Checksum(reinterpret_cast<uint8_t*>(&prior),sizeof(prior)),prior};
+    auto third=LoadRecord(reinterpret_cast<uint8_t*>(&v3),sizeof(v3));assert(third.movement==0&&third.config[2].value[1]==700&&third.mixer.value[4]==2700);
+    r=MakeRecord(bank);assert(LoadRecord(reinterpret_cast<uint8_t*>(&r),sizeof(r)).movement==2);
     auto invalid=bank;invalid.mixer.value[1]=5000;r=MakeRecord(invalid);assert(LoadRecord(reinterpret_cast<uint8_t*>(&r),sizeof(r)).mixer.value[1]==0);
     Modes modes;modes.RestoreMixer(bank.mixer,2048,0,4095);modes.Controls(Mode::Mixer,2048,0,4095,0,0,false,bank.config[1]);
     auto scene=modes.Advance();assert(scene.angle[0]==0x40000000u&&scene.angle[1]==0xc0000000u&&scene.distance==1000&&scene.distance_b==2700&&scene.level_a==2300&&modes.Pickup()==0);

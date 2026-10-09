@@ -686,3 +686,62 @@ LED-band measurements or run duration were supplied; do not infer specific
 values from the confirmation or previous builds. Firmware remains unchanged.
 Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
 2026, MIT; existing platform/dependency attribution remains applicable.
+
+## Alpha14 movement selection hardware test
+
+Original protocol: Adrian Vos (soveda), 2026, MIT. Sources/dependency notices:
+../THIRD_PARTY_NOTICES.md. Alpha14 hardware validation is pending. Flash
+`Spatial_Disorientation_0.1.0-alpha14-movements.uf2` and reload the editor.
+Alpha13 is retained as fallback. Export existing presets before saving v4 if
+planning to downgrade. Editor and 8mu tests use separate USB sessions.
+
+1. **Migration/editor.** Boot into Disorientation (Down/Main upper third/right
+   LEDs, release). Read: existing settings should be retained and movement Fig8
+   selected. Choose Pendulum then Apply: movement changes; Save, reset back into
+   Disorientation and Read: Pendulum retained. Export/import v3 includes ID 13;
+   import an older v2 Fig8 preset: movement becomes Fig8 when Applied. Reset to
+   init restores Fig8/default settings without automatically saving. Verify
+   Orbits/Mixer settings and Mixer placements remain unchanged.
+2. **Fig8 regression.** Slow X, Main about 3 o’clock, Y high, headphones. The
+   previous crossing loops, depth/excursion, freeze, clock/reset should still work.
+3. **Pendulum.** Select/Apply Pendulum. Start Main minimum (front-centred), Y high,
+   X just beyond centre stop. Hear a smooth left/right swing which reverses along
+   the same arc. Main noon centres it to the right; high Main towards the back.
+   Y narrows/widens the arc; minimum holds its centre. Its distance stays fixed
+   at 25%, so it should not breathe near/far like Fig8. Reverse/stop X; try both
+   sources with phase separation and linked/opposing movement.
+4. **Wander.** Select/Apply Wander. Main high and Y high, slow X: smooth changing
+   left/right/front/back and distance, without an obvious repeating orbit.
+   Main lowers rear reach; Y shrinks the path. X centre holds, reverse retraces
+   the recent route. A/Pulse2 restarts a repeatable sequence (A front-centre at
+   reset; B follows phase separation). Hold Down/C freezes phase but permits
+   shape/CV changes. Watch/listen for hard jumps, clicks or stuck movement.
+5. **D tap offline.** Change USB to 8mu and reset into Disorientation. Tap D
+   (<500 ms), then release: cycle Fig8 → Pendulum → Wander, starting from the
+   saved movement. LEDs 1/2/3 identify the new movement for one second. Holding
+   D >=500 ms instead shows timing; release must not cycle. Normal LED feedback
+   returns after the selection notice. Test repeated taps, long holds, and taps
+   while C/panel Down freezes phase. Selection must not reset phase, change
+   motion enable or lose fader pickup.
+6. **8mu controls across movements.** Faders remain speed/excursion/phase
+   separation/room/A/B trims/strength/motion amount. B motion takeover changes
+   Main: Fig8 depth, Pendulum arc centre, Wander rear reach. A recaptures pose/
+   Main and resets phase. C held freezes, D tap selects/hold diagnoses. Verify
+   clamp, amount-zero behaviour, panel handback and disconnect like alpha13.
+   Disconnect/new USB session restores the saved movement; no flash write from D.
+7. **Clock/reset and worst load.** Pulse1 controls a phase cycle: one Fig8,
+   one full Pendulum return swing, four Wander node transitions. Saved default
+   four pulses per cycle remains. X still controls direction/stop. Pulse2 resets
+   even frozen. Both inputs, high room/strength, rapid CV/motion/fader changes,
+   repeated movement switches and USB requests: at least 20 minutes. Card
+   bottom-right warning off, no bursts of silence, lockups or lost control.
+   Record callback/block peaks separately in editor role; target <18/<1200 us,
+   block deadline 1333 us. D diagnostics report the offline host session; report
+   bands/warnings there rather than inferring host timing from editor readings.
+8. **Other modes.** Briefly recheck Orbits/Mixer editor/presets and 8mu mappings.
+   Their D behaviour remains held timing diagnostics; they do not cycle movements.
+   Normal boot remains Orbits and selector still uses three original LED choices.
+
+Report which movements/controls pass, any clicks/pickup changes, D tap/hold
+behaviour, timing readings/warnings and run duration. Host tests cannot validate
+localization, hardware timing or USB stability.

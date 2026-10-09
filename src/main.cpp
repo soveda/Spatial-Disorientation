@@ -98,7 +98,9 @@ private:
                     motion=mu_controls_.Motion();
                     shared.mu_feedback=mu_controls_.Picked()|(motion?256:0);
                 }else{
-                    reset=fig8_mu_.Apply(mu_input_,main,x,y,effective_);
+                    reset=fig8_mu_.Apply(mu_input_,main,x,y,effective_,settings_.movement);
+                    modes_.SetMovement(fig8_mu_.Movement());
+                    shared.movement=fig8_mu_.Movement();
                     shared.mu_feedback=fig8_mu_.Feedback(selected_==Switch::Down);
                 }
                 modes_.Controls(boot_.Selected(),main,x,y,

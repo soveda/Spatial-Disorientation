@@ -1,6 +1,6 @@
 # Spatial Disorientation editor protocol
 
-Current alpha12 uses **SysEx/presets v2 and storage v3**, defined in the final sections.
+Current alpha14 uses **SysEx/presets v3 and storage v4**, defined in the final sections.
 The v1 sections below are retained for migration/history.
 
 © 2026 Adrian Vos (soveda), MIT. SysEx/editor transport structure follows Chris
@@ -224,3 +224,35 @@ otherwise steady bright while motion enabled, otherwise normal pickup/level.
 D diagnostics have priority. Telemetry 43 byte 11 reports the combined freeze.
 No 8mu Save gesture or forwarding editor connection is added. Original extension:
 Adrian Vos (soveda), 2026, MIT; existing source/dependency credits apply.
+
+## Alpha14 movement setting, SysEx/JSON v3 and flash v4
+
+Original extension: Adrian Vos (soveda), 2026, MIT; existing dependency/measurement
+credits apply. Frame version is now 3 (`F0 7D 53 44 03 ... F7`). Prior v1/v2
+clients receive unsupported-schema status; reload the matching editor/firmware.
+Commands/status values and six base setting IDs remain. Mode 2 Snapshot/Apply
+contains seven triples with IDs 1–6 and **13 movement**: 0 Fig8 (default),
+1 Pendulum, 2 Wander. Mixer remains IDs 1–12; Orbits IDs 1–6. Maximum payload37
+and bounded buffers are unchanged. Movement validation is transactional and a
+mode-2 update cannot overwrite Mixer placements or another mode’s bank.
+
+Telemetry43 appends byte 12 movement to the prior 12-byte payload: total13 bytes.
+Byte 11 remains combined phase freeze. Resolved angles/distances remain observed
+worker positions. Internal mu_feedback bits 13–14 encode movement; bit 15 marks
+D-held diagnostic eligibility after 500 ms. Bit 11 remains Disorientation mapping,
+bit 12 freeze, bit 8 motion, bits 0–7 fader pickup. LED 1/2/3 selection notice takes
+priority for one second after movement changes; D diagnostics resume afterwards.
+D tap cycles on release and does not reset phase or write flash.
+
+Flash v4 retains magic/checksum format. Payload 52 bytes: prior v3 48-byte settings,
+uint16 movement, uint16 reserved (zero). Record 64 bytes. FNV-1a covers all 52 payload
+bytes. V1/v2/v3 records migrate without writing at boot, preserving previous
+banks/placements and initializing movement 0. Invalid/unknown/truncated records
+use defaults. Location, fade/lockout and power-loss limitations remain unchanged.
+Older firmware cannot read v4.
+
+JSON format is now version3. Disorientation requires IDs 1–6 and13; other modes
+retain six/twelve IDs. V1/v2 import remains supported; v2 Disorientation’s six
+IDs append Fig8 movement 0. V1 cannot describe Disorientation. Export always emits
+v3. Live 8mu choice is excluded from saved snapshots; explicit editor choice is
+saved/exported. Startup remains physical, normal boot remains Orbits.

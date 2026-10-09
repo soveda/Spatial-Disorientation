@@ -7,10 +7,7 @@ struct Fig8Point {uint32_t angle;int32_t distance;};
 // Gerono figure eight, translated in front of the listener: lateral=sin(p),
 // depth=sin(2p). At large excursion/depth its lobes also pass behind the head.
 // Run in the block worker at the staggered geometry cadence, never in the ISR.
-inline Fig8Point FigureEight(uint32_t phase,int32_t shape,int32_t excursion){
-    int32_t lateral=((Sin(phase)>>3)*excursion)>>12;
-    int32_t depth=((Sin(phase*2)>>3)*excursion)>>12;
-    depth=2048+((depth*(1024+((shape*5)>>2)))>>12);
+inline Fig8Point CartesianPosition(int32_t lateral,int32_t depth){
     uint32_t ax=lateral<0?-lateral:lateral,az=depth<0?-depth:depth;
     uint32_t major=ax>az?ax:az,minor=ax>az?az:ax;
     if(!major)return {0,0};
@@ -22,5 +19,11 @@ inline Fig8Point FigureEight(uint32_t phase,int32_t shape,int32_t excursion){
     if(lateral<0)angle=0u-angle;
     int32_t radius=(major*scale)>>12;
     return {angle,Clamp(((radius-1024)*4095)>>13,0,4095)};
+}
+inline Fig8Point FigureEight(uint32_t phase,int32_t shape,int32_t excursion){
+    int32_t lateral=((Sin(phase)>>3)*excursion)>>12;
+    int32_t depth=((Sin(phase*2)>>3)*excursion)>>12;
+    depth=2048+((depth*(1024+((shape*5)>>2)))>>12);
+    return CartesianPosition(lateral,depth);
 }
 }

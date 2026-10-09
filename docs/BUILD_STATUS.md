@@ -140,3 +140,19 @@ LED-band measurements or run duration were supplied; do not infer specific
 values from the confirmation or previous builds. Firmware remains unchanged.
 Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
 2026, MIT; existing platform/dependency attribution remains applicable.
+
+## Alpha14 movements build — 2026-10-10
+
+Build passes: flash image 90,496 bytes, main RAM 127,504 bytes, 2,048 bytes in each
+scratch bank. 192 MHz/1.15 V, 48 kHz, 32 taps, unmodified ComputerCard 0.4.0.
+Twelve address/undefined-sanitizer host suites and actual editor lifecycle tests
+pass. New/extended checks cover pendulum retracing/collapse, deterministic Wander
+continuity/reversal across phase wrap/reset/freeze, all-path audio bounds, exact
+block transport, D tap-on-release vs diagnostic hold, old-record migration and
+movement isolation, v1/v2 preset migration and v3 export/validation.
+
+UF2 headers, RP2040 family/address bounds, reserved saved-sector exclusion and
+all firmware checksums verified. Alpha14 hardware testing is pending; alpha13's
+user pass does not establish new-path sound or this build's timing. Original
+verification record: Adrian Vos (soveda), 2026, MIT; existing platform/dependency
+and measured-HRTF notices remain in ../THIRD_PARTY_NOTICES.md.

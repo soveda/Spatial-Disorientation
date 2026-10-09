@@ -1,9 +1,10 @@
 # Spatial Disorientation
 
-**0.1.0-alpha13**: Fig8 8mu fader/motion control, alongside Twin Orbits and Spatial Mixer, using the 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
+**0.1.0-alpha14**: Fig8, Pendulum and Wander in Disorientation, with editor and 8mu movement selection, using the 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs can orbit, trace crossing loops or stay at
 individual placements, mixed to binaural stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
-**192 MHz / 1.15 V**. Firmware builds and host checks pass; the user reports alpha13 Fig8 8mu tests pass (2026-10-09).
+**192 MHz / 1.15 V**. Firmware builds and host checks pass; alpha14 hardware validation is pending.
+The user reports alpha13 Fig8 8mu tests pass (2026-10-09).
 The user reports alpha12 Fig8 tests pass (2026-10-09). User hardware tests
 on **alpha1** pass for the main controls, left/right movement and editor/persistence;
 front/back cues were weak. Alpha1 stability is ongoing (20 minutes without issues
@@ -48,7 +49,7 @@ vendor notices/measurement terms with redistributed source or firmware packages.
 
 ## Try it
 
-First flash `uf2/Spatial_Disorientation_0.1.0-alpha13-fig8-8mu.uf2` using the usual
+First flash `uf2/Spatial_Disorientation_0.1.0-alpha14-movements.uf2` using the usual
 Workshop Computer BOOTSEL procedure. Start with a mono sound in Audio 1, both audio
 outputs connected to the left/right sides of a headphone monitoring path, Main and
 X at noon, Y down. Turn X right to start an orbit; turn left for reverse motion.
@@ -89,7 +90,7 @@ the framework's surrounding ISR work; measure the full ISR before release.
 
 ## Alpha12: first Disorientation Fig8 pass
 
-Flash **alpha13 and reload the editor**. Hold Down at startup, turn Main to its
+For the current firmware, flash **alpha14 and reload the editor**. Hold Down at startup, turn Main to its
 upper third (right-column LEDs), then release. Start with Audio 1 alone on
 headphones, Main around 3 o’clock, Y high and X just right of its centre deadband.
 Keep movement slow for the first listening test. See [the Fig8 test protocol](docs/TEST_PROTOCOL.md#alpha12-fig8-hardware-test).
@@ -196,6 +197,57 @@ MIT. Reuses this project's tested pickup/host integration adapted from Chris
 Johnson's WaveSeq/EightMU; rppicomidi and all renderer/platform credits remain
 in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
+## Alpha14: movement choices in Disorientation
+
+Startup still selects Disorientation with Down held and Main upper third. Its
+movement now selects **Fig8, Pendulum or Wander**. Fig8 remains the default and
+its geometry is unchanged. Choose Movement in the editor, Apply to audition,
+then Save to retain it. Export/import includes the choice.
+
+On 8mu, **tap D and release within 500 ms** to cycle Fig8 → Pendulum → Wander.
+The change happens on release, once per press. Holding D for at least 500 ms
+shows timing diagnostics; releasing a long hold does not change movement.
+8mu LEDs **1 / 2 / 3** briefly identify Fig8 / Pendulum / Wander for one second;
+this identification takes priority over other feedback, then normal LEDs/diagnostics
+resume. Live 8mu movement choices never write flash. Disconnect/new session
+restores the saved editor choice. A/B/C retain their alpha13 actions.
+
+| Movement | Main / motion takeover / CV1 | Y / fader 2 / CV2 |
+|---|---|---|
+| Fig8 | Front/back loop depth | Overall excursion |
+| Pendulum | Arc centre: minimum front, noon right, maximum nearly back | Swing width, up to ±90° |
+| Wander | Front/back reach of smooth random positions | Overall excursion |
+
+Pendulum swings along one arc at a fixed distance (25%); each complete cycle
+returns along the same arc. Y minimum stops at its selected centre, not necessarily
+front. Wander interpolates repeatable pseudo-random Cartesian nodes with softened
+starts/stops. Each phase cycle visits four transitions; further cycles choose new
+nodes. X reverses/retraces the path, rather than reseeding it. A/Pulse2 reset its
+sequence to a repeatable front-centre start for A; source B retains phase separation.
+Y minimum collapses Wander/Fig8 to the front crossing. Changing movement preserves
+phase and existing fader ownership; the renderer smooths its normal ear/distance
+controls, but different paths may move the perceived source when selected.
+
+**Controls retained:** X/fader1 speed and direction (centre stops); fader3 source
+phase separation; fader4 room; faders5/6 source trims; fader7 strength; fader8 tilt/
+gyro amount. B toggles motion takeover of Main, A resets/recentres, C or panel Down
+held freezes phase. Freeze still permits shape/CV changes. Pulse1 sets phase rate
+using the saved clock division. For Wander that division covers four transitions,
+not one random node. Free-running maximum remains 1.5 phase cycles/sec; start slowly.
+
+Movement is a new stable setting **ID 13**, values 0/1/2. SysEx and preset files
+are v3; reload the matching editor after flashing. Old v1/v2 presets still import;
+old Disorientation v2 presets select Fig8. Flash v4 migrates v1/v2/v3 records in
+RAM, retaining existing banks/placements and selecting Fig8. Only explicit Save
+writes v4. Export existing presets before saving if you may downgrade: older
+firmware cannot read v4. Panel shape, speed, excursion, phase, motion and 8mu
+runtime overrides remain excluded from saved settings.
+
+Original paths, D tap/hold selection and schema/integration/docs: Adrian Vos
+(soveda), 2026, MIT. No new external DSP or data. Existing ComputerCard, WaveSeq/
+EightMU/rppicomidi, block scheduling, Pico SDK/TinyUSB and Gardner/Martin KEMAR
+notices remain in THIRD_PARTY_NOTICES.md. Hardware test: [alpha14 protocol](docs/TEST_PROTOCOL.md#alpha14-movement-selection-hardware-test).
+
 ## Editor
 
 Open `web/index.html` in desktop Chrome/Edge. If local file MIDI access is blocked,
@@ -224,7 +276,7 @@ automatic loudness compensation. A corrupt or absent record restores defaults.
 Only explicit Save writes flash; the last 4 KB of the actual card capacity is
 reserved. Reflashing may replace or invalidate saved settings; Read afterwards.
 
-Alpha12 runs all three startup modes; Disorientation now traces a Fig8. Each has
+Alpha12 runs all three startup modes; Disorientation now offers Fig8, Pendulum and Wander. Each has
 separate saved editor settings; Mixer also saves its source placements. Elevation
 remains planned. Startup choice is never saved; normal boot is Twin Orbits.
 
@@ -615,6 +667,8 @@ clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/mo
 /tmp/spatial-modes-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/mixer_mu_controls_test.cpp -o /tmp/spatial-mixer-mu-test
 /tmp/spatial-mixer-mu-test
+clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/movements_test.cpp -o /tmp/spatial-movements-test
+/tmp/spatial-movements-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/fig8_mu_controls_test.cpp -o /tmp/spatial-fig8-mu-test
 /tmp/spatial-fig8-mu-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/fig8_test.cpp -o /tmp/spatial-fig8-test
