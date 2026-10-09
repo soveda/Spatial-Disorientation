@@ -112,3 +112,21 @@ preserves staged edits; explicit Read discards them. Apply must succeed before
 Save can persist imported values. Neither import nor export sends MIDI by itself.
 Name, physical controls, CV, phase, live 8mu overrides and motion calibration are
 not part of saved card configuration. Firmware and its UF2 remain alpha8.
+
+## Alpha9 mode telemetry and Mixer presets
+
+Original extension: Adrian Vos (soveda), 2026, MIT. Command 43 appends four bytes
+for an 11-byte payload: index 7 mode (0 Twin Orbits, 1 Spatial Mixer, 2 reserved
+Disorientation), indices 8/9 B distance low/high, index 10 Mixer state. State bit 0
+selects B (clear A); bits 1/2/3 indicate Main/X/Y pickup. Earlier seven-byte telemetry
+is accepted as Twin Orbits; the interim eight-byte mode form is also accepted.
+Separately read snapshot fields can differ by one control update. Mode is observation
+only: no MIDI command selects it. Down-at-startup selection is fixed until reset.
+
+Preset v1 now accepts `twin-orbits` or `spatial-mixer` function tags. All six fields
+retain their ranges; separation and clock division are unused in Mixer but retained.
+Import can stage the other mode; Apply is disabled until its startup mode matches.
+Reserved Disorientation presets are rejected, and export is disabled while that
+mode runs. Flash remains one shared six-field v1 record. Mode, source selection,
+panel position/distance/level and pickup are volatile, excluded from JSON/flash.
+This supersedes the alpha8-only format status above, not existing parameter IDs.

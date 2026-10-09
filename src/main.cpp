@@ -5,7 +5,7 @@
 #include "hardware/clocks.h"
 #include "hardware/vreg.h"
 #include "pico/multicore.h"
-#include "orbits.h"
+#include "modes.h"
 #include "block_audio.h"
 #include "usb_editor.h"
 #include "mu_host.h"
@@ -54,6 +54,8 @@ private:
         if (++scan_==48) {
             scan_=0;
             shared.Consume(config_);
+            boot_.Tick(SwitchVal()==Switch::Down,KnobVal(Knob::Main));
+            shared.mode=static_cast<uint32_t>(boot_.Selected());
             Switch raw=SwitchVal();
             if (raw!=candidate_) { candidate_=raw;stable_count_=0; }
             else if (stable_count_<5 && ++stable_count_==5) {
@@ -67,19 +69,22 @@ private:
             else if(mu_age_<150)++mu_age_;
             if(mu_age_==150)mu_input_.yaw=0; // No stale integrated motion during USB waits.
             effective_=config_;
-            reset=mu_controls_.Apply(mu_input_,main,x,y,effective_,reset)||reset;
+            bool orbits=boot_.Selected()==spatial::Mode::Orbits;
+            if(boot_.Ready())reset=mu_controls_.Apply(mu_input_,main,x,y,effective_,
+                orbits&&reset,orbits)||reset;
             shared.mu_feedback=mu_controls_.Picked()|(mu_controls_.Motion()?256:0);
-            orbits_.Controls(main,x,y,
-                Connected(Input::CV1)?CVIn1():0,Connected(Input::CV2)?CVIn2():0,linked_,effective_);
+            if(boot_.Ready())modes_.Controls(boot_.Selected(),main,x,y,
+                Connected(Input::CV1)?CVIn1():0,Connected(Input::CV2)?CVIn2():0,linked_,effective_,
+                selected_==Switch::Up?0:(selected_==Switch::Down?1:-1),mu_controls_.Motion());
             CVOut1(0);CVOut2(0);PulseOut1(false);PulseOut2(false);
         }
-        orbits_.Pulse(Connected(Input::Pulse1),PulseIn1RisingEdge(),
+        modes_.Pulse(Connected(Input::Pulse1),PulseIn1RisingEdge(),
             reset || (Connected(Input::Pulse2) && PulseIn2RisingEdge()));
-        spatial::Scene scene=orbits_.Advance();
+        spatial::Scene scene=boot_.Ready()?modes_.Advance():spatial::Scene{};
         auto output=blocks.Tick(Connected(Input::Audio1)?AudioIn1():0,
                                     Connected(Input::Audio2)?AudioIn2():0,scene,effective_);
         if (startup_<4800) ++startup_;
-        int32_t target=(!saving && startup_==4800)?1024:0;
+        int32_t target=(!saving && startup_==4800 && boot_.Ready() && boot_.Selected()!=spatial::Mode::Disorientation)?1024:0;
         fade_=spatial::Slew(fade_,target,128);
         AudioOut1(output.left*fade_>>10);AudioOut2(output.right*fade_>>10);
         if (saving && fade_==0) {
@@ -92,10 +97,15 @@ private:
             LedBrightness(2,(4095-b)/2);LedBrightness(3,(4095+b)/2);
             uint32_t block_fault=blocks.fault|blocks.worker_fault;
             overrun_=overrun_ || block_fault;
-            LedOn(4,linked_);LedOn(5,overrun_);
+            LedOn(4,boot_.Selected()==spatial::Mode::Mixer?modes_.SelectedSource()==0:linked_);LedOn(5,overrun_);
+            if(boot_.Selected()==spatial::Mode::Mixer&&boot_.Ready()&&modes_.Pickup()!=7){
+                if((led_tick_++/250)&1){int first=modes_.SelectedSource()*2;LedOff(first);LedOff(first+1);}
+            }else led_tick_=0;
+            if(!boot_.Ready()||boot_.Selected()==spatial::Mode::Disorientation)for(int i=0;i<6;++i)LedOn(i,(boot_.LedMask()>>i)&1);
             shared.angle_a=scene.angle[0]>>20;shared.angle_b=scene.angle[1]>>20;
-            shared.distance=scene.distance;
-            shared.flags=(linked_?1:0)|(orbits_.ClockLocked()?2:0)|(overrun_?4:0)|(saving?8:0)
+            shared.distance=scene.distance;shared.distance_b=scene.distance_b<0?scene.distance:scene.distance_b;
+            shared.mixer_state=modes_.SelectedSource()|(modes_.Pickup()<<1);
+            shared.flags=(linked_?1:0)|(modes_.ClockLocked()?2:0)|(overrun_?4:0)|(saving?8:0)
                 |((block_fault&2)?16:0)|((block_fault&1)?32:0)|(callback_slow_?64:0);
         }
         // This measures callback duration, not the framework's surrounding ISR.
@@ -108,8 +118,9 @@ private:
     spatial::Config config_,effective_;
     spatial::MuInput mu_input_;
     spatial::MuControls mu_controls_;
-    spatial::Orbits orbits_;
-    uint32_t startup_=0;
+    spatial::Modes modes_;
+    spatial::StartupMode boot_;
+    uint32_t startup_=0,led_tick_=0;
     int32_t fade_=0;
     unsigned scan_=0,stable_count_=0,silent_=0,mu_age_=0;
     Switch candidate_=Switch::Middle,selected_=Switch::Middle;

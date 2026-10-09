@@ -384,3 +384,47 @@ connect, explicit Apply/Save and Read discard plus prior lifecycle/init behaviou
 A real browser check confirms offline export and file-chooser import, correct
 labels/values, disabled Apply/Save without a card, and the preset controls' layout.
 Hardware persistence for this editor pass remains to be verified by the user.
+
+## Alpha9: startup selector and Spatial Mixer
+
+Original protocol: Adrian Vos (soveda), 2026, MIT. Based on the user's requested
+controls; implementation/source attribution in ../THIRD_PARTY_NOTICES.md.
+Alpha8 and preset tests are reported passed by the user. Do not inherit that result
+for alpha9: reflash `Spatial_Disorientation_0.1.0-alpha9-mixer.uf2` and run:
+
+1. Boot without Down with Main at each extreme: Twin Orbits every time. Check
+   previous knob/CV/clock/reset behavior and editor preset Apply/Save separately.
+2. Hold Down through reset. Sweep Main slowly: lower third all off, middle three
+   left LEDs, upper three right LEDs. No sound during selection. Check boundaries
+   for chatter. Release in each region; moving Main afterwards must not change mode.
+   Repeat on power-up. Main at noon selects Mixer; normal boot must never restore it.
+3. Confirm reserved Disorientation: right LEDs remain on, audio stays silent, editor
+   says reserved/silent and disables Apply/Save/init/export. Reset normally to recover.
+4. Select Mixer, release to middle. Different continuous sounds in A and B. Up selects
+   A. Main moves only A; X changes only A distance; Y can silence only A. Editor trim
+   zero must also silence the corresponding source after the short DSP tail drains.
+5. Press Down and release: B selected and retained. Neither source should jump merely
+   on selection. Move Main to the back/minimum, X to minimum and Y to maximum to
+   pick up B's initial values. Its middle LED pair stops blinking after all three
+   pickups. Set B somewhere distinct; return Up to A and pick up A's stored values.
+   Test crossing a stored value quickly as well as approaching slowly. Bottom left
+   on means A, off means B. The other source must retain position/distance/level.
+6. CV1 moves both positions and CV2 both distances. Remove CV: restore individual
+   placements. Test extreme and rapidly changing CV without warnings. Clock/reset
+   pulse inputs must not move either source in Mixer. CV/pulse outputs remain zero/low.
+7. Editor reports Mixer, selected source, pending Main/X/Y pickup and both distances.
+   Room/strength and A/B trims act normally; separation and clock division are unused.
+   Import/export Mixer settings offline; importing Twin Orbits while Mixer runs
+   disables Apply until reset into Twin Orbits. Read discards staged edits. Save /
+   power-cycle retains the six shared editor settings, not mode or panel placements.
+8. Test 8mu separately after USB role reset. Motion off first: faders 1/2 control
+   selected distance/level after pickup. Change source and verify mixer pickup.
+   Faders 4–7 keep shared room/trims/strength; fader 3 is unused. B enables motion
+   for selected position; A recenters; panel Down selects B; C must not jump distance.
+   D shows timing diagnostics. Disconnect returns controls as documented.
+9. Run both working modes with two dense audio inputs, extreme CV, rapid source and
+   knob changes, editor traffic and (separately) 8mu motion for at least 15 minutes.
+   Record peak callback and 64-frame block times and any latched warning. Targets:
+   callback <18 us, block <1200 us, no queue misses. Actual block deadline 1333.3 us.
+   Recheck headphone placement with screen hidden. Build success is not a timing
+   or listening pass; report results for each mode and USB role.

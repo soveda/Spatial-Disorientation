@@ -1,8 +1,8 @@
-# Spatial Disorientation — Twin Orbits
+# Spatial Disorientation
 
-**0.1.0-alpha8**: 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
-Computer. Two independent mono inputs orbit around the listener and mix to binaural
-stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
+**0.1.0-alpha9**: startup mode selection and an initial Spatial Mixer, using the 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
+Computer. Two independent mono inputs can orbit around the listener or stay at
+individual placements, mixed to binaural stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
 **192 MHz / 1.15 V**. Firmware builds and host checks pass. User hardware tests
 on **alpha1** pass for the main controls, left/right movement and editor/persistence;
 front/back cues were weak. Alpha1 stability is ongoing (20 minutes without issues
@@ -18,7 +18,9 @@ returns to 32 taps and changes the room cues. The user reports 5 µs callback /
 (maximum 1.5 turns/sec); clock-driven rates and the alpha6 DSP remain unchanged.
 The user reports alpha7 and alpha8 8mu tests pass. Alpha8 adds direct 8mu
 control. The editor now supports preset import/export (2026-10-09); this update
-uses the tested alpha8 firmware without a reflash.
+uses the tested alpha8 firmware without a reflash. The user reports preset tests pass.
+Alpha9 adds the boot selector and Spatial Mixer; Disorientation is reserved by
+user request. Alpha9 hardware tests are pending.
 
 Original code and documentation © 2026 Adrian Vos (soveda), MIT. Hardware/library
 patterns: Chris Johnson and the Workshop Computer contributors. Musical inspiration:
@@ -31,11 +33,13 @@ retain their own attribution terms; original project code remains MIT.
 
 ## Try it
 
-First flash `uf2/Spatial_Disorientation_Twin_Orbits_0.1.0-alpha8-8mu.uf2` using the usual
+First flash `uf2/Spatial_Disorientation_0.1.0-alpha9-mixer.uf2` using the usual
 Workshop Computer BOOTSEL procedure. Start with a mono sound in Audio 1, both audio
 outputs connected to the left/right sides of a headphone monitoring path, Main and
 X at noon, Y down. Turn X right to start an orbit; turn left for reverse motion.
 Patch a different sound into Audio 2 to hear the second source.
+
+### Twin Orbits (normal boot)
 
 | Control | Behaviour |
 |---|---|
@@ -96,8 +100,61 @@ automatic loudness compensation. A corrupt or absent record restores defaults.
 Only explicit Save writes flash; the last 4 KB of the actual card capacity is
 reserved. Reflashing may replace or invalidate saved settings; Read afterwards.
 
-Only **Twin Orbits** runs in this prototype. Elevation, preset files, Spatial Mixer,
-Disorientation and startup function selection remain future work.
+Twin Orbits and Spatial Mixer run in alpha9. Disorientation is a reserved startup
+slot, with silent output and steady right-column LEDs. Elevation remains planned.
+The six saved editor settings are shared between modes for now; startup choice
+and mixer panel positions/distances/levels are not saved or exported.
+
+## Alpha9 startup and Spatial Mixer
+
+Hold the switch **Down while resetting/powering up**, then keep it held while
+turning Main. Its lower third selects **Twin Orbits** (all LEDs off), middle third
+**Spatial Mixer** (all three left LEDs), upper third **Disorientation** (all three
+right LEDs). Release to confirm. Audio is muted during selection. Small hysteresis
+prevents flickering at the boundaries. Boot without Down always selects Twin
+Orbits, irrespective of Main or saved settings. Selection is fixed until reset.
+Disorientation is reserved for later: confirming it leaves audio muted and the
+right LEDs lit; reset to choose a working function. USB role selection is separate.
+
+In **Spatial Mixer**, the sources stay where you put them:
+
+| Control | Behaviour |
+|---|---|
+| Switch Up | Select source A |
+| Switch Down, then release to middle | Select source B; middle retains the last selection |
+| Main | Selected source position; noon front, minimum/maximum back |
+| X | Selected source distance, near to far |
+| Y | Selected source level, silence to full panel level |
+| CV 1 / CV 2 | Modulate both stored positions / distances; the same nominal scale as Twin Orbits |
+| Pulse inputs | Unused; no clock movement or phase reset |
+| Audio inputs / outputs | Same two sources and binaural stereo mix as Twin Orbits |
+
+The initially selected source takes the current knobs. The unedited source starts
+near, at full panel level, with A front or B back. Up selects A on entry; releasing
+the startup gesture to middle starts with A. Each source retains its three values
+until reset. After switching sources, move each knob to or through that source's
+stored value to pick it up; tolerance is about 1.6% of travel. The selected top
+(A) or middle (B) LED pair blinks until all three controls are picked up, then shows
+position steadily. Bottom left is on for editing A and off for B. Bottom right
+retains the timing warning. CV modulation never overwrites stored panel values.
+
+Editor A/B levels act as trims multiplied by the individual Y levels. Room and
+spatial strength remain shared. Separation and clock division are unused and
+disabled in the Mixer editor, but retained for Twin Orbits. Reset to init resets
+editor settings, not stored panel placements. Mixer presets contain the same six
+editor settings, not the panel placements; per-mode storage is a later pass.
+
+8mu fader 1 takes over **X/distance**, fader 2 **Y/selected source level**, and
+motion takes over **Main/selected source position**. Mixer pickup also applies to
+the effective fader controls after a source change. Fader 3 is unused in Mixer;
+faders 4–7 retain room, A/B trims and strength. A recenters motion; B toggles it;
+C has no Mixer function; D timing diagnostics are unchanged. Panel Down selects
+B rather than recentering. For reliable selection/pickup testing, start with
+motion disabled. Live mixer controls are not saved by the editor or 8mu.
+
+Original selector/mixer code and guide: Adrian Vos (soveda), 2026, MIT. Source
+selection/pickup patterns were reviewed in Chris Johnson's WaveSeq; renderer,
+ComputerCard and measured HRTF attribution remain in THIRD_PARTY_NOTICES.md.
 
 ## What it sounds like
 
@@ -135,14 +192,18 @@ CV, orbit phase, 8mu fader overrides, motion depth/on-off state and calibration 
 live controls and are not captured. To use a preset with 8mu, first Apply/Save in
 editor mode, then connect the 8mu and reset. Faders still require pickup.
 
-Preset format v1 uses stable parameter IDs, a Twin Orbits function tag and the
+Preset format v1 uses stable parameter IDs, a Twin Orbits or Spatial Mixer function tag and the
 firmware's exact ranges; unsupported/invalid files leave all editor/card settings
-unchanged. Files over 16 KB are rejected. See [docs/PROTOCOL.md](docs/PROTOCOL.md)
+unchanged. A preset for the other working mode can be staged offline, but Apply
+is disabled until that mode is selected at startup. Disorientation presets are
+unsupported until its effect is implemented. Files over 16 KB are rejected. See [docs/PROTOCOL.md](docs/PROTOCOL.md)
 for the format. Original preset code/documentation: Adrian Vos (soveda), 2026, MIT;
 Workshop Computer editor conventions and sources: THIRD_PARTY_NOTICES.md. No new
 third-party libraries or DSP/data are introduced.
 
-## Alpha8: direct 8mu control
+## Direct 8mu control — Twin Orbits mapping
+
+For Mixer mapping differences, see the alpha9 section above.
 
 Use a USB-C data cable between the 8mu and Workshop Computer. Connect it before
 reset/power-up. On Rev 1.1 hardware the USB power role selects host mode for the
@@ -363,6 +424,10 @@ clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/ro
 /tmp/spatial-room-test
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/mu_controls_test.cpp -o /tmp/spatial-mu-controls-test
 /tmp/spatial-mu-controls-test
+clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/startup_mode_test.cpp -o /tmp/spatial-startup-test
+/tmp/spatial-startup-test
+clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/modes_test.cpp -o /tmp/spatial-modes-test
+/tmp/spatial-modes-test
 node tests/editor_test.cjs
 clang++ -std=c++17 -O2 -Wall -Wextra -fsanitize=undefined,address -Isrc tests/block_audio_test.cpp -o /tmp/spatial-block-test
 /tmp/spatial-block-test

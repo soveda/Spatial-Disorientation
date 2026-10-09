@@ -1,10 +1,11 @@
 # Spatial Disorientation implementation plan
 
-Updated 2026-10-08. Original plan © 2026 Adrian Vos (soveda), MIT.
+Updated 2026-10-09. Original plan © 2026 Adrian Vos (soveda), MIT.
 User requirements and hardware reports are the basis for this plan. Platform/API
 sources and musical inspiration are credited in ../THIRD_PARTY_NOTICES.md.
-The stages below record the original plan and subsequent checkpoints. Alpha6 is
-the current room experiment; other functions and 8mu remain planned.
+The stages below record the original plan and subsequent checkpoints. Alpha9 is
+the current selector/Mixer pass; historical checkpoints follow. Disorientation is
+reserved at the user’s request.
 
 ## 1. Finish the Twin Orbits listening/timing pass
 
@@ -141,3 +142,20 @@ MIDI regressions pass; verify Apply/Save/power-cycle on the user's card. Multi-p
 libraries, live 8mu snapshots and other function settings remain outside this pass.
 Next planned feature: define/implement Spatial Mixer and then function selection.
 Original checkpoint note: Adrian Vos (soveda), 2026, MIT.
+
+## Alpha9 current checkpoint (2026-10-09)
+
+User reports preset import/export tests pass. Implemented startup selector and
+Spatial Mixer per the user's chosen switch A/B layout. The user asks to reserve
+Disorientation, so no motion-path effect is included. Default boot is always Twin
+Orbits; no saved startup default. Reserved selection is silent with right LEDs.
+Host sanitizer tests and firmware build pass; hardware tests are pending.
+
+Next: validate boot gesture, source retention/pickup, independent distance/level,
+8mu interaction and worst-load timing/stability. Then extend mode-specific saved
+configuration and panel-placement preset support, with v1 migration, if requested.
+Design Disorientation before implementing its reserved slot. Elevation and listener
+calibration remain separate possible DSP work. Keep the tested alpha8 UF2 available.
+This checkpoint supersedes older planned selector/default behavior above.
+Original checkpoint: Adrian Vos (soveda), 2026, MIT; source credits in
+../THIRD_PARTY_NOTICES.md.

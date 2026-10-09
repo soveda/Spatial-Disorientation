@@ -33,6 +33,7 @@ int main(){
     for(int i=0;i<5;++i)assert(r.cfg.value[i]==expected[i]);
     assert(r.cfg.value[5]==4); // Clock divider stays in the saved configuration.
     r.in.buttons=4;r.Tick();assert(r.x==2048);
+    r.x=500;r.y=1200;r.cfg=r.base;r.mu.Apply(r.in,r.main,r.x,r.y,r.cfg,false,false);assert(r.x!=2048); // Mixer C never changes distance.
     r.in.buttons=0;r.Tick();assert(r.x!=2048); // C is held, not a toggle.
     // Main is replaced by motion, not added to a knob that keeps changing.
     r.in.buttons=2;r.Tick(1800);assert(r.mu.Motion()&&r.main==1800);

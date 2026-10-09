@@ -19,6 +19,8 @@ struct Stereo { int32_t left = 0, right = 0; };
 struct Scene {
     uint32_t angle[2] = {0, 0x80000000u}; // 0 front; quarter turn right.
     int32_t distance = 0;
+    int32_t level_a = 4096, level_b = 4096; // Panel gain; unity for Twin Orbits.
+    int32_t distance_b = -1; // Negative shares A distance; otherwise independent B.
 };
 class Delay {
 public:
@@ -120,8 +122,8 @@ public:
     void SetScene(const Scene& scene,const Config& config) { scene_=scene;config_=config; }
     Stereo Process(int32_t a,int32_t b) {
         // Stagger the two geometry calculations to spread work within each DSP block.
-        if ((count_&31)==0) source_[0].Geometry(scene_.angle[0],scene_.distance,config_.value[2],config_.value[4],config_.value[1]);
-        if ((count_&31)==16) source_[1].Geometry(scene_.angle[1],scene_.distance,config_.value[3],config_.value[4],config_.value[1]);
+        if ((count_&31)==0) source_[0].Geometry(scene_.angle[0],scene_.distance,(config_.value[2]*scene_.level_a)>>12,config_.value[4],config_.value[1]);
+        if ((count_&31)==16) source_[1].Geometry(scene_.angle[1],scene_.distance_b<0?scene_.distance:scene_.distance_b,(config_.value[3]*scene_.level_b)>>12,config_.value[4],config_.value[1]);
         ++count_;
         Stereo x=source_[0].Process(a),y=source_[1].Process(b);
         return {Clamp(((x.left+y.left)*3)>>2,-2048,2047),Clamp(((x.right+y.right)*3)>>2,-2048,2047)};

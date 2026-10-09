@@ -11,7 +11,7 @@ struct MuInput {
 // Core 0 only, at 1 kHz. USB never writes DSP/knob state directly.
 class MuControls {
 public:
-    bool Apply(const MuInput& in,int32_t& main,int32_t& x,int32_t& y,Config& cfg,bool panelReset=false){
+    bool Apply(const MuInput& in,int32_t& main,int32_t& x,int32_t& y,Config& cfg,bool panelReset=false,bool orbitStop=true){
         if(!in.connected){
             picked_=0;connected_=false;motion_=false;previous_buttons_=0;
             return false;
@@ -40,7 +40,7 @@ public:
         }
         x=target[0];y=target[1];
         for(int i=0;i<5;++i)cfg.value[i]=static_cast<uint16_t>(target[i+2]);
-        if(in.buttons&4)x=2048; // Hold C to stop the orbit; release resumes it.
+        if(orbitStop&&(in.buttons&4))x=2048; // Hold C to stop the orbit; release resumes it.
         if(motion_){
             // Yaw is a rotation RATE, not heading. Integrate at 1 kHz, bounded
             // to about half a turn/sec at full scale. Deadband rejects drift.

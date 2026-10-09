@@ -13,7 +13,8 @@ int main(){
         random=random*1664525u+1013904223u;
         int a=static_cast<int>(random&4095)-2048,b=static_cast<int>((random>>12)&4095)-2048;
         scene.angle[0]+=1234567;scene.angle[1]-=1234567;
-        scene.distance=(i/500)*123;
+        scene.distance=(i/500)*123;scene.distance_b=4095-scene.distance;
+        scene.level_a=(i*17)&4095;scene.level_b=(i*31)&4095;
         if(i==3000)cfg.value[0]=1024;
         reference.SetScene(scene,cfg);expected[i]=reference.Process(a,b);
         auto got=transport.Tick(a,b,scene,cfg);

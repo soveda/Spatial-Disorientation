@@ -13,7 +13,7 @@ struct Shared {
     alignas(4) volatile uint32_t save = 0;
     volatile uint32_t angle_a=0,angle_b=2048,distance=0,flags=0;
     volatile uint32_t callback_peak_us=0,block_peak_us=0;
-    volatile uint32_t usb_ready=0;
+    volatile uint32_t usb_ready=0,mode=0,distance_b=0,mixer_state=0;
     // A second SPSC mailbox carries one coherent 8mu control snapshot. Core 1
     // skips publication while full; core 0 never waits for USB or a writer.
     MuInput mu_queued;

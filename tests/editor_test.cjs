@@ -57,7 +57,7 @@ const ctx=vm.createContext({document,navigator:{requestMIDIAccess:async()=>midi}
  const stableFields=fields.map(f=>Number(f.value)),stableName=get('preset-name').value;
  const invalid=[
   '{',JSON.stringify(null),JSON.stringify({...custom,version:2}),
-  JSON.stringify({...custom,function:'spatial-mixer'}),JSON.stringify({...custom,name:'bad\nname'}),
+  JSON.stringify({...custom,function:'unknown-mode'}),JSON.stringify({...custom,function:'disorientation'}),JSON.stringify({...custom,name:'bad\nname'}),
   JSON.stringify({...custom,parameters:{...custom.parameters,'7':10}}),
   JSON.stringify({...custom,parameters:{...custom.parameters,'2':4096}}),
   JSON.stringify({...custom,parameters:{...custom.parameters,'6':3}}),
@@ -77,6 +77,15 @@ const ctx=vm.createContext({document,navigator:{requestMIDIAccess:async()=>midi}
  await load(JSON.stringify(initialPreset));await get('read').onclick();assert.deepEqual(fields.map(f=>Number(f.value)),saved);assert(!get('save').disabled);
  assert.throws(()=>vm.runInContext('decode([1,0,0,1,0,0,3,0,0,4,0,0,5,0,0,6,4,0])',ctx));
  assert.throws(()=>vm.runInContext('encode([4096,0,0,0,0,4])',ctx));
+ input.onmidimessage({data:[240,125,83,68,1,67,0,0,0,0,16,0,0,0,1,247]});
+ assert(get('mode-title').textContent.includes('Spatial Mixer'));assert(fields[5].disabled);
+ await get('export').onclick();assert.equal(JSON.parse(await downloads.at(-1).blob.text()).function,'spatial-mixer');
+ await load(JSON.stringify(initialPreset));assert(get('apply').disabled);const mismatchCount=sent.length;await get('apply').onclick();assert.equal(sent.length,mismatchCount);
+ await get('read').onclick();assert(!get('apply').disabled);
+ input.onmidimessage({data:[240,125,83,68,1,67,0,0,0,0,16,0,0,0,1,100,10,15,247]});
+ assert(get('live').textContent.includes('Editing B'));assert(get('live').textContent.includes('controls ready'));assert(fields[0].disabled);
+ input.onmidimessage({data:[240,125,83,68,1,67,0,0,0,0,16,0,0,0,2,0,0,0,247]});
+ assert(get('live').textContent.includes('Reserved / silent'));for(const id of ['apply','save','init','export'])assert(get(id).disabled);
  for(const msg of sent)assert(msg.slice(1,-1).every(b=>b>=0&&b<=127));
- console.log('PASS: editor lifecycle, factory reset, offline preset roundtrip, validation/atomic rejection, staged reconnect, explicit Apply/Save and Read discard');
+ console.log('PASS: editor lifecycle, factory reset, offline preset roundtrip, validation/atomic rejection, staged reconnect, explicit Apply/Save Read discard, mode telemetry, mixer preset guards and reserved-mode controls');
 })().catch(e=>{console.error(e);process.exitCode=1;});

@@ -139,3 +139,13 @@ Adrian Vos (soveda), 2026, MIT. Workshop Computer Read/Apply/Save conventions an
 Chris Johnson's WaveSeq file import/export UI were reviewed as examples; no new
 third-party library or preset data was copied. Existing transport and HRTF source
 credits above remain unchanged. Firmware remains the tested alpha8 build.
+
+## Alpha9 startup selector and Spatial Mixer
+
+Original mode selector, per-source controls, level/distance integration, telemetry,
+editor mode guards, tests and documentation: Adrian Vos (soveda), 2026, MIT.
+Chris Johnson's WaveSeq switch-bank soft-takeover pattern was reviewed; the local
+near/crossing pickup implementation extends this project's existing 8mu controls.
+No new external code or measurements are introduced. Existing ComputerCard 0.4.0,
+EightMU/rppicomidi and Gardner/Martin MIT KEMAR notices remain applicable. The
+Disorientation selector position is intentionally reserved, not implemented DSP.

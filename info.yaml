@@ -1,10 +1,10 @@
 draft: true
 Name: "Spatial Disorientation"
 short-description: "Two-source binaural spatializer inspired by Neuzeit Instruments Quasar"
-summary: "Twin Orbits 32-tap KEMAR HRTF and externalization experiment with directional early reflections: two independent sources with linked/opposing binaural orbits, clock/reset, distance, 1.5 turns/sec manual maximum, direct 8mu motion/fader control and USB editor in separate startup roles. 8mu user tests pass; editor supports preset import/export."
+summary: "Twin Orbits and initial Spatial Mixer with 32-tap KEMAR HRTF/room rendering, Down-at-boot mode selection, independent mixer position/distance/level with pickup, 8mu live control and editor preset files. Disorientation selector slot reserved and silent. Alpha9 hardware validation pending."
 Language: "C++ (Pico SDK)"
 Creator: soveda
-Version: "0.1.0-alpha8"
+Version: "0.1.0-alpha9"
 Status: WIP
 License: MIT
 date-created: 2026-10-07

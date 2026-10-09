@@ -7,12 +7,12 @@ Original editor; WebMIDI transport inspired by Chris Johnson's ComputerCard web_
 :root{color-scheme:dark;font:16px system-ui;background:#10171e;color:#e9eef3}body{max-width:880px;margin:40px auto;padding:0 20px}h1{font-size:2rem;margin-bottom:6px}p{line-height:1.5;color:#bfcbd7}section{background:#19242e;border:1px solid #354552;border-radius:14px;padding:24px;margin:20px 0}button,select{font:inherit;color:inherit;background:#293c4b;border:1px solid #526979;border-radius:6px;padding:10px;margin:4px}button:enabled{cursor:pointer}button:disabled{opacity:.4}label{display:grid;grid-template-columns:190px 1fr 70px;gap:12px;align-items:center;margin:22px 0}input{width:100%;accent-color:#69dacc}output{text-align:right}svg{display:block;width:280px;max-width:100%;margin:auto}#status{min-height:48px;color:#8ee6d5}small{color:#bfcbd7}a{color:#8ee6d5}@media(max-width:600px){label{grid-template-columns:1fr 65px}label input{grid-column:1/3;grid-row:2}}
 input[type="text"]{box-sizing:border-box;font:inherit;color:inherit;background:#293c4b;border:1px solid #526979;border-radius:6px;padding:10px}
 </style>
-<h1>Spatial Disorientation</h1><p>Twin Orbits · 0.1.0-alpha8 · preset files v1 · 32-tap HRTF + room cues · two sources moving around your head</p>
+<h1>Spatial Disorientation</h1><p>Twin Orbits · 0.1.0-alpha9 · startup selector + Spatial Mixer · preset files v1 · 32-tap HRTF + room cues · two sources moving around your head</p>
 <section><strong>Connect your Workshop Computer</strong><p>Use a USB-C data cable. Close Serial Monitor/other apps. Use Chrome or Edge on desktop with MIDI and SysEx permission; iOS is unsupported. Select “Spatial Disorientation” for both MIDI ports below.</p>
 <button id="access">Enable MIDI</button><select id="inputs" aria-label="MIDI input"></select><select id="outputs" aria-label="MIDI output"></select><button id="connect" disabled>Connect &amp; read</button><button id="disconnect" disabled>Disconnect</button><p id="status" role="status" aria-live="polite">Connect the card, then enable MIDI.</p></section>
-<section><svg viewBox="0 0 280 280" role="img" aria-label="Live source positions; front is up"><circle cx="140" cy="140" r="100" fill="none" stroke="#526979"/><ellipse cx="140" cy="140" rx="27" ry="34" fill="#354552"/><path d="M134 107 L140 97 L146 107" fill="none" stroke="#bfcbd7"/><text x="140" y="20" text-anchor="middle" fill="#bfcbd7">FRONT</text><circle id="a" cx="140" cy="40" r="11" fill="#69dacc"/><circle id="b" cx="140" cy="240" r="11" fill="#ffc777"/></svg><p id="timing">Timing measurements appear after connection.</p><p id="live">A: turquoise · B: amber. Headphones recommended.</p><p>Main: position · X: speed/direction (centre stops; free-running max 1.5 turns/s) · Y: distance<br>Switch up: linked · middle: opposing · down: reset phase</p></section>
-<section><strong>Twin Orbits settings</strong><p>Apply changes the running sound. Save to card stores the applied settings and briefly fades the audio out. Reset to init applies factory editor settings; use Save to card to retain them after reset. Physical knobs remain independent performance controls.</p>
-<label>Source separation<input data-id="1" type="range" min="0" max="4095" value="2048"><output></output></label>
+<section><svg viewBox="0 0 280 280" role="img" aria-label="Live source positions; front is up"><circle cx="140" cy="140" r="100" fill="none" stroke="#526979"/><ellipse cx="140" cy="140" rx="27" ry="34" fill="#354552"/><path d="M134 107 L140 97 L146 107" fill="none" stroke="#bfcbd7"/><text x="140" y="20" text-anchor="middle" fill="#bfcbd7">FRONT</text><circle id="a" cx="140" cy="40" r="11" fill="#69dacc"/><circle id="b" cx="140" cy="240" r="11" fill="#ffc777"/></svg><p id="timing">Timing measurements appear after connection.</p><p id="live">A: turquoise · B: amber. Headphones recommended.</p><p id="controls">Main: position · X: speed/direction (centre stops; free-running max 1.5 turns/s) · Y: distance<br>Switch up: linked · middle: opposing · down: reset phase</p></section>
+<section><strong id="mode-title">Twin Orbits settings</strong><p>Apply changes the running sound. Save to card stores the applied settings and briefly fades the audio out. Reset to init applies factory editor settings; use Save to card to retain them after reset. Physical knobs remain independent performance controls.</p>
+<label><span id="separation-label">Source separation</span><input data-id="1" type="range" min="0" max="4095" value="2048"><output></output></label>
 <p><small>Room reflections: zero gives the dry HRTF. Try 30–50% for outside-head listening; Y increases the reflected/direct balance. Front/back placement remains listener-dependent.</small></p>
 <label>Room reflections<input data-id="2" type="range" min="0" max="4095" value="1200"><output></output></label>
 <label>Source A level<input data-id="3" type="range" min="0" max="4095" value="2048"><output></output></label>
@@ -23,17 +23,19 @@ input[type="text"]{box-sizing:border-box;font:inherit;color:inherit;background:#
 <label>Preset name<input id="preset-name" type="text" maxlength="80" value="Twin Orbits"></label>
 <button id="export">Export preset</button><button id="import">Import preset</button><input id="preset-file" type="file" accept=".json,application/json" hidden>
 <p><small>Export downloads the settings currently shown here. Import loads settings into the editor only; Apply auditions them, then Save to card makes them persistent. Files work offline. Presets contain these six settings, not knob/CV positions, live 8mu controls or motion calibration.</small></p>
-<p><small>For direct 8mu use, connect it to the card and reset; the editor is used separately. 8mu fader changes are live only and are not saved. Only Twin Orbits is implemented in this prototype. Elevation and the other startup functions are planned. Horizontal ear filters derive from Bill Gardner and Keith Martin’s MIT KEMAR measurements (MIT Media Laboratory, 1994), with separate timing and room cues. This is a short-filter approximation, not personalized HRTF rendering.</small></p></section>
+<p><small>For direct 8mu use, connect it to the card and reset; the editor is used separately. 8mu fader changes are live only and are not saved. Hold Down during startup and choose with Main: lower third Twin Orbits (no LEDs), middle Spatial Mixer (left LEDs), upper Disorientation (right LEDs, reserved and silent). Release to confirm; normal boot always chooses Twin Orbits. Elevation remains planned. Horizontal ear filters derive from Bill Gardner and Keith Martin’s MIT KEMAR measurements (MIT Media Laboratory, 1994), with separate timing and room cues. This is a short-filter approximation, not personalized HRTF rendering.</small></p></section>
 <p>Code and documentation © 2026 Adrian Vos (soveda), MIT. Built with Chris Johnson’s <a href="https://github.com/TomWhitwell/Workshop_Computer/tree/main/Demonstrations%2BHelloWorlds/PicoSDK/ComputerCard">ComputerCard</a> 0.4.0 for Music Thing Modular Workshop Computer. Musical inspiration: <a href="https://www.neuzeit-instruments.com/Quasar">Neuzeit Instruments Quasar</a>. Independent implementation. HRTF data: <a href="https://sound.media.mit.edu/resources/KEMAR.html">Bill Gardner and Keith Martin, MIT Media Laboratory, 1994</a>; data retains its attribution terms.</p>
 <script>
 'use strict';
 const $=id=>document.getElementById(id), fields=[...document.querySelectorAll('[data-id]')];
-let midi=null,input=null,output=null,sequence=0,connected=false,busy=false,dirty=false;
+let midi=null,input=null,output=null,sequence=0,connected=false,busy=false,dirty=false,mode=0,editorMode=0;
+const FUNCTIONS=['twin-orbits','spatial-mixer','disorientation'],MODE_NAMES=['Twin Orbits','Spatial Mixer','Disorientation'];
+function modeLabels(){$('mode-title').textContent=MODE_NAMES[editorMode]+' settings';$('separation-label').textContent=editorMode===1?'Unused in Spatial Mixer':'Source separation';$('controls').textContent=['Main: position · X: speed/direction · Y: distance · switch: linked/opposing/reset','Switch Up: A · Down then release: B · Main: position · X: distance · Y: level · CV1/CV2: both positions/distances','Disorientation is reserved for a later pass. Audio is muted; reset to choose a working mode.'][mode];buttons();}
 // Keep in sync with Config defaults in src/config.h (covered by editor tests).
 const INIT=Object.freeze([2048,1200,2048,2048,4095,4]);
 const pending=new Map();
 function status(text){$('status').textContent=text;}
-function buttons(){for(const id of ['init','read','apply','save'])$(id).disabled=!connected||busy||(id==='save'&&dirty);for(const id of ['import','export','preset-name'])$(id).disabled=busy;for(const f of fields)f.disabled=busy;$('disconnect').disabled=!input&&!output;$('connect').disabled=!midi||busy||connected;}
+function buttons(){for(const id of ['init','read','apply','save'])$(id).disabled=!connected||busy||(id==='save'&&dirty)||((id==='apply'||id==='init'||id==='save')&&(editorMode!==mode||mode===2));for(const id of ['import','export','preset-name'])$(id).disabled=busy||(id==='export'&&editorMode===2);for(const f of fields)f.disabled=busy||(editorMode===2||(editorMode===1&&['1','6'].includes(f.dataset.id)));$('disconnect').disabled=!input&&!output;$('connect').disabled=!midi||busy||connected;}
 function labels(){for(const f of fields){const o=f.parentElement.querySelector('output');if(o)o.textContent=f.dataset.id==='1'?Math.round(Number(f.value)*360/4096)+'°':Math.round(Number(f.value)*100/4095)+'%';}}
 function validate(values){if(values.length!==6||values.some((v,i)=>!Number.isInteger(v)||(i<5?(v<0||v>4095):![1,2,4,8,16].includes(v))))throw Error('Invalid settings');return values;}
 function encode(values){return validate(values).flatMap((v,i)=>[i+1,v&127,(v>>7)&127]);}
@@ -41,20 +43,20 @@ function decode(data){if(data.length!==18)throw Error('Invalid card settings');c
 function show(values){validate(values).forEach((v,i)=>fields[i].value=v);dirty=false;labels();buttons();}
 // File version and function tag are separate from the card's SysEx version.
 // IDs match Config; reject incomplete/foreign presets before touching controls.
-function preset(values,name){return {format:'spatial-disorientation-preset',version:1,function:'twin-orbits',name,parameters:Object.fromEntries(validate(values).map((v,i)=>[String(i+1),v]))};}
+function preset(values,name){return {format:'spatial-disorientation-preset',version:1,function:FUNCTIONS[editorMode],name,parameters:Object.fromEntries(validate(values).map((v,i)=>[String(i+1),v]))};}
 function parsePreset(text){
  const p=JSON.parse(text);
- if(!p||p.format!=='spatial-disorientation-preset'||p.version!==1||p.function!=='twin-orbits')throw Error('Unsupported preset format, version or function.');
+ if(!p||p.format!=='spatial-disorientation-preset'||p.version!==1||!FUNCTIONS.slice(0,2).includes(p.function))throw Error('Unsupported preset format, version or function.');
  if(typeof p.name!=='string'||!p.name.trim()||p.name.length>80||/[\u0000-\u001f\u007f]/.test(p.name))throw Error('Invalid preset name.');
  const v=p.parameters;
  if(!v||typeof v!=='object'||Array.isArray(v)||Object.keys(v).length!==6||Object.keys(v).some(k=>!['1','2','3','4','5','6'].includes(k)))throw Error('Preset must contain all six parameter IDs.');
- return {name:p.name.trim(),values:validate(['1','2','3','4','5','6'].map(k=>v[k]))};
+ return {name:p.name.trim(),mode:FUNCTIONS.indexOf(p.function),values:validate(['1','2','3','4','5','6'].map(k=>v[k]))};
 }
 async function importPreset(file){
  if(file.size>16384)throw Error('Preset file is too large (maximum 16 KB).');
  const p=parsePreset(await file.text()); // Atomic validation: a bad file changes nothing.
- show(p.values);$('preset-name').value=p.name;dirty=true;buttons();
- status('Preset loaded into editor. Apply to audition; Save to card after Apply to retain it.');
+ show(p.values);$('preset-name').value=p.name;dirty=true;editorMode=p.mode;modeLabels();
+ status(MODE_NAMES[editorMode]+' preset loaded. Select that startup mode, Apply to audition, then Save to card.');
 }
 function exportPreset(){
  const name=$('preset-name').value.trim()||'Twin Orbits';
@@ -68,10 +70,10 @@ function exportPreset(){
 function request(command,data=[]){if(!input||!output) return Promise.reject(Error('Connect the card first'));sequence=sequence%127+1;const seq=sequence;return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{pending.delete(seq);reject(Error('Card did not reply. Check ports and reconnect.'));},command===3?3000:1500);pending.set(seq,{command,resolve,reject,timer});try{output.send([240,125,83,68,1,command,seq,...data,247]);}catch(e){clearTimeout(timer);pending.delete(seq);reject(e);}});}
 function receive(event){const d=[...event.data];if(d.length<8||d[0]!==240||d.at(-1)!==247||d[1]!==125||d[2]!==83||d[3]!==68||d[4]!==1)return;const cmd=d[5],seq=d[6],body=d.slice(7,-1);if(body.some(v=>v>127))return;
  if(cmd===68&&(body.length===4||body.length===5)){$('timing').textContent='Peak callback: '+(body[0]|body[1]<<7)+' µs / 18 µs warning · peak 64-frame block: '+(body[2]|body[3]<<7)+' µs / 1200 µs warning'+(body.length===5?' · HRTF: '+body[4]+' taps':'');return;}
- if(cmd===67&&body.length===7){const angle=[body[0]|body[1]<<7,body[2]|body[3]<<7];angle.forEach((v,i)=>{const p=v*Math.PI*2/4096;$(i?'b':'a').setAttribute('cx',140+100*Math.sin(p));$(i?'b':'a').setAttribute('cy',140-100*Math.cos(p));});$('live').textContent=(body[6]&1?'Linked':'Opposing')+' · '+(body[6]&2?'Clock locked':'Free running')+' · distance '+Math.round((body[4]|body[5]<<7)*100/4095)+'%'+(body[6]&4?' · WARNING'+(body[6]&16?' slow DSP block':'')+(body[6]&32?' audio queue underrun/overrun':'')+(body[6]&64?' slow callback':''):'');return;}
+ if(cmd===67&&(body.length===7||body.length===8||body.length===11)){mode=body.length>=8&&body[7]<3?body[7]:0;if(!dirty)editorMode=mode;modeLabels();const angle=[body[0]|body[1]<<7,body[2]|body[3]<<7];angle.forEach((v,i)=>{const p=v*Math.PI*2/4096;$(i?'b':'a').setAttribute('cx',140+100*Math.sin(p));$(i?'b':'a').setAttribute('cy',140-100*Math.cos(p));});$('live').textContent=MODE_NAMES[mode]+' · '+(mode===2?'Reserved / silent':mode===1?'Editing '+(body.length===11&&body[10]&1?'B':'A')+(body.length===11?' · '+((body[10]>>1)===7?'controls ready':'pickup '+['Main','X','Y'].filter((_,i)=>!(body[10]&(2<<i))).join(', ')):'')+' · distance A '+Math.round((body[4]|body[5]<<7)*100/4095)+'%'+(body.length===11?' / B '+Math.round((body[8]|body[9]<<7)*100/4095)+'%':''):(body[6]&1?'Linked':'Opposing')+' · '+(body[6]&2?'Clock locked':'Free running')+' · distance '+Math.round((body[4]|body[5]<<7)*100/4095)+'%')+(body[6]&4?' · WARNING'+(body[6]&16?' slow DSP block':'')+(body[6]&32?' audio queue underrun/overrun':'')+(body[6]&64?' slow callback':''):'');return;}
  const p=pending.get(seq);if(!p)return;if((cmd===65&&p.command===1)||(cmd===66&&body.length===2&&body[0]===p.command)){clearTimeout(p.timer);pending.delete(seq);if(cmd===66&&body[1]!==0)p.reject(Error('Card rejected command (status '+body[1]+')'));else p.resolve(body);}}
 async function action(fn){busy=true;buttons();try{await fn();}catch(e){status(e.message);}finally{busy=false;buttons();}}
-async function read(){show(decode(await request(1)));status('Read settings from the card.');}
+async function read(){editorMode=mode;show(decode(await request(1)));modeLabels();status('Read settings from the card.');}
 async function disconnect(){connected=false;for(const p of pending.values()){clearTimeout(p.timer);p.reject(Error('Card disconnected'));}pending.clear();const oldIn=input,oldOut=output;input=output=null;if(oldIn)oldIn.onmidimessage=null;await Promise.allSettled([oldIn?.close(),oldOut?.close()]);buttons();}
 function ports(){for(const [id,collection] of [['inputs',midi.inputs],['outputs',midi.outputs]]){const select=$(id),previous=select.value;select.replaceChildren();for(const port of collection.values()){const option=document.createElement('option');option.value=port.id;option.textContent=port.name||port.id;select.append(option);}if([...select.options].some(o=>o.value===previous))select.value=previous;else {const match=[...select.options].find(o=>o.textContent.includes('Spatial Disorientation'));if(match)select.value=match.value;}}}
 $('access').onclick=()=>action(async()=>{if(!navigator.requestMIDIAccess)throw Error('WebMIDI unavailable. Use desktop Chrome/Edge with a secure page (HTTPS or localhost).');midi=await navigator.requestMIDIAccess({sysex:true});ports();midi.onstatechange=async()=>{if((input&&input.state==='disconnected')||(output&&output.state==='disconnected')){await disconnect();status('Card disconnected. Select ports and reconnect.');}ports();};status('Select Spatial Disorientation for both ports, then Connect & read.');});
@@ -79,11 +81,11 @@ $('connect').onclick=()=>action(async()=>{input=midi.inputs.get($('inputs').valu
 $('disconnect').onclick=()=>action(async()=>{await disconnect();status('Disconnected.');});
 $('read').onclick=()=>action(read);
 $('init').onclick=()=>action(async()=>{await request(2,encode(INIT));await read();status('Factory settings applied. Use Save to card to retain them after reset.');});
-$('apply').onclick=()=>action(async()=>{await request(2,encode(fields.map(f=>Number(f.value))));await read();status('Applied. Use Save to card to retain settings after reset.');});
+$('apply').onclick=()=>action(async()=>{if(editorMode!==mode||mode===2)throw Error('Select the preset’s mode at startup before Apply.');await request(2,encode(fields.map(f=>Number(f.value))));await read();status('Applied. Use Save to card to retain settings after reset.');});
 $('save').onclick=()=>action(async()=>{await request(3);status('Saved to card. Reset and reconnect to verify persistence.');});
 $('export').onclick=()=>action(exportPreset);
 $('import').onclick=()=>$('preset-file').click();
 $('preset-file').onchange=()=>action(async()=>{try{const file=$('preset-file').files[0];if(file)await importPreset(file);}finally{$('preset-file').value='';}});
 fields.forEach(f=>f.oninput=()=>{dirty=true;labels();buttons();status('Settings edited. Apply to audition; Read to discard these edits.');});
-labels();buttons();
+labels();modeLabels();buttons();
 </script></html>

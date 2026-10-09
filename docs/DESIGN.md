@@ -163,3 +163,24 @@ Import stages edits, preserves them on connect and requires Apply/Save explicitl
 export captures displayed values. Files work offline; live controls/motion state
 are excluded. No firmware/schema/UF2 change. Original implementation and document:
 Adrian Vos (soveda), 2026, MIT; source conventions in THIRD_PARTY_NOTICES.md.
+
+## Alpha9 startup selector and initial Spatial Mixer (2026-10-09)
+
+The user specifies Down held at startup, Main thirds, no LEDs for Twin Orbits,
+left column for Spatial Mixer, right column for Disorientation; release confirms.
+Normal startup always chooses Twin Orbits. This supersedes any planned saved mode
+default. The user selects switch A/B editing with Main position, X distance and
+Y level, and asks to reserve Disorientation for later. The reserved choice stays
+silent with right LEDs lit; it is not presented as a completed effect.
+
+Up selects A, Down selects B, middle retains selection. Each source stores three
+volatile control values with near/crossing pickup after source changes. CV1/CV2
+modulate both stored positions/distances; editor levels multiply panel levels.
+32-tap HRTF/room processing and 64-frame block architecture remain intact. Mixer
+ignores clock/reset pulses; normal Twin Orbits is checked against its previous
+control generator. Initial selected source takes current knobs; unedited A/B is
+front/back, near, full panel level. Shared six-field flash schema stays v1; per-mode
+settings and panel-placement presets remain future work. 8mu follows knob roles;
+C is unused in Mixer, and panel Down selects B rather than recentering motion.
+Original design/code/docs: Adrian Vos (soveda), 2026, MIT. WaveSeq pickup examples,
+ComputerCard and KEMAR provenance remain in ../THIRD_PARTY_NOTICES.md.
