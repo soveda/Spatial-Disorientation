@@ -1,3 +1,4 @@
+// Source revision and original MIT notice: ../vendor/Workshop_BlockAudioCard/LICENSE and ../THIRD_PARTY_NOTICES.md.
 // Copyright (c) 2026 Adrian Vos (soveda). SPDX-License-Identifier: MIT
 // Fixed ring/two-block scheduling follows Adrian Vos's Workshop_BlockAudioCard
 // reference. ComputerCard 0.4.0 still owns the hardware ISR and jack probe here.

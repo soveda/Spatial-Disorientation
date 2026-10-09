@@ -1,4 +1,9 @@
-# Twin Orbits alpha1 test protocol
+# Spatial Disorientation test protocols
+
+For the current build, start with **Alpha9: startup selector and Spatial Mixer**
+at the end of this document. Earlier sections record version-specific tests.
+
+## Twin Orbits alpha1
 
 © 2026 Adrian Vos (soveda), MIT. Hardware/API guidance: Chris Johnson's
 ComputerCard 0.4.0 and the Workshop Computer maintainers; full sources in

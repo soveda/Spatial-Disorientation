@@ -1,6 +1,27 @@
 # Sources and attribution
 
-Original project code and documentation: soveda, 2026, MIT; see LICENSE.
+Original project code and documentation: Adrian Vos (soveda), 2026, MIT; see LICENSE.
+This grant covers original work, not relicensing of dependencies, measurement data
+or the copied upstream directive. The current build is alpha9; historical alpha
+sections below identify when particular sources were introduced.
+
+## Current source-to-file map
+
+| Source | Local use | Preserved notice |
+|---|---|---|
+| ComputerCard 0.4.0 / web_interface, Chris Johnson | vendor/ComputerCard/ComputerCard.h, src/usb_descriptors.c; build, core split and editor conventions | vendor/ComputerCard/LICENSE; full header notice |
+| WaveSeq / EightMU, Chris Johnson; rppicomidi | vendor/EightMU/EightMU.h (adapted), src/mu_host.h, USB role/configuration; pickup conventions in src/modes.h and src/mu_controls.h | Full MIT notices in EightMU.h; pinned source/change record in vendor/EightMU/SOURCE.md |
+| Workshop_BlockAudioCard, Adrian Vos and contributors | Adapted scheduling pattern in src/block_audio.h; raw hardware driver not copied | vendor/Workshop_BlockAudioCard/LICENSE |
+| You spin me round, Adrian Vos | Reused values in src/dsp/sine_table.h | vendor/YouSpinMeRound/LICENSE |
+| Raspberry Pi Pico SDK | External linked SDK and copied pico_sdk_import.cmake | vendor/PicoSDK/LICENSE.TXT (BSD-3-Clause) |
+| TinyUSB / contributors | External linked host/device stack; configuration notice in src/tusb_config.h | vendor/TinyUSB/LICENSE and NOTICE.md; full Ha Thach notice in tusb_config.h |
+| Gardner/Martin MIT KEMAR data | vendor/KEMAR/diffuse.zip, src/dsp/hrtf_table_32.h and hrtf_table_64.h; HRTF previews | vendor/KEMAR/SOURCE_TERMS.md; data attribution in generated tables |
+
+WaveSeq source and revision are in vendor/EightMU/SOURCE.md. Its web preset UI and
+switch-bank pickup were reviewed as examples, rather than copied wholesale.
+Voder was reviewed for motion handling; no Voder source or DSP was copied.
+Retain this file, LICENSE and the referenced vendor notices when redistributing.
+
 
 ## ComputerCard 0.4.0
 
@@ -43,14 +64,17 @@ Clock and regulator setup follows Chris Johnson's ComputerCard NOTES.md
 (Programming and optimisation / Clock speed) from the same upstream directory
 referenced above: 192 MHz with the regulator at 1.15 V.
 
-## Twin Orbits DSP and editor
+## Initial alpha1/alpha2 Twin Orbits DSP and editor
 
 Original fixed-point spatial DSP, orbit logic, configuration contract, editor,
 tests and synthetic preview sources: Adrian Vos (soveda), 2026, MIT. The model
 combines interaural delay/level, one-pole head-shadow filtering, distance and
-feed-forward early reflections. No measured HRTF dataset or third-party binaural
-DSP code is incorporated. The mathematical sine table is reused from this author's
-MIT-licensed You spin me round project.
+feed-forward early reflections. Those initial versions did not incorporate measured HRTF data or third-party
+binaural DSP code. Alpha3 and later use the attributed KEMAR data below. The mathematical sine table is reused from this author's
+MIT-licensed You spin me round project, introduced in revision
+fb56a2144947e8f7e0f47d0094ce1e3c33fa51cc:
+https://github.com/soveda/You-spin-me-round/tree/fb56a2144947e8f7e0f47d0094ce1e3c33fa51cc
+The project's original MIT notice is retained in vendor/YouSpinMeRound/LICENSE.
 
 USB descriptor code in src/usb_descriptors.c is adapted from Chris Johnson's
 ComputerCard web_interface example (MIT; upstream source revision/link above).
@@ -58,7 +82,8 @@ Core separation and SysEx transport are based on the same example, with a new
 bounded protocol and settings implementation. The full ComputerCard MIT license
 is preserved in vendor/ComputerCard/LICENSE. src/tusb_config.h preserves its
 original Ha Thach 2019 MIT notice in full. TinyUSB is an MIT-licensed Pico SDK
-dependency; see https://github.com/hathach/tinyusb/blob/master/LICENSE.
+dependency; the full upstream license is retained in vendor/TinyUSB/LICENSE,
+with build-source copyright notices and the pinned revision in vendor/TinyUSB/NOTICE.md.
 Firmware also incorporates Pico SDK components under their respective licenses;
 the Raspberry Pi BSD-3-Clause notice is in vendor/PicoSDK/LICENSE.TXT.
 
@@ -94,7 +119,8 @@ https://github.com/soveda/Workshop_BlockAudioCard
 
 The fixed-ring, 64-frame/two-block output scheduling pattern in src/block_audio.h
 is adapted from Adrian Vos's MIT-licensed Workshop_BlockAudioCard reference,
-revision 2802e3692a2e24cb554306ab8c7219ee502650ae:
+revision 2802e3692a2e24cb554306ab8c7219ee502650ae (copyright Adrian Vos and
+contributors; full notice in vendor/Workshop_BlockAudioCard/LICENSE):
 https://github.com/soveda/Workshop_BlockAudioCard/tree/2802e3692a2e24cb554306ab8c7219ee502650ae
 
 This integration keeps Chris Johnson's unmodified ComputerCard 0.4.0 for hardware
@@ -138,7 +164,8 @@ Original JSON preset format, import/export, validation and lifecycle tests:
 Adrian Vos (soveda), 2026, MIT. Workshop Computer Read/Apply/Save conventions and
 Chris Johnson's WaveSeq file import/export UI were reviewed as examples; no new
 third-party library or preset data was copied. Existing transport and HRTF source
-credits above remain unchanged. Firmware remains the tested alpha8 build.
+credits above remain unchanged. That editor-only checkpoint used the tested alpha8 build; alpha9 adds the
+selector/Mixer firmware described below.
 
 ## Alpha9 startup selector and Spatial Mixer
 

@@ -1,5 +1,8 @@
 # Spatial Disorientation: approved initial design
 
+Original design record © 2026 Adrian Vos (soveda), MIT. Platform, program-card
+examples and measurement provenance: [../THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
+
 Two-source binaural spatializer inspired by Neuzeit Instruments Quasar for Music Thing Modular Workshop Computer.
 Approved in conversation on 2026-10-07. This records the approved target; implementation status is noted below.
 

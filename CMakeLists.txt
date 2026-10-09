@@ -1,3 +1,4 @@
+# Original integration (c) 2026 Adrian Vos (soveda), MIT; ComputerCard/WaveSeq build conventions, see THIRD_PARTY_NOTICES.md.
 cmake_minimum_required(VERSION 3.13)
 include(pico_sdk_import.cmake)
 project(spatial_disorientation C CXX ASM)

@@ -1,3 +1,4 @@
+// WaveSeq switch-bank pickup reviewed; original implementation. See ../THIRD_PARTY_NOTICES.md.
 // Copyright (c) 2026 Adrian Vos (soveda). SPDX-License-Identifier: MIT
 #pragma once
 #include "startup_mode.h"

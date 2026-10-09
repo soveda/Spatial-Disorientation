@@ -3,7 +3,9 @@
 Design sketch by Adrian Vos (soveda), 2026-10-07. Original notes: MIT.
 These are options for discussion, not implemented features or a replacement for
 the approved initial design. The Leslie card has now been merged upstream;
-Spatial Disorientation is the next card. Twin Orbits now has alpha firmware; the other directions remain planned.
+Spatial Disorientation is the next card. Twin Orbits and initial Spatial Mixer are implemented in alpha9. Disorientation
+is reserved for later. The options below are historical design candidates; current
+controls and licensing/source attribution are in README.md and THIRD_PARTY_NOTICES.md.
 
 ## Musical directions
 

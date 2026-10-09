@@ -1,3 +1,4 @@
+// Hardware/core split and USB role setup follow Chris Johnson's ComputerCard / WaveSeq (MIT).
 // Copyright (c) 2026 Adrian Vos (soveda). SPDX-License-Identifier: MIT
 // ComputerCard hardware and core split follow Chris Johnson's examples.
 #include "tusb_config.h" // Configure both roles before EightMU/TinyUSB headers.

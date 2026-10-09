@@ -1,4 +1,4 @@
-# Twin Orbits editor protocol v1
+# Spatial Disorientation editor protocol v1
 
 © 2026 Adrian Vos (soveda), MIT. SysEx/editor transport structure follows Chris
 Johnson's ComputerCard web_interface example. See [../THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
@@ -111,7 +111,8 @@ values only and marks them dirty. Connecting/reconnecting reads the card but
 preserves staged edits; explicit Read discards them. Apply must succeed before
 Save can persist imported values. Neither import nor export sends MIDI by itself.
 Name, physical controls, CV, phase, live 8mu overrides and motion calibration are
-not part of saved card configuration. Firmware and its UF2 remain alpha8.
+not part of saved card configuration. That initial file-format checkpoint used alpha8; the current alpha9 extension
+is specified below.
 
 ## Alpha9 mode telemetry and Mixer presets
 

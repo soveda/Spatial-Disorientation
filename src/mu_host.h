@@ -1,3 +1,4 @@
+// Pinned WaveSeq/EightMU source and licenses: ../vendor/EightMU/SOURCE.md.
 // Copyright (c) 2026 Adrian Vos (soveda). SPDX-License-Identifier: MIT
 // Host-role pattern adapted from Chris Johnson's WaveSeq (MIT).
 #pragma once

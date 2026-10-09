@@ -22,14 +22,25 @@ uses the tested alpha8 firmware without a reflash. The user reports preset tests
 Alpha9 adds the boot selector and Spatial Mixer; Disorientation is reserved by
 user request. Alpha9 hardware tests are pending.
 
-Original code and documentation © 2026 Adrian Vos (soveda), MIT. Hardware/library
-patterns: Chris Johnson and the Workshop Computer contributors. Musical inspiration:
-[Neuzeit Instruments Quasar](https://www.neuzeit-instruments.com/Quasar).
-See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for sources and licenses.
-This is an independent implementation; no Quasar DSP is used. The new derived
-HRTF bank credits **Bill Gardner and Keith Martin, MIT Media Laboratory (1994)**;
-see [dataset terms and processing](vendor/KEMAR/SOURCE_TERMS.md). Measurements
-retain their own attribution terms; original project code remains MIT.
+Original code and documentation © 2026 Adrian Vos (soveda), [MIT](LICENSE).
+Third-party code and measurement data retain their own notices and terms; the
+project license does not relicense them. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
+for pinned sources, file mappings and the preserved license texts.
+
+| Source | Use here | License / terms |
+|---|---|---|
+| Chris Johnson: ComputerCard 0.4.0 and web_interface | Hardware API, example build/core split, adapted USB descriptors and editor transport | [MIT notice](vendor/ComputerCard/LICENSE) |
+| Chris Johnson: WaveSeq / EightMU; rppicomidi USB MIDI host driver | Adapted direct 8mu host implementation, USB role setup; pickup/file UI examples reviewed | MIT notices retained in [EightMU.h](vendor/EightMU/EightMU.h); [source/change record](vendor/EightMU/SOURCE.md) |
+| Adrian Vos and contributors: Workshop_BlockAudioCard | Adapted 64-frame ring/two-block scheduling pattern | [MIT notice](vendor/Workshop_BlockAudioCard/LICENSE) |
+| Adrian Vos: You spin me round | Reused mathematical sine table | [MIT notice](vendor/YouSpinMeRound/LICENSE) |
+| Raspberry Pi Pico SDK / TinyUSB | Firmware platform and USB stacks | [BSD-3-Clause](vendor/PicoSDK/LICENSE.TXT) / [MIT](vendor/TinyUSB/LICENSE), plus [USB copyright notices](vendor/TinyUSB/NOTICE.md) |
+| Bill Gardner and Keith Martin, MIT Media Laboratory (1994) | Derived horizontal KEMAR HRTF coefficients and rendered previews | [Dataset attribution terms](vendor/KEMAR/SOURCE_TERMS.md), separate from the MIT software license |
+
+Musical inspiration: [Neuzeit Instruments Quasar](https://www.neuzeit-instruments.com/Quasar).
+This is an independent implementation; no Quasar DSP, manual text or graphics are
+used. The copied upstream AI directive retains upstream ownership and is excluded
+from this project's MIT grant. Keep LICENSE, THIRD_PARTY_NOTICES.md and the referenced
+vendor notices/measurement terms with redistributed source or firmware packages.
 
 ## Try it
 

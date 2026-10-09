@@ -1,4 +1,10 @@
-# Initial scaffold build verification
+# Build verification history
+
+Original verification notes © 2026 Adrian Vos (soveda), MIT. Platform/dependency
+credits: [../THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md). Current alpha9
+results are in the final section; the scaffold record below is historical.
+
+## Initial scaffold
 
 Verified 2026-10-07 on macOS with Pico SDK 2.3.0 and ARM GCC 15.2.1.
 Both CMake configuration and Release compilation completed successfully and

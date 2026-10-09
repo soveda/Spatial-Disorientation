@@ -6,6 +6,7 @@ Language: "C++ (Pico SDK)"
 Creator: soveda
 Version: "0.1.0-alpha9"
 Status: WIP
+# MIT covers original code/docs; dependency and measurement terms: THIRD_PARTY_NOTICES.md
 License: MIT
 date-created: 2026-10-07
 date-updated: 2026-10-09
