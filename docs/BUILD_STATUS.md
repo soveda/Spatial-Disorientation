@@ -78,3 +78,12 @@ timing numbers or a specific run duration. No firmware change. Disorientation
 remains reserved; agree its design before implementing the third mode.
 Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
 2026, MIT; existing platform/dependency attribution remains applicable.
+
+### Alpha11 timing report — 2026-10-09
+
+Following the alpha11 pass, the user reports peak callback / 64-frame block times
+9 / 1015 us and 11 / 991 us, both at 32 HRTF taps. Both are below warning thresholds
+18 / 1200 us; the actual block deadline is 1333.3 us. USB roles and run duration
+were not specified. These supersede the earlier absence of alpha11 timing numbers,
+without changing firmware. Source: user hardware report in this conversation.
+Record: Adrian Vos (soveda), 2026, MIT.

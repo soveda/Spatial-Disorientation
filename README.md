@@ -271,8 +271,9 @@ then connect 8mu and reset. Twin Orbits knob position, phase, motion on/off/dept
 and calibration remain outside presets.
 
 The user reports alpha10 8mu tests and the alpha11 validation pass (2026-10-09).
-Alpha11 build/host checks also pass. No new alpha11 timing readings were supplied;
-earlier measurements remain labeled by their tested version.
+Alpha11 build/host checks also pass. Alpha11 reported peak callback/block readings are **9 / 1,015 µs** and
+**11 / 991 µs**, both with 32 taps and below the 18 / 1,200 µs warning thresholds.
+USB roles for those two readings were not specified.
 Original storage/preset code and documentation: Adrian Vos (soveda), 2026, MIT;
 existing platform/editor and KEMAR credits remain in THIRD_PARTY_NOTICES.md.
 
