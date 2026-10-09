@@ -156,3 +156,14 @@ all firmware checksums verified. Alpha14 hardware testing is pending; alpha13's
 user pass does not establish new-path sound or this build's timing. Original
 verification record: Adrian Vos (soveda), 2026, MIT; existing platform/dependency
 and measured-HRTF notices remain in ../THIRD_PARTY_NOTICES.md.
+
+## Alpha14 user validation and timing — 2026-10-10
+
+The user reports "tests pass" following the alpha14 movement-selection protocol,
+with peak callback 13 us and peak 64-frame DSP block 997 us. Both are below their
+18 us / 1200 us warning thresholds; the block deadline is 1333.3 us. No run
+duration or USB role for these measurements was specified. Do not attribute
+these timings to an offline 8mu session or infer full ISR timing from callback
+telemetry. Firmware remains unchanged.
+Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
+2026, MIT; existing platform/dependency attribution remains applicable.

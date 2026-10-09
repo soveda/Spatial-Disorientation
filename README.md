@@ -3,7 +3,8 @@
 **0.1.0-alpha14**: Fig8, Pendulum and Wander in Disorientation, with editor and 8mu movement selection, using the 32-tap HRTF and room externalization prototype for Music Thing Modular Workshop
 Computer. Two independent mono inputs can orbit, trace crossing loops or stay at
 individual placements, mixed to binaural stereo. Listen on headphones. Uses ComputerCard **0.4.0**, 48 kHz audio and
-**192 MHz / 1.15 V**. Firmware builds and host checks pass; alpha14 hardware validation is pending.
+**192 MHz / 1.15 V**. Firmware builds and host checks pass; the user reports alpha14 tests pass (2026-10-10),
+with peak callback **13 µs** and peak 64-frame block **997 µs**.
 The user reports alpha13 Fig8 8mu tests pass (2026-10-09).
 The user reports alpha12 Fig8 tests pass (2026-10-09). User hardware tests
 on **alpha1** pass for the main controls, left/right movement and editor/persistence;

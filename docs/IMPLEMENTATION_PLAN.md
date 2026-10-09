@@ -222,9 +222,10 @@ credited in ../THIRD_PARTY_NOTICES.md.
 
 User requests two new movements and short D press selection. Implemented Pendulum,
 Wander, live D tap cycle, retained D-hold timing, LED identification, editor saved
-movement and schema/preset migrations. Build/host tests pass; hardware pending.
-Next run the alpha14 protocol, concentrating on slow listening, switching artefacts,
-D gestures, offline 8mu and worst-load timing. Keep alpha13 available as fallback.
-Do not add further paths or package a release candidate until this pass is accepted.
+movement and schema/preset migrations. Build/host tests pass; the user reports
+alpha14 tests pass (2026-10-10), with callback/block peaks 13/997 us, below warning
+thresholds. USB role and run duration were not supplied. Keep alpha13 as fallback.
+Next review release requirements, documentation, attribution, metadata and
+packaging before a release candidate. Further paths need a separate design pass.
 Original plan/implementation: Adrian Vos (soveda), 2026, MIT; sources credited in
 ../THIRD_PARTY_NOTICES.md with all existing notices preserved.

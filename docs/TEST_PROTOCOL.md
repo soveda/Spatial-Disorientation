@@ -690,7 +690,8 @@ Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
 ## Alpha14 movement selection hardware test
 
 Original protocol: Adrian Vos (soveda), 2026, MIT. Sources/dependency notices:
-../THIRD_PARTY_NOTICES.md. Alpha14 hardware validation is pending. Flash
+../THIRD_PARTY_NOTICES.md. The user reports alpha14 tests pass with callback/block
+peaks 13/997 us (2026-10-10); see the validation record below. Flash
 `Spatial_Disorientation_0.1.0-alpha14-movements.uf2` and reload the editor.
 Alpha13 is retained as fallback. Export existing presets before saving v4 if
 planning to downgrade. Editor and 8mu tests use separate USB sessions.
@@ -745,3 +746,14 @@ planning to downgrade. Editor and 8mu tests use separate USB sessions.
 Report which movements/controls pass, any clicks/pickup changes, D tap/hold
 behaviour, timing readings/warnings and run duration. Host tests cannot validate
 localization, hardware timing or USB stability.
+
+## Alpha14 user validation and timing — 2026-10-10
+
+The user reports "tests pass" following the alpha14 movement-selection protocol,
+with peak callback 13 us and peak 64-frame DSP block 997 us. Both are below their
+18 us / 1200 us warning thresholds; the block deadline is 1333.3 us. No run
+duration or USB role for these measurements was specified. Do not attribute
+these timings to an offline 8mu session or infer full ISR timing from callback
+telemetry. Firmware remains unchanged.
+Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
+2026, MIT; existing platform/dependency attribution remains applicable.
