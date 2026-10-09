@@ -36,8 +36,8 @@ public:
             step_=displacement>0 ? rate : -rate;
         }
     }
-    Scene Advance() {
-        phase_+=static_cast<uint32_t>(step_);
+    Scene Advance(bool frozen=false) {
+        if(!frozen)phase_+=static_cast<uint32_t>(step_);
         return {{base_+phase_,base_+(linked_ ? phase_ : 0u-phase_)+separation_},distance_};
     }
     bool ClockLocked() const {

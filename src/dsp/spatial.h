@@ -1,25 +1,17 @@
 // Copyright (c) 2026 Adrian Vos (soveda). SPDX-License-Identifier: MIT
 #pragma once
 #include <cstdint>
-#include "sine_table.h"
+#include "fixed.h"
+#include "fig8.h"
 #include "hrtf.h"
 #include "../config.h"
 namespace spatial {
-inline int32_t Clamp(int32_t x, int32_t lo, int32_t hi) { return x < lo ? lo : (x > hi ? hi : x); }
-inline int32_t Sin(uint32_t phase) {
-    uint32_t i = phase >> 24;
-    int32_t f = (phase >> 16) & 255;
-    return kSine[i] + ((kSine[(i+1)&255] - kSine[i]) * f >> 8);
-}
-inline int32_t Slew(int32_t from, int32_t to, int32_t divisor) {
-    int32_t d = to - from;
-    return from + (d == 0 ? 0 : d / divisor + (d > 0 ? 1 : -1));
-}
 struct Stereo { int32_t left = 0, right = 0; };
 struct Scene {
     uint32_t angle[2] = {0, 0x80000000u}; // 0 front; quarter turn right.
     int32_t distance = 0;
     int32_t level_a = 4096, level_b = 4096; // Panel gain; unity for Twin Orbits.
+    uint16_t shape=0,excursion=0;bool fig8=false;
     int32_t distance_b = -1; // Negative shares A distance; otherwise independent B.
 };
 class Delay {
@@ -119,17 +111,26 @@ private:
 };
 class Engine {
 public:
+    const Scene& RenderedScene()const{return rendered_;}
     void SetScene(const Scene& scene,const Config& config) { scene_=scene;config_=config; }
     Stereo Process(int32_t a,int32_t b) {
         // Stagger the two geometry calculations to spread work within each DSP block.
-        if ((count_&31)==0) source_[0].Geometry(scene_.angle[0],scene_.distance,(config_.value[2]*scene_.level_a)>>12,config_.value[4],config_.value[1]);
-        if ((count_&31)==16) source_[1].Geometry(scene_.angle[1],scene_.distance_b<0?scene_.distance:scene_.distance_b,(config_.value[3]*scene_.level_b)>>12,config_.value[4],config_.value[1]);
+        int e=(count_&31)==0?0:((count_&31)==16?1:-1);
+        if(e>=0){
+            uint32_t angle=scene_.angle[e];
+            int32_t distance=e&&scene_.distance_b>=0?scene_.distance_b:scene_.distance;
+            if(scene_.fig8){auto point=FigureEight(angle,scene_.shape,scene_.excursion);angle=point.angle;distance=point.distance;}
+            rendered_.angle[e]=angle;
+            if(e)rendered_.distance_b=distance;else rendered_.distance=distance;
+            int32_t level=e?scene_.level_b:scene_.level_a;
+            source_[e].Geometry(angle,distance,(config_.value[e+2]*level)>>12,config_.value[4],config_.value[1]);
+        }
         ++count_;
         Stereo x=source_[0].Process(a),y=source_[1].Process(b);
         return {Clamp(((x.left+y.left)*3)>>2,-2048,2047),Clamp(((x.right+y.right)*3)>>2,-2048,2047)};
     }
 private:
-    Scene scene_;
+    Scene scene_,rendered_;
     Config config_;
     Source source_[2];
     uint32_t count_=0;

@@ -1,10 +1,10 @@
 draft: true
 Name: "Spatial Disorientation"
 short-description: "Two-source binaural spatializer inspired by Neuzeit Instruments Quasar"
-summary: "Twin Orbits and Spatial Mixer with 32-tap binaural rendering, separate saved mode settings, Mixer placements and v2 presets with v1 migration. Fader/button-only Mixer 8mu control tests pass on alpha10; user reports alpha11 validation passes with callback/block peaks 9/1015 us and 11/991 us at 32 taps. Down-at-boot selector; Disorientation reserved and silent."
+summary: "Twin Orbits, Spatial Mixer and initial Disorientation Fig8, with separate saved settings and presets. 32-tap binaural rendering at 192 MHz; Down-at-boot mode selector. Alpha12 build and host tests pass; Fig8 hardware validation pending. Original code/docs MIT; dependency and KEMAR terms preserved."
 Language: "C++ (Pico SDK)"
 Creator: soveda
-Version: "0.1.0-alpha11"
+Version: "0.1.0-alpha12"
 Status: WIP
 # MIT covers original code/docs; dependency and measurement terms: THIRD_PARTY_NOTICES.md
 License: MIT

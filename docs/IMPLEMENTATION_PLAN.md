@@ -3,9 +3,9 @@
 Updated 2026-10-09. Original plan © 2026 Adrian Vos (soveda), MIT.
 User requirements and hardware reports are the basis for this plan. Platform/API
 sources and musical inspiration are credited in ../THIRD_PARTY_NOTICES.md.
-The stages below record the original plan and subsequent checkpoints. Alpha11 is
-the current separate-settings/preset pass; historical checkpoints follow. Disorientation is
-reserved at the user’s request.
+The stages below record the original plan and subsequent checkpoints. Alpha12 is
+the current first Fig8 pass; historical checkpoints follow. Disorientation now
+has a panel/CV-controlled crossing path.
 
 ## 1. Finish the Twin Orbits listening/timing pass
 
@@ -190,3 +190,18 @@ timing numbers or a specific run duration. No firmware change. Disorientation
 remains reserved; agree its design before implementing the third mode.
 Source: user hardware report in this conversation. Record: Adrian Vos (soveda),
 2026, MIT; existing platform/dependency attribution remains applicable.
+
+## Alpha12 first Fig8 checkpoint and next work
+
+User authorizes the first Fig8; no separate pendulum is needed for this pass.
+Panel/CV path, held freeze, clock/reset, third settings bank and tagged presets
+are implemented. Build and host checks pass; hardware tests remain pending.
+Original implementation/plan: Adrian Vos (soveda), 2026, MIT; external credits in
+../THIRD_PARTY_NOTICES.md.
+
+Next, collect blind listening and worst-load callback/block measurements using
+TEST_PROTOCOL.md. Adjust path range only if those results justify it. After the
+panel path is accepted, agree and implement a mode-specific 8mu mapping and test
+its pickup/ownership offline. Further path variants or additional Fig8 editor
+shape settings need a separate design pass; they are not implemented here.
+Preserve normal Orbits startup, independent banks and existing Mixer mappings.

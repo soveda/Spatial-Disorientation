@@ -9,13 +9,13 @@ struct Placement {
     bool Valid()const{for(auto v:value)if(v>4095)return false;return true;}
 };
 struct Settings {
-    Config config[2];Placement mixer;
-    bool Valid()const{return config[0].Valid()&&config[1].Valid()&&mixer.Valid();}
+    Config config[3];Placement mixer;
+    bool Valid()const{return config[0].Valid()&&config[1].Valid()&&config[2].Valid()&&mixer.Valid();}
 };
-static_assert(sizeof(Settings)==36,"Stable flash layout");
+static_assert(sizeof(Settings)==48,"Stable flash layout");
 inline bool DecodeSettings(const uint8_t* data,size_t n,Settings& settings,uint32_t& mode){
-    if(!n||data[0]>1)return false;
-    uint32_t m=data[0];size_t fields=m?12:6;
+    if(!n||data[0]>2)return false;
+    uint32_t m=data[0];size_t fields=m==1?12:6;
     if(n!=1+fields*3)return false;
     Settings candidate=settings;Config cfg;Placement place;
     uint32_t seen=0;
@@ -25,19 +25,22 @@ inline bool DecodeSettings(const uint8_t* data,size_t n,Settings& settings,uint3
         uint16_t v=data[i+1]|(uint16_t(data[i+2])<<7);
         if(id<=6)cfg.value[id-1]=v;else place.value[id-7]=v;
     }
-    if(!cfg.Valid()||(m&&!place.Valid()))return false;
-    candidate.config[m]=cfg;if(m)candidate.mixer=place;
+    if(!cfg.Valid()||(m==1&&!place.Valid()))return false;
+    candidate.config[m]=cfg;if(m==1)candidate.mixer=place;
     settings=candidate;mode=m;return true;
 }
 inline size_t EncodeSettings(const Settings& settings,uint32_t mode,uint8_t* data){
     data[0]=mode;EncodeConfig(settings.config[mode],data+1);
-    if(mode)for(int i=0;i<6;++i){data[19+i*3]=i+7;data[20+i*3]=settings.mixer.value[i]&127;data[21+i*3]=settings.mixer.value[i]>>7;}
-    return mode?37:19;
+    if(mode==1)for(int i=0;i<6;++i){data[19+i*3]=i+7;data[20+i*3]=settings.mixer.value[i]&127;data[21+i*3]=settings.mixer.value[i]>>7;}
+    return mode==1?37:19;
 }
 constexpr uint32_t kRecordMagic=0x314f4453;
 struct Record {uint32_t magic,version,checksum;Settings settings;};
+struct PreviousSettings {Config config[2];Placement mixer;};
+struct PreviousRecord {uint32_t magic,version,checksum;PreviousSettings settings;};
 struct LegacyRecord {uint32_t magic,version,checksum;Config config;};
-inline Record MakeRecord(const Settings& settings){return {kRecordMagic,2,Checksum(reinterpret_cast<const uint8_t*>(&settings),sizeof(settings)),settings};}
+static_assert(sizeof(Record)==60&&sizeof(PreviousRecord)==48&&sizeof(LegacyRecord)==24,"Stable record layouts");
+inline Record MakeRecord(const Settings& settings){return {kRecordMagic,3,Checksum(reinterpret_cast<const uint8_t*>(&settings),sizeof(settings)),settings};}
 inline Settings LoadRecord(const uint8_t* data,size_t n){
     Settings result;
     if(n<sizeof(LegacyRecord))return result;
@@ -46,7 +49,14 @@ inline Settings LoadRecord(const uint8_t* data,size_t n){
     if(old.version==1&&old.config.Valid()&&old.checksum==Checksum(reinterpret_cast<const uint8_t*>(&old.config),sizeof(Config))){
         result.config[0]=result.config[1]=old.config;return result;
     }
-    if(old.version==2&&n>=sizeof(Record)){
+    if(old.version==2&&n>=sizeof(PreviousRecord)){
+        PreviousRecord previous;std::memcpy(&previous,data,sizeof(previous));
+        auto& s=previous.settings;
+        if(s.config[0].Valid()&&s.config[1].Valid()&&s.mixer.Valid()&&previous.checksum==Checksum(reinterpret_cast<const uint8_t*>(&s),sizeof(s))){
+            result.config[0]=s.config[0];result.config[1]=s.config[1];result.mixer=s.mixer;return result;
+        }
+    }
+    if(old.version==3&&n>=sizeof(Record)){
         Record current;std::memcpy(&current,data,sizeof(current));
         if(current.settings.Valid()&&current.checksum==Checksum(reinterpret_cast<const uint8_t*>(&current.settings),sizeof(Settings)))return current.settings;
     }

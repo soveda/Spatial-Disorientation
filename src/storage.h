@@ -18,7 +18,7 @@ public:
     }
     Settings Load() const {
         if(!valid_)return {};
-        return LoadRecord(Address(),sizeof(Record)); // Migrates v1 in RAM; never writes at boot.
+        return LoadRecord(Address(),sizeof(Record)); // Migrates v1/v2 in RAM; never writes at boot.
     }
     // Core 1 only, after core 0 acknowledges muted audio. Both cores execute
     // from RAM; lock out core 0 and disable local interrupts around flash access.

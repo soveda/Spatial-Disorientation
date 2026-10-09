@@ -215,3 +215,25 @@ editor requires SysEx v2 firmware. Runtime 8mu trim overrides and motion/phase a
 not automatically saved. No host-role Save gesture; editing/saving and 8mu use
 remain separate sessions. Original implementation/design: Adrian Vos, 2026, MIT;
 existing external source/measurement attributions remain unchanged.
+
+## Alpha12 first Fig8 (2026-10-09)
+
+User authorizes the first Fig8 pass and considers a separate pendulum unnecessary
+for now. Activate the third startup slot with a translated Gerono figure eight:
+lateral=sin(phase), depth=sin(2*phase). Main sets depth, Y excursion, X signed
+traversal rate. CV1/2 add to depth/excursion. Hold Down freezes phase, release
+resumes; Up/middle retain linked/opposing sources. Pulse1 clocks, Pulse2 resets.
+At high depth/excursion the path reaches behind, with its crossing in front.
+
+Resolve fixed-point Cartesian angle/radius on core 1 at each source’s staggered
+32-sample geometry cadence. Mathematical atan/radius tables avoid audio-rate
+floating point and keep this work outside ProcessSample. Existing HRTF/room DSP
+renders independently changing source distance. No new external data or DSP
+library; original implementation Adrian Vos (soveda), 2026, MIT, with existing
+sine-table and renderer attribution retained. Shape/rate/phase remain live.
+
+Add third six-field config bank; migrate v1/v2 flash in RAM, write v3 only on Save.
+SysEx/JSON stay v2 and accept mode/tag 2/disorientation. Telemetry includes worker
+resolved positions and a freeze byte. First pass excludes Fig8 8mu performance
+mapping; D diagnostics still work. Two existing modes/mappings remain supported.
+Hardware listening/timing verification is pending; see TEST_PROTOCOL.md.

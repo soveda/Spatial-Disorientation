@@ -193,3 +193,13 @@ restore/pickup, mode-tagged SysEx/JSON v2, v1 import conversion and tests/docs:
 Adrian Vos (soveda), 2026, MIT. No additional external code or dataset is introduced.
 The existing ComputerCard/web_interface, WaveSeq/EightMU/rppicomidi, block scheduling,
 Pico SDK/TinyUSB and Gardner/Martin KEMAR notices and retained licenses still apply.
+
+## Alpha12 Fig8 additions
+
+`src/dsp/fig8.h`, `fig8_table.h`, the third-mode integration and its tests/docs are
+original Adrian Vos (soveda), 2026, MIT. The lookup tables encode mathematical
+atan and radius, with no additional measurement dataset. `fixed.h` relocates our
+existing helpers and retains the existing sine-table use credited to You spin me
+round above. Fig8 uses the same ComputerCard/block transport and Gardner/Martin
+KEMAR/room renderer; their notices/terms are unchanged. No Quasar code or data
+has been introduced.

@@ -87,3 +87,20 @@ Following the alpha11 pass, the user reports peak callback / 64-frame block time
 were not specified. These supersede the earlier absence of alpha11 timing numbers,
 without changing firmware. Source: user hardware report in this conversation.
 Record: Adrian Vos (soveda), 2026, MIT.
+
+## Alpha12 first Fig8 build — 2026-10-09
+
+Build passes: flash image 86,096 bytes, main RAM 121,872 bytes, 2,048 bytes in each
+scratch bank. 192 MHz / 1.15 V, 48 kHz, 32 taps, unmodified ComputerCard 0.4.0.
+Ten address/undefined-sanitizer host suites and actual editor-script tests pass.
+Geometry is checked against a mathematical double-precision reference across
+100,000 parameter/phase samples; DSP uses fixed point. Tests also cover freeze,
+clock/reset, CV clamps, independent distance, output bounds, Fig8 block transport,
+v1/v2 migration, third-bank isolation and preset/editor behaviour.
+
+Hardware timing, perception and stability are pending. Alpha11’s user-reported
+9/1015 us and 11/991 us are historical, not this build’s results. Alpha11 remains
+available as fallback. First Fig8 performance controls are panel/CV/editor; 8mu
+D timing feedback remains, with no Fig8 fader/motion mapping yet.
+Original verification record: Adrian Vos (soveda), 2026, MIT; platform and measured
+HRTF attribution retained in ../THIRD_PARTY_NOTICES.md.

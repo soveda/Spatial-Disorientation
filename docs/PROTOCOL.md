@@ -1,6 +1,6 @@
 # Spatial Disorientation editor protocol
 
-Current alpha11 uses **SysEx/storage/presets v2**, defined in the final section.
+Current alpha12 uses **SysEx/presets v2 and storage v3**, defined in the final sections.
 The v1 sections below are retained for migration/history.
 
 © 2026 Adrian Vos (soveda), MIT. SysEx/editor transport structure follows Chris
@@ -187,3 +187,30 @@ files: Orbits values unchanged; Mixer gets default placements. Names, limits and
 atomic validation remain unchanged. Export always emits v2, displayed values only.
 Function-mismatched imports can be staged but cannot Apply. Preset files and both
 saved banks do not change normal startup's Twin Orbits default.
+
+## Alpha12 Fig8 protocol and storage v3
+
+Original extension: Adrian Vos (soveda), 2026, MIT; existing source/dependency
+credits apply. SysEx frame version remains 2. Snapshot/Apply accepts mode 2
+Disorientation with six IDs; ID 1 is source phase separation along the Fig8.
+Modes 0/1 retain their contracts. Save retains all three banks and Mixer placements.
+Telemetry 43 appends byte 11: 0 moving/stopped normally, 1 phase frozen by held
+Down. The payload is 12 bytes. Angles/distances in Fig8 are resolved worker
+positions, not raw path phase; they remain observational, not an atomic snapshot.
+Bit 0 linked and bit 1 clock-locked retain their meanings. Clients also accept
+older telemetry lengths. Internal mu_feedback bit 11 means no Fig8 performance
+mapping; D-held timing feedback still works.
+
+Flash v3 record: same magic, version 3 and checksum, then 48-byte payload:
+Orbits, Mixer and Disorientation each six uint16 config values, followed by six
+uint16 Mixer placement values. Total record 60 bytes; existing FNV-1a over the
+payload. V2 (48-byte record) migrates both banks/placements and defaults the third;
+v1 seeds Orbits/Mixer and defaults the third plus placements. No boot write.
+Unknown, invalid or truncated records restore defaults. Existing flash location,
+fade/lockout and power-loss behaviour remain. Older firmware cannot read v3.
+
+Preset JSON remains version 2 and adds `disorientation` with exactly IDs 1–6.
+V1 files cannot describe Fig8 and are rejected for that tag. Existing v1/v2
+Orbits/Mixer imports retain their migration rules. Panel depth/excursion, traversal
+rate, phase, CV and freeze are excluded from Read/Save/preset files. Startup mode
+continues to be selected only physically and normal boot continues to be Orbits.

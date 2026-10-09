@@ -31,9 +31,9 @@ public:
             uint32_t now=time_us_32();
             if (now-last_telemetry_>=50000) {
                 last_telemetry_=now;
-                uint8_t data[11];
+                uint8_t data[12];
                 Pack(shared_.angle_a,data);Pack(shared_.angle_b,data+2);
-                Pack(shared_.distance,data+4);data[6]=shared_.flags&127;data[7]=shared_.mode;Pack(shared_.distance_b,data+8);data[10]=shared_.mixer_state;
+                Pack(shared_.distance,data+4);data[6]=shared_.flags&127;data[7]=shared_.mode;Pack(shared_.distance_b,data+8);data[10]=shared_.mixer_state;data[11]=shared_.frozen;
                 if(tx_.Empty()) {
                     Send(0x43,0,data,sizeof(data));
                     uint8_t timing[5];
@@ -71,7 +71,7 @@ private:
         __dmb();shared_.snapshot_request=0;return okay;
     }
     void Snapshot(uint8_t seq) {
-        if(shared_.mode>1||!Capture()){Ack(1,seq,4);return;}
+        if(shared_.mode>2||!Capture()){Ack(1,seq,4);return;}
         uint8_t data[37];size_t n=EncodeSettings(current_,shared_.mode,data);Send(0x41,seq,data,n);
     }
     void Message() {
@@ -88,7 +88,7 @@ private:
         } else if (command==3 && length_==6) {
             // Explicit Save creates a brief audio pause, never a flash write in
             // the ISR. Zero reaches the DAC before core 0 is locked out.
-            if(shared_.mode>1||!Capture()){Ack(command,seq,4);return;}
+            if(shared_.mode>2||!Capture()){Ack(command,seq,4);return;}
             __dmb();shared_.save=1;
             uint32_t start=time_us_32();
             while (shared_.save!=2 && time_us_32()-start<500000) { worker_();tud_task();Pump(); }

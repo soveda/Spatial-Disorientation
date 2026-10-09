@@ -32,7 +32,8 @@ inline void RunMuHost(Shared& shared,void (*worker)()){
                     // Each LED is a 150-us band of the peak DSP block time.
                     brightness=shared.block_peak_us>static_cast<uint32_t>(i*150)?2048:0;
                     if(shared.flags&4)brightness=(now/125000)&1?4095:0;
-                }else if(i==7&&(feedback&1024)){
+                }else if(feedback&2048)brightness=0; // Fig8: D diagnostics only.
+                else if(i==7&&(feedback&1024)){
                     // Mixer LED 8: steady A, blinking B. Fader 8 is unused.
                     brightness=(feedback&512)&&!((now/250000)&1)?0:1024;
                 }else if(i==7&&(feedback&256))brightness=4095;

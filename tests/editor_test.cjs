@@ -8,13 +8,13 @@ const elements=new Map(),downloads=[],urls=new Map();let urlId=0;
 function element(){return {disabled:false,value:'',textContent:'',hidden:false,options:[],files:[],click(){if(this.download)downloads.push({name:this.download,blob:urls.get(this.href)});},setAttribute(){},append(o){this.options.push(o);if(!this.value)this.value=o.value;},replaceChildren(){this.options=[];this.value='';}};}
 const fields=[...defaults,...placement].map((v,i)=>({...element(),value:String(v),dataset:{id:String(i+1)},parentElement:{hidden:false,querySelector:()=>element()}}));
 const document={getElementById:id=>{if(!elements.has(id))elements.set(id,element());return elements.get(id);},querySelectorAll:()=>fields,createElement:()=>element()};
-let activeMode=0,banks=[[...defaults],[...defaults,...placement]],saved=null,sent=[],oldFirmware=false;
+let activeMode=0,banks=[[...defaults],[...defaults,...placement],[...defaults]],saved=null,sent=[],oldFirmware=false;
 const input={id:'in',name:'Spatial Disorientation',state:'connected',open:async()=>{},close:async()=>{}};
 const output={id:'out',name:'Spatial Disorientation',state:'connected',open:async()=>{},close:async()=>{},send(msg){
  sent.push(msg);assert.equal(msg[4],2);const cmd=msg[5],seq=msg[6];let body,reply;
  if(oldFirmware){queueMicrotask(()=>input.onmidimessage?.({data:[240,125,83,68,1,66,seq,cmd,2,247]}));return;}
  if(cmd===1){reply=65;body=[activeMode,...banks[activeMode].flatMap((v,i)=>[i+1,v&127,v>>7])];}
- else{reply=66;body=[cmd,0];if(cmd===2){assert.equal(msg[7],activeMode);banks[activeMode]=Array.from({length:activeMode?12:6},(_,i)=>msg[9+i*3]|msg[10+i*3]<<7);}if(cmd===3)saved=banks.map(a=>[...a]);}
+ else{reply=66;body=[cmd,0];if(cmd===2){assert.equal(msg[7],activeMode);banks[activeMode]=Array.from({length:activeMode===1?12:6},(_,i)=>msg[9+i*3]|msg[10+i*3]<<7);}if(cmd===3)saved=banks.map(a=>[...a]);}
  queueMicrotask(()=>input.onmidimessage?.({data:[240,125,83,68,2,reply,seq,...body,247]}));
 }};
 const midi={inputs:new Map([['in',input]]),outputs:new Map([['out',output]])};
@@ -33,7 +33,7 @@ const ctx=vm.createContext({document,navigator:{requestMIDIAccess:async()=>midi}
  await get('connect').onclick();assert.equal(fields[1].value,2300);assert.deepEqual(banks[0],defaults);await get('apply').onclick();assert.equal(banks[0][1],2300);
  // Malformed files fail atomically and send no commands.
  const stable=values(12),name=get('preset-name').value;
- for(const p of ['{',null,{...initial,version:3},{...initial,function:'disorientation'},{...initial,name:'bad\nname'},{...initial,parameters:{...initial.parameters,'7':1}},{...initial,parameters:{...initial.parameters,'6':3}},{...initial,parameters:{...initial.parameters,'2':4096}},{...initial,parameters:{...initial.parameters,'2':'1'}}]){
+ for(const p of ['{',null,{...initial,version:3},{...initial,version:1,function:'disorientation'},{...initial,name:'bad\nname'},{...initial,parameters:{...initial.parameters,'7':1}},{...initial,parameters:{...initial.parameters,'6':3}},{...initial,parameters:{...initial.parameters,'2':4096}},{...initial,parameters:{...initial.parameters,'2':'1'}}]){
   const n=sent.length;await load(typeof p==='string'?p:JSON.stringify(p));assert.deepEqual(values(12),stable);assert.equal(get('preset-name').value,name);assert.equal(sent.length,n);
  }
  await load(initial,16385);assert(get('status').textContent.includes('too large'));
@@ -52,7 +52,11 @@ const ctx=vm.createContext({document,navigator:{requestMIDIAccess:async()=>midi}
  // Timing/source telemetry remains compatible inside version-2 transport.
  input.onmidimessage({data:[240,125,83,68,2,68,0,8,0,125,7,32,247]});assert(get('timing').textContent.includes('1021 µs'));
  input.onmidimessage({data:[240,125,83,68,2,67,0,0,0,0,16,0,0,0,1,100,10,15,247]});assert(get('live').textContent.includes('Editing B'));
- input.onmidimessage({data:[240,125,83,68,2,67,0,0,0,0,16,0,0,0,2,0,0,0,247]});for(const id of ['apply','save','init'])assert(get(id).disabled);
+ input.onmidimessage({data:[240,125,83,68,2,67,0,0,0,0,16,0,0,0,2,0,0,0,247]});activeMode=2;await get('read').onclick();assert(!get('apply').disabled);assert(fields[6].parentElement.hidden);
+ input.onmidimessage({data:[240,125,83,68,2,67,0,0,0,0,16,0,0,3,2,0,0,0,1,247]});assert(get('live').textContent.includes('Frozen'));
+ input.onmidimessage({data:[240,125,83,68,2,67,0,0,0,0,16,0,0,3,2,0,0,0,0,247]});assert(get('live').textContent.includes('Clock locked'));
+ const previousBanks=banks.slice(0,2).map(a=>[...a]);fields[1].value=700;fields[1].oninput();await get('apply').onclick();await get('save').onclick();assert.equal(saved[2][1],700);assert.deepEqual(banks.slice(0,2),previousBanks);
+ await get('export').onclick();const fig=JSON.parse(await downloads.at(-1).blob.text());assert.equal(fig.function,'disorientation');assert.equal(Object.keys(fig.parameters).length,6);await load(fig);assert(!get('apply').disabled);
  input.state='disconnected';await midi.onstatechange();assert(get('save').disabled);
  input.state='connected';oldFirmware=true;await get('connect').onclick();assert(get('status').textContent.includes('Older firmware'));assert(get('apply').disabled);
  assert.throws(()=>vm.runInContext('decode([0,1,0,0])',ctx));assert.throws(()=>vm.runInContext('encode([4096,0,0,0,0,4],0)',ctx));

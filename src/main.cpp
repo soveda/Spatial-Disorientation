@@ -20,6 +20,11 @@ static void RenderBlock() {
     uint32_t start=time_us_32();
     bool saving=shared.save!=0;
     bool rendered=blocks.Render(engine);
+    if(rendered){
+        const auto& s=engine.RenderedScene();
+        shared.resolved_a=s.angle[0]>>20;shared.resolved_b=s.angle[1]>>20;
+        shared.resolved_distance_a=s.distance;shared.resolved_distance_b=s.distance_b;
+    }
     // Keep 10% block headroom. Flash lockout pauses both cores intentionally.
     if(rendered && !saving && !shared.save) {
         uint32_t elapsed=time_us_32()-start;
@@ -77,7 +82,7 @@ private:
             if(boot_.Ready()&&boot_.Selected()==spatial::Mode::Mixer&&restored){
                 modes_.RestoreMixer(settings_.mixer,main,x,y);mixer_mu_.Rearm();
             }
-            config_=settings_.config[boot_.Selected()==spatial::Mode::Mixer?1:0];
+            config_=settings_.config[static_cast<uint32_t>(boot_.Selected())];
             effective_=config_;
             bool orbits=boot_.Selected()==spatial::Mode::Orbits;
             bool mixer=boot_.Selected()==spatial::Mode::Mixer;
@@ -87,11 +92,11 @@ private:
                     modes_.SelectMixer(mixer_source,main,x,y);
                     takeover=mixer_mu_.Apply(mu_input_,modes_,main,x,y,effective_);
                     shared.mu_feedback=mixer_mu_.Feedback();
-                }else{
+                }else if(orbits){
                     reset=mu_controls_.Apply(mu_input_,main,x,y,effective_,orbits&&reset,orbits)||reset;
                     motion=mu_controls_.Motion();
                     shared.mu_feedback=mu_controls_.Picked()|(motion?256:0);
-                }
+                }else shared.mu_feedback=2048; // Fig8 has panel/editor controls in this pass.
                 modes_.Controls(boot_.Selected(),main,x,y,
                     Connected(Input::CV1)?CVIn1():0,Connected(Input::CV2)?CVIn2():0,linked_,effective_,
                     -1,takeover);
@@ -101,15 +106,17 @@ private:
                 if(mixer)snapshot.mixer=modes_.MixerPlacement();
                 shared.snapshot=snapshot;__dmb();shared.snapshot_request=2;
             }
+            shared.frozen=boot_.Selected()==spatial::Mode::Disorientation&&selected_==Switch::Down;
+            modes_.Freeze(shared.frozen);
             CVOut1(0);CVOut2(0);PulseOut1(false);PulseOut2(false);
         }
         modes_.Pulse(Connected(Input::Pulse1),PulseIn1RisingEdge(),
-            reset || (Connected(Input::Pulse2) && PulseIn2RisingEdge()));
+            (boot_.Selected()==spatial::Mode::Orbits&&reset) || (Connected(Input::Pulse2) && PulseIn2RisingEdge()));
         spatial::Scene scene=boot_.Ready()?modes_.Advance():spatial::Scene{};
         auto output=blocks.Tick(Connected(Input::Audio1)?AudioIn1():0,
                                     Connected(Input::Audio2)?AudioIn2():0,scene,effective_);
         if (startup_<4800) ++startup_;
-        int32_t target=(!saving && startup_==4800 && boot_.Ready() && boot_.Selected()!=spatial::Mode::Disorientation)?1024:0;
+        int32_t target=(!saving && startup_==4800 && boot_.Ready())?1024:0;
         fade_=spatial::Slew(fade_,target,128);
         AudioOut1(output.left*fade_>>10);AudioOut2(output.right*fade_>>10);
         if (saving && fade_==0) {
@@ -117,6 +124,10 @@ private:
             if (silent_==8 && shared.save==1) { __dmb();shared.save=2; }
         } else silent_=0;
         if (scan_==0) {
+            if(scene.fig8){
+                scene.angle[0]=shared.resolved_a<<20;scene.angle[1]=shared.resolved_b<<20;
+                scene.distance=shared.resolved_distance_a;scene.distance_b=shared.resolved_distance_b;
+            }
             int32_t a=spatial::Sin(scene.angle[0])>>3,b=spatial::Sin(scene.angle[1])>>3;
             LedBrightness(0,(4095-a)/2);LedBrightness(1,(4095+a)/2);
             LedBrightness(2,(4095-b)/2);LedBrightness(3,(4095+b)/2);
@@ -126,7 +137,7 @@ private:
             if(boot_.Selected()==spatial::Mode::Mixer&&boot_.Ready()&&modes_.Pickup()!=7){
                 if((led_tick_++/250)&1){int first=modes_.SelectedSource()*2;LedOff(first);LedOff(first+1);}
             }else led_tick_=0;
-            if(!boot_.Ready()||boot_.Selected()==spatial::Mode::Disorientation)for(int i=0;i<6;++i)LedOn(i,(boot_.LedMask()>>i)&1);
+            if(!boot_.Ready())for(int i=0;i<6;++i)LedOn(i,(boot_.LedMask()>>i)&1);
             shared.angle_a=scene.angle[0]>>20;shared.angle_b=scene.angle[1]>>20;
             shared.distance=scene.distance;shared.distance_b=scene.distance_b<0?scene.distance:scene.distance_b;
             shared.mixer_state=modes_.SelectedSource()|(modes_.Pickup()<<1);

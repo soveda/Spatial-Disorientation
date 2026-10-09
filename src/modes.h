@@ -30,7 +30,10 @@ public:
     void Controls(Mode mode,int32_t main,int32_t x,int32_t y,int32_t cv1,int32_t cv2,bool linked,const Config& cfg,int source=-1,uint32_t takeover=0){
         mode_=mode;
         if(mode==Mode::Orbits){orbits_.Controls(main,x,y,cv1,cv2,linked,cfg);return;}
-        if(mode!=Mode::Mixer)return; // Disorientation is an explicitly reserved slot.
+        if(mode==Mode::Disorientation){
+            shape_=Clamp(main+cv1*2,0,4095);excursion_=Clamp(y+cv2*2,0,4095);
+            orbits_.Controls(2048,x,0,0,0,linked,cfg);return;
+        }
         SelectMixer(source,main,x,y);
         int32_t knobs[3]={Clamp(main,0,4095),Clamp(x,0,4095),Clamp(y,0,4095)};
         // On return from USB to the panel, re-arm pickup without treating
@@ -56,14 +59,21 @@ public:
             else{fixed_.distance=distance;fixed_.level_a=value_[e][2];}
         }
     }
-    void Pulse(bool connected,bool edge,bool reset){if(mode_==Mode::Orbits)orbits_.Pulse(connected,edge,reset);}
-    Scene Advance(){return mode_==Mode::Orbits?orbits_.Advance():fixed_;}
-    bool ClockLocked()const{return mode_==Mode::Orbits&&orbits_.ClockLocked();}
+    void Freeze(bool held){frozen_=held;}
+    void Pulse(bool connected,bool edge,bool reset){if(mode_!=Mode::Mixer)orbits_.Pulse(connected,edge,reset);}
+    Scene Advance(){
+        if(mode_==Mode::Mixer)return fixed_;
+        Scene s=orbits_.Advance(mode_==Mode::Disorientation&&frozen_);
+        if(mode_==Mode::Disorientation){s.fig8=true;s.shape=shape_;s.excursion=excursion_;}
+        return s;
+    }
+    bool ClockLocked()const{return mode_!=Mode::Mixer&&orbits_.ClockLocked();}
     int SelectedSource()const{return selected_;}
     uint32_t Pickup()const{return picked_;}
 private:
     Orbits orbits_;Scene fixed_;
     Mode mode_=Mode::Orbits;
+    int32_t shape_=0,excursion_=0;bool frozen_=false;
     // Unedited source defaults: A front, B back, near, full panel level.
     int32_t value_[2][3]={{2048,0,4095},{0,0,4095}},previous_[3]={};
     int selected_=0;uint32_t picked_=0,owner_=0;bool initialized_=false;

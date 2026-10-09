@@ -550,3 +550,62 @@ Following the alpha11 pass, the user reports peak callback / 64-frame block time
 were not specified. These supersede the earlier absence of alpha11 timing numbers,
 without changing firmware. Source: user hardware report in this conversation.
 Record: Adrian Vos (soveda), 2026, MIT.
+
+## Alpha12 Fig8 hardware test
+
+Original protocol: Adrian Vos (soveda), 2026, MIT. Source/dependency notices remain
+in ../THIRD_PARTY_NOTICES.md. Flash `Spatial_Disorientation_0.1.0-alpha12-fig8.uf2`
+and reload the editor. Alpha11 is retained as fallback; export its presets before
+saving v3 if you may downgrade. Hardware results for this build are pending.
+
+1. **Startup/regression.** Normal reset still chooses Twin Orbits. Down held plus
+   Main middle selects Mixer with left LEDs. Down held plus Main upper third
+   selects Fig8 with right LEDs; release confirms and restores live LED feedback.
+   Both inputs should play; unplugged inputs are silent. Recheck Orbits/Mixer and
+   their existing 8mu mappings briefly.
+2. **Slow Fig8 listening.** Headphones, Audio 1 only, Main about 3 o’clock, Y high,
+   X just right of the centre stop band. With the editor hidden, listen for a
+   right loop and left loop, returning through a crossing in front between them.
+   Listen for nearer/further movement plus front/back colour/location; report if
+   it still feels like only sideways movement. Repeat with noise/percussion and
+   a harmonic source. Main higher gives greater depth; Y lower shrinks both lobes.
+3. **Stop/direction/shape.** X centre stops. Right/left reverse traversal; increase
+   speed gradually, maximum 1.5 whole Fig8 cycles/sec. Main low flattens depth;
+   Main high allows the large path to reach behind. Y minimum gives a stationary
+   point in front, retaining audio. CV1/CV2 add depth/excursion and clamp; removing
+   CV restores the knob shape. No stuck controls or unexpected fast motion.
+4. **Two sources and held freeze.** Patch a different source to Audio 2. Up links
+   traversal, middle opposes it; separation in the editor offsets path phase.
+   Default 180° gives opposite lateral positions at matching depths when linked.
+   Hold Down anywhere: phase stops; release resumes there with the previous
+   relationship. Repeated presses must not toggle freeze or reset the path.
+   While frozen, Main/Y/CV can still reshape the held positions.
+5. **Clock/reset.** Pulse1 clock uses the saved pulses per whole Fig8 (default 4).
+   Two valid edges acquire clock; X still stops/reverses. Remove clock and manual
+   speed resumes. Pulse2 resets to the front crossing, even when frozen. Use
+   pulses at least 1 ms wide. Repeated Down holds must not act as Pulse2 reset.
+6. **Editor and isolation.** Read shows Disorientation and six fields; first is
+   source phase separation. Change room/trims/strength/separation/division with
+   Apply; each should affect its stated function. Reset to init acts immediately
+   without saving. Export/import a v2 `disorientation` preset; import stages until
+   Apply, then Save. Reboot into Fig8 and Read verifies its bank. Reboot into each
+   other mode and verify its prior bank/placements were retained. Importing a
+   different function must keep Apply disabled until that startup function runs.
+   Main/X/Y/phase/freeze/CV are intentionally excluded from presets.
+7. **Persistence migration.** An existing alpha11 v2 record must retain Orbits,
+   Mixer and placements before the first alpha12 Save; Fig8 starts at defaults.
+   Save persists all three banks in v3. Saving briefly fades audio. Do not interrupt
+   power for this routine test; power-loss recovery remains unproven.
+8. **Timing/stability.** Run both inputs, full depth/excursion/strength, room high,
+   rapid CV and knob changes; exercise freeze, clock, reset and editor requests.
+   Test at least 20 minutes and repeat unplugged/editor and 8mu-host roles if
+   available. Fig8 ignores 8mu faders/motion/A–C; D retains timing diagnostics.
+   Record peak callback/block times, taps and any bottom-right LED warning.
+   Targets: callback below 18 us, 64-frame block below 1200 us warning and 1333 us
+   deadline, no queue misses, silence bursts, lockups or unresponsive controls.
+
+Host checks cover mathematical geometry against a floating-point reference,
+rear-reaching lobes, crossing, collapsed excursion, phase freeze/resume, clock,
+reset, CV clamping, independent source distance, bounded audio and frame-exact
+block transport through Fig8 changes. They cannot establish perceived localization
+or hardware timing. Do not infer an alpha12 pass from alpha11’s timings.
