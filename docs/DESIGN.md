@@ -309,3 +309,29 @@ and Workshop release remain unchanged. Build, focused mapping/mailbox tests,
 756,000 exact DSP frames, slew and existing 8mu/block/mode/editor checks pass.
 Hardware tests are pending. Original code/docs: Adrian Vos (soveda), 2026, MIT;
 existing dependency and Gardner/Martin KEMAR notices remain preserved.
+
+
+## Alpha22 continuous Mixer height and persistence (2026-10-12)
+
+User authorizes continuous Mixer elevation, saving height and staging vertical
+Disorientation next. Independent experimental/continuous-elevation-64 replaces
+three-state height with 0–4096 continuous Level-to-measured-±40° interpolation
+and continuous timing projection, retaining exact alpha21 audio at anchors.
+Mixer 8mu fader 8 retains source/session pickup, now continuous; LED brightness
+follows height. Other modes remain horizontal with their existing motion mapping.
+
+Add Mixer IDs 14/15, SysEx v4, JSON v4 and flash v5. Read/Save capture live A/B
+height via the existing snapshot handshake. Legacy flash v1–v4 and Mixer JSON
+v1–v3 migrate heights to Level without automatic flash writes. There is no host
+Save gesture; 8mu edits are volatile until reboot and editor Save persists editor
+session heights. Root firmware/editor and Workshop release remain unchanged.
+192 MHz/1.15 V, two sources/all 64 taps and block architecture remain; intermediate
+coefficient blending adds work and needs hardware timing validation. Build and
+sanitized DSP/migration/control/editor checks pass; hardware tests pending.
+
+Vertical Disorientation is staged in the experiment's docs/NEXT_VERTICAL_PASS.md:
+phase-related Fig8/Pendulum/Wander height, separate saved centre/depth, zero-depth
+legacy compatibility, preserve fader-8 motion for the initial experiment, verify
+headroom before increasing scope. No vertical Disorientation code is in alpha22.
+Original code/docs Adrian Vos (soveda), 2026, MIT; existing Gardner/Martin KEMAR
+measurement and dependency attribution/terms are preserved.

@@ -28,6 +28,11 @@ peak callback/block readings **7 / 1,021 µs** and **8 / 996 µs**, both at 32 t
 Both are below the 18 µs callback / 1,200 µs block warning thresholds.
 Separate alpha9 8mu and full Twin Orbits regression results are not reported.
 
+The new [alpha22 continuous Mixer height and persistence pass](experimental/continuous-elevation-64/README.md)
+adds smooth height control and saved/exported A/B heights, with vertical
+Disorientation staged next. Matching experimental editor/firmware are required;
+hardware validation is pending.
+
 The separate [alpha20 smoothing-only 64-tap experiment](experimental/smoothing-64/README.md)
 has passed the user
 hardware protocol (2026-10-11). The separate [alpha21 Mixer 8mu elevation pass](experimental/mixer-mu-elevation-64/README.md)
