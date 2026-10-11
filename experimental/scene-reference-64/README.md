@@ -57,6 +57,24 @@ Alpha18 user baseline: Mixer 13/1,181 µs; Orbits 11/1,198 µs; Disorientation
 14/1,203 µs (callback/block). Height remains clear. Alpha19's actual savings must
 be measured on hardware; sample agreement does not establish a timing pass.
 
+### Alpha19 reported hardware peaks (2026-10-11)
+
+| Mode | Callback | Block | Margin below 1,200 µs warning |
+|---|---:|---:|---:|
+| Twin Orbits | 11 µs | 1,156 µs | 44 µs |
+| Spatial Mixer | 13 µs | 1,136 µs | 64 µs |
+| Disorientation: Fig8 | 14 µs | 1,135 µs | 65 µs |
+
+All reported peaks are below the callback/block warning thresholds. Relative
+to alpha18's reported peaks, block times decrease by 42 µs (Orbits), 45 µs
+(Mixer) and 68 µs (Fig8 versus the earlier combined Disorientation report).
+These are comparisons of reported maxima, not controlled benchmark guarantees.
+Orbits telemetry showed opposing/free-running movement at 100% distance; Mixer
+showed A selected, Main/X pickup pending and both distances zero; Fig8 showed
+free running with A/B distances 26%/71%. Room amount, run duration and explicit
+audio-regression/queue-fault results were not supplied. Pendulum/Wander and 8mu
+timings have not been separately reported for alpha19.
+
 ## Verification and rebuild
 
 [Comparison test](tests/reference_test.cpp) uses the preserved alpha18 implementation
