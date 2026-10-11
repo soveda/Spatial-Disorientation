@@ -56,6 +56,27 @@ its height/preset/lifecycle and SOLO/DUAL telemetry tests. Hardware timing must
 still establish whether this reduction provides sufficient two-source headroom.
 The passing alpha17 SOLO binary remains available unchanged as the fallback.
 
+### Alpha18 hardware feedback (2026-10-11)
+
+The user confirms height remains clear with both sources. Reported peaks:
+
+| Mode | Callback | 64-frame block |
+|---|---:|---:|
+| Twin Orbits | 11 µs | 1,198 µs |
+| Disorientation (Wander, Pendulum and Fig8, reported together) | 14 µs | 1,203 µs |
+| Spatial Mixer | 13 µs | 1,181 µs |
+
+Callbacks remain below 18 µs and reported blocks below the 1,333 µs deadline.
+Disorientation crosses the 1,200 µs warning threshold. Mixer has just 19 µs
+below that warning threshold, and Orbits 2 µs. This is positive two-source height
+feedback with marginal warning headroom, not a complete timing/stability pass.
+The run duration and queue-fault status were not supplied.
+
+The original experimental timing text said "Mixer: two sources" for every mode;
+that identified the build's renderer policy, not the selected startup mode.
+The editor now labels it "Rendering: two sources". Firmware and timing thresholds
+are unchanged; the separate live readout identifies the selected mode.
+
 ## Firmware and editor
 
 - [Passing alpha17 SOLO reference](uf2/Spatial_Disorientation_0.1.0-alpha17-elevation64-SOLO-startup-fix.uf2):
@@ -89,7 +110,7 @@ requires reset, so use editor/device mode for the height comparison.
 ## Alpha18 DUAL test
 
 1. Flash alpha18 DUAL and boot into Mixer. Connect the alpha18 experimental editor;
-   verify telemetry says **64 taps / Mixer: two sources**. Check for a startup
+   verify telemetry says **64 taps / Rendering: two sources**. Check for a startup
    warning before changing settings.
 2. Patch Audio 1 only and repeat A Below/Level/Above at fixed front position,
    near distance, full strength and room zero. Then patch Audio 2 only and repeat
