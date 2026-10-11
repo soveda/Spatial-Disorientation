@@ -1,4 +1,4 @@
-Spatial Disorientation alpha16 64-tap elevation proof of concept
+Spatial Disorientation alpha16/alpha17 64-tap elevation proof-of-concept collection
 Original code/docs: Adrian Vos (soveda), 2026, MIT.
 New elevation tables derive from Gardner/Martin MIT Media Laboratory 1994 data;
 measurement attribution terms remain separate. Preserve these notices with UF2.

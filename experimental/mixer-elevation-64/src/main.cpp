@@ -21,7 +21,6 @@ static void RenderBlock() {
     uint32_t start=time_us_32();
     bool saving=shared.save!=0;
     engine.SetElevation(shared.mode==1?shared.elevation:0);
-    engine.SetSolo(SPATIAL_ELEVATION_SOLO&&shared.mode==1);
     bool rendered=blocks.Render(engine);
     if(rendered){
         const auto& s=engine.RenderedScene();
@@ -47,6 +46,9 @@ extern "C" void tusb_time_delay_ms_api(uint32_t ms) {
 static spatial::UsbEditor* editor;
 static bool host_mode=false;
 static void UsbCore() {
+    // Establish the worker-only policy before USB/audio readiness. Mode selection
+    // has a 50 ms warmup; SOLO must never render B even during that warmup.
+    engine.SetSolo(SPATIAL_ELEVATION_SOLO);
     if(host_mode)spatial::RunMuHost(shared,RenderBlock);
     else editor->Run();
 }

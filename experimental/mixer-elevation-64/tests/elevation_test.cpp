@@ -5,6 +5,7 @@
 #undef spatial
 #include "dsp/spatial.h"
 #include "elevation_control.h"
+#include "startup_mode.h"
 #include <cassert>
 #include <cstdio>
 #include <cstdlib>
@@ -69,5 +70,14 @@ int main(){
     solo.SetScene(scene,cfg);reference.SetScene(scene,cfg);solo.SetElevation(9);reference.SetElevation(9);
     for(int i=0;i<48000;++i){seed=seed*1664525u+1013904223u;int a=int(seed&4095)-2048;
         auto x=solo.Process(a,2047),y=reference.Process(a,0);assert(x.left==y.left&&x.right==y.right);}
+    // SOLO must exclude B throughout startup warmup, selection and release,
+    // including visits to the non-Mixer selector regions while audio is muted.
+    spatial::Engine bootEngine;bootEngine.SetSolo(true);spatial::StartupMode boot;
+    for(int ms=0;ms<180;++ms){
+        boot.Tick(ms<150,ms<70?100:ms<100?3500:2000);
+        spatial::Scene s;spatial::Config c;bootEngine.SetScene(s,c);
+        for(int n=0;n<48;++n){auto x=bootEngine.Process(0,2047);assert(x.left==0&&x.right==0);}
+    }
+    assert(boot.Ready()&&boot.Selected()==spatial::Mode::Mixer);
     std::puts("PASS: atomic height validation, bit-identical Level baseline, measured height FIR references, bypass and rapid-control bounds");
 }

@@ -1,6 +1,6 @@
 # Spatial Mixer: 64-tap height comparison
 
-**0.1.0-alpha16-elevation-64-poc · experimental · hardware tests pending**
+**0.1.0-alpha17-elevation-64-poc · experimental · hardware tests pending**
 
 Original code/documentation © 2026 Adrian Vos (soveda), MIT;
 [license](../../LICENSE), [dependency attribution](../../THIRD_PARTY_NOTICES.md).
@@ -13,15 +13,30 @@ The user reports alpha15 passes but height is very subtle. This pass compares
 64-tap filters at the same measured −40° / 0° / +40° directions and shared gain.
 The current editor, alpha15 experiment and Workshop Computer release are unchanged.
 
+## Startup correction (2026-10-11)
+
+The user reports alpha16 SOLO callback 11 µs / block 1,359 µs, a slow-block and
+queue warning. The original SOLO policy depended on `shared.mode == Mixer`;
+startup defaults to Orbits during the 50 ms ADC warmup and can visit other modes
+while choosing. Both 64-tap sources ran in those intervals, even while output was
+muted, and the peaks/faults remained latched after Mixer selection.
+
+Alpha17 establishes SOLO on core 1 before USB/audio readiness, independent of
+mode. Warning thresholds and latching are unchanged. This removes a known
+startup workload error; hardware must determine whether it explains the entire
+reported overrun. Reset and verify peak/warning state before changing heights,
+then during repeated height/CV changes. The alpha16 SOLO binary is retained only
+as the failed comparison artifact; use alpha17 for the next test.
+
 ## Firmware and editor
 
-- [SOLO firmware](uf2/Spatial_Disorientation_0.1.0-alpha16-elevation64-SOLO.uf2):
-  **start here**. Mixer renders A only; B's geometry/convolution/room processing
+- [SOLO firmware](uf2/Spatial_Disorientation_0.1.0-alpha17-elevation64-SOLO-startup-fix.uf2):
+  **start here**. Every mode renders A only from startup; B's geometry/convolution/room processing
   is skipped and B input is silent. This isolates height listening and reduces
-  worker load. Unplugging B on ordinary firmware does not skip its DSP work.
+  worker load. B is also silent in Orbits/Disorientation on this SOLO build. Unplugging B on ordinary firmware does not skip its DSP work.
 - [DUAL firmware](uf2/Spatial_Disorientation_0.1.0-alpha16-elevation64-DUAL.uf2):
   optional two-source load/listening comparison after SOLO. Both sources render.
-- [Experimental editor](web/index.html): identifies alpha16-elevation-64-poc;
+- [Experimental editor](web/index.html): identifies alpha17-elevation-64-poc;
   timing telemetry shows 64 taps and Mixer source A only / two sources.
 - [Checksums](uf2/SHA256SUMS.txt).
 
@@ -58,7 +73,7 @@ requires reset, so use editor/device mode for the height comparison.
    clearer than alpha15, not merely whether the sound is different.
 4. Compare against [alpha15 32-tap firmware](../mixer-elevation/uf2/Spatial_Disorientation_0.1.0-alpha15-elevation-poc.uf2)
    with the same source/settings and its [matching editor](../mixer-elevation/web/index.html).
-   Level uses 64 taps in alpha16, so it is not bit-identical to alpha14/alpha15's
+   Level uses 64 taps in alpha16/alpha17, so it is not bit-identical to alpha14/alpha15's
    32-tap Level. Compare height distinctions within each build before comparing
    the two builds overall. No added gain or exaggerated spectral cue is used.
 5. In SOLO, Audio 2 alone must be silent. Repatch Audio 1, rapidly change heights,
@@ -103,16 +118,17 @@ cmake -S experimental/mixer-elevation-64 -B /tmp/spatial-elevation64-dual -DPICO
 cmake --build /tmp/spatial-elevation64-dual -j2
 ```
 
-Both firmware builds pass: SOLO main RAM 174,112 bytes / flash 136,572 bytes;
+Both firmware builds pass: alpha17 SOLO main RAM 174,080 bytes / flash 136,544 bytes;
 DUAL main RAM 174,080 bytes / flash 136,540 bytes; scratch banks 2,048 bytes each.
 
-Only 64 taps are supported in this experiment. The SOLO option affects Mixer;
-Orbits/Disorientation still render both sources with horizontal 64-tap filters
-and need separate timing validation before use.
+Only 64 taps are supported in this experiment. SOLO applies from startup in all modes;
+DUAL renders both sources with horizontal 64-tap filters in Orbits/Disorientation
+and needs separate timing validation before use.
 
 Host sanitizer checks cover all height-direction impulse references, neutral
 bypass, rapid profile switching/bounds, agreement with the matching 64-tap
-horizontal renderer, and SOLO output agreement with A-only DUAL rendering.
+horizontal renderer, SOLO output agreement with A-only DUAL rendering, and
+B silence throughout warmup/selector traversal/release.
 DSP, room, block transport, mode and settings regression suites pass against the
 experimental headers. The copied editor tests cover height sending/readback,
 SOLO/DUAL telemetry and existing preset/lifecycle behaviour.
