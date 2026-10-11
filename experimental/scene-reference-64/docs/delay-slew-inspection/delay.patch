@@ -1,0 +1,36 @@
+--- a/src/dsp/spatial.h
++++ b/src/dsp/spatial.h
+@@ -18,6 +18,12 @@
+ class Delay {
+ public:
+     void Write(int32_t x) { data_[head_] = static_cast<int16_t>(Clamp(x,-4096,4095)); head_=(head_+1)&2047; }
++    struct Position { int32_t index, fraction; };
++    Position Prepare(int32_t q8) const { return {head_-1-(q8>>8),q8&255}; }
++    int32_t ReadPrepared(Position p,int32_t offset=0) const {
++        int32_t a=(p.index-offset)&2047,b=(a-1)&2047;
++        return data_[a]+((data_[b]-data_[a])*p.fraction>>8);
++    }
+     int32_t Read(int32_t q8) const {
+         int32_t a=(head_-1-(q8>>8))&2047, b=(a-1)&2047;
+         return data_[a]+((data_[b]-data_[a])*(q8&255)>>8);
+@@ -84,6 +90,7 @@
+         delay_[0]=Slew(delay_[0],delay_target_[0],256);
+         delay_[1]=Slew(delay_[1],delay_target_[1],256);
+         filtered=ears_.Process(filtered,delay_);
++        const auto position=line_.Prepare(base_);
+         int32_t reflected[2]={};
+         // Unequal arrival times (7–24 ms after the direct sound) give the ears
+         // room-width cues without adding latency to the direct path. Three
+@@ -91,9 +98,9 @@
+         for(int32_t e=0;e<2;++e){
+             int32_t taps=0;
+             if(room_[e]!=0){
+-                int32_t first=line_.Read(base_+(e==0?337:401)*256);
+-                int32_t later=(line_.Read(base_+(e==0?631:727)*256)
+-                              +line_.Read(base_+(e==0?1069:1153)*256))>>1;
++                int32_t first=line_.ReadPrepared(position,(e==0?337:401));
++                int32_t later=(line_.ReadPrepared(position,(e==0?631:727))
++                              +line_.ReadPrepared(position,(e==0?1069:1153)))>>1;
+                 taps=later+(((first-later)*early_)>>12);
+             }
+             // Q3 one-pole wall absorption: softer reflections preserve the

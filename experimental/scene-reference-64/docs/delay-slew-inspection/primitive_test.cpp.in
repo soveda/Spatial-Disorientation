@@ -1,0 +1,21 @@
+// Copyright (c) 2026 Adrian Vos (soveda). SPDX-License-Identifier: MIT
+#define spatial baseline
+#include "@BASELINE@/dsp/spatial.h"
+#undef spatial
+#include "@CANDIDATE@/dsp/spatial.h"
+#include <cassert>
+#include <cstdio>
+#include <initializer_list>
+template<int K> void Check(){
+for(int d=-262144;d<=262144;++d){
+for(int from : {-10000,0,10000})assert(baseline::Slew(from,from+d,1<<K)==spatial::SlewPower<K>(from,from+d));
+}
+}
+int main(){
+Check<2>();Check<7>();Check<8>();Check<9>();
+spatial::Delay line;uint32_t random=3;
+for(int i=0;i<4096;++i){random=random*1664525u+1013904223u;line.Write(int(random&8191)-4096);
+for(int f=0;f<256;++f){int base=((i*37)%384+64)*256+f;auto p=line.Prepare(base);for(int offset : {0,337,401,631,727,1069,1153})assert(line.Read(base+offset*256)==line.ReadPrepared(p,offset));}
+}
+std::puts("PASS 6291468 slew comparisons and 7340032 delay comparisons, signs/zero/rounding/fractions/ring wraps");
+}

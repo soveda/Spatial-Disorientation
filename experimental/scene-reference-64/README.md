@@ -135,3 +135,8 @@ only documentation.
 [Geometry caching investigation](docs/GEOMETRY_CACHE_INSPECTION.md) includes
 frame-exact temporary-prototype checks and cache-hit counts. Savings are strongest
 for stationary scenes; hardware timing savings have not been measured.
+
+[Delay-read and smoothing inspection](docs/DELAY_SLEW_INSPECTION.md) records
+compiled candidates and exact-output checks. Smoothing is the stronger next
+hardware experiment; shared delay addressing currently adds FIR register-move
+overhead. No inspection candidate has been packaged as firmware.

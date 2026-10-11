@@ -1,0 +1,58 @@
+--- a/src/dsp/fixed.h
++++ b/src/dsp/fixed.h
+@@ -9,6 +9,14 @@
+     int32_t f = (phase >> 16) & 255;
+     return kSine[i] + ((kSine[(i+1)&255] - kSine[i]) * f >> 8);
+ }
++template<int Shift> inline int32_t SlewPower(int32_t from,int32_t to){
++    int32_t d=to-from;
++    if(d==0)return from;
++    int32_t sign=d>>31;
++    int32_t magnitude=(d^sign)-sign;
++    int32_t step=(magnitude>>Shift)+1;
++    return from+((step^sign)-sign);
++}
+ inline int32_t Slew(int32_t from, int32_t to, int32_t divisor) {
+     int32_t d = to - from;
+     return from + (d == 0 ? 0 : d / divisor + (d > 0 ? 1 : -1));
+--- a/src/dsp/spatial.h
++++ b/src/dsp/spatial.h
+@@ -69,11 +69,11 @@
+         int32_t q8=Clamp(input,-2048,2047)*256;
+         dc_=q8-previous_+dc_-(dc_>>10);previous_=q8;
+         line_.Write(dc_>>8);
+-        base_=Slew(base_,base_target_,256);
+-        room_[0]=Slew(room_[0],room_target_[0],512);
+-        room_[1]=Slew(room_[1],room_target_[1],512);
+-        early_=Slew(early_,early_target_,256);gain_=Slew(gain_,gain_target_,128);
+-        tone_=Slew(tone_,tone_target_,128);
++        base_=SlewPower<8>(base_,base_target_);
++        room_[0]=SlewPower<9>(room_[0],room_target_[0]);
++        room_[1]=SlewPower<9>(room_[1],room_target_[1]);
++        early_=SlewPower<8>(early_,early_target_);gain_=SlewPower<7>(gain_,gain_target_);
++        tone_=SlewPower<7>(tone_,tone_target_);
+         // Shared Q3 low-pass state replaces two Q8/int64 multiplies. With input
+         // bounded to [-4096,4095], |difference|<=65528 and tone<=32700, so the
+         // signed 32-bit product is <=2,142,765,600. State remains in input range.
+@@ -81,8 +81,8 @@
+         shadow_+=((direct*8-shadow_)*tone_)>>15;
+         hrtf_.Update();
+         EarPair filtered=hrtf_.Process(Clamp(shadow_>>3,-4096,4095));
+-        delay_[0]=Slew(delay_[0],delay_target_[0],256);
+-        delay_[1]=Slew(delay_[1],delay_target_[1],256);
++        delay_[0]=SlewPower<8>(delay_[0],delay_target_[0]);
++        delay_[1]=SlewPower<8>(delay_[1],delay_target_[1]);
+         filtered=ears_.Process(filtered,delay_);
+         int32_t reflected[2]={};
+         // Unequal arrival times (7–24 ms after the direct sound) give the ears
+--- a/src/dsp/hrtf.h
++++ b/src/dsp/hrtf.h
+@@ -27,7 +27,7 @@
+             int32_t target=neutral+(((measured-neutral)*strength_)>>12);
+             int32_t delta=target-coeff_[e][update_];
+             changed|=delta!=0;
+-            coeff_[e][update_]=coeff_[e][update_]+(delta==0?0:delta/4+(delta>0?1:-1));
++            coeff_[e][update_]=SlewPower<2>(coeff_[e][update_],target);
+         }
+         quiet_updates_=changed?0:quiet_updates_+1;
+         update_=(update_+1)&(kHrtfTaps-1);
