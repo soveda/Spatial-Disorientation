@@ -75,6 +75,21 @@ free running with A/B distances 26%/71%. Room amount, run duration and explicit
 audio-regression/queue-fault results were not supplied. Pendulum/Wander and 8mu
 timings have not been separately reported for alpha19.
 
+Further user tests used rapid, audio-rate CV input:
+
+| Mode / reported distance | Callback | Block |
+|---|---:|---:|
+| Mixer, A/B 81% | 13 µs | 1,158 µs |
+| Orbits, opposing/free-running, 100% | 11 µs | 1,155 µs |
+| Mixer, A/B 99% | 13 µs | 1,158 µs |
+
+The highest reported alpha19 block peak is now 1,158 µs: 42 µs below the warning
+threshold and about 175 µs below the 1,333.3 µs block deadline. This confirms
+reported timing under the supplied fast-CV stimulus. The existing control scan
+remains 1 kHz; audio-rate CV input does not imply audio-rate geometry updates.
+Run duration and explicit sound/control-regression or queue-fault status remain
+unspecified. No firmware change accompanies this result record.
+
 ## Verification and rebuild
 
 [Comparison test](tests/reference_test.cpp) uses the preserved alpha18 implementation
