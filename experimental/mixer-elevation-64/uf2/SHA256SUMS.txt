@@ -1,0 +1,2 @@
+50c80b2d5e5dce42d78e6f07cef71a632344f706136734320aca365a7de18d13  Spatial_Disorientation_0.1.0-alpha16-elevation64-SOLO.uf2
+5839067b505a831e4c876c1fa1edecfd535047cc167cd6be13fca262459c5b2d  Spatial_Disorientation_0.1.0-alpha16-elevation64-DUAL.uf2

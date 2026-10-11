@@ -1,0 +1,102 @@
+{
+  "archive_sha256": "a48e73137390626ef1e45d1de6a4d98530c6aa570e71b40f7c4442241ed5fa22",
+  "elevations_degrees": [
+    -40,
+    40
+  ],
+  "rate": 48000,
+  "taps": 64,
+  "azimuth_directions": 72,
+  "global_scale": 0.48727477260326996,
+  "rings": {
+    "-40": {
+      "measured_azimuths": [
+        0,
+        6,
+        13,
+        19,
+        26,
+        32,
+        39,
+        45,
+        51,
+        58,
+        64,
+        71,
+        77,
+        84,
+        90,
+        96,
+        103,
+        109,
+        116,
+        122,
+        129,
+        135,
+        141,
+        148,
+        154,
+        161,
+        167,
+        174,
+        180
+      ],
+      "max_direction_ear_l1_q14": 42933,
+      "comparison": {
+        "32": {
+          "magnitude_error_1k_12k_rms_db": 1.1784364349794232,
+          "min_energy_retained_before_taper": 0.9330910856657558
+        },
+        "64": {
+          "magnitude_error_1k_12k_rms_db": 0.6126230503052251,
+          "min_energy_retained_before_taper": 0.9672630113070776
+        }
+      }
+    },
+    "40": {
+      "measured_azimuths": [
+        0,
+        6,
+        13,
+        19,
+        26,
+        32,
+        39,
+        45,
+        51,
+        58,
+        64,
+        71,
+        77,
+        84,
+        90,
+        96,
+        103,
+        109,
+        116,
+        122,
+        129,
+        135,
+        141,
+        148,
+        154,
+        161,
+        167,
+        174,
+        180
+      ],
+      "max_direction_ear_l1_q14": 34715,
+      "comparison": {
+        "32": {
+          "magnitude_error_1k_12k_rms_db": 0.8299766364475155,
+          "min_energy_retained_before_taper": 0.9649841389980527
+        },
+        "64": {
+          "magnitude_error_1k_12k_rms_db": 0.31757178305738776,
+          "min_energy_retained_before_taper": 0.9920213311304131
+        }
+      }
+    }
+  },
+  "worst_combined_mixture_l1_q14": 91968
+}
