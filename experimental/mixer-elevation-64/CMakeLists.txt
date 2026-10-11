@@ -9,7 +9,7 @@ set(SPATIAL_HRTF_TAPS "64" CACHE STRING "Experimental HRTF filter length: 32 or 
 if(NOT SPATIAL_HRTF_TAPS STREQUAL "64")
     message(FATAL_ERROR "Elevation experiment requires 64 taps")
 endif()
-option(SPATIAL_ELEVATION_SOLO "Render only source A from startup in every mode" ON)
+option(SPATIAL_ELEVATION_SOLO "Render only source A from startup in every mode" OFF)
 add_executable(spatial_disorientation src/main.cpp src/usb_descriptors.c)
 target_include_directories(spatial_disorientation PRIVATE ${CMAKE_CURRENT_LIST_DIR}/../../vendor/ComputerCard ${CMAKE_CURRENT_LIST_DIR}/../../vendor/EightMU src)
 target_compile_options(spatial_disorientation PRIVATE -Wdouble-promotion -Wfloat-conversion -Wall -Wextra)

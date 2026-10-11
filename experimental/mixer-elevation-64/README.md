@@ -1,6 +1,6 @@
 # Spatial Mixer: 64-tap height comparison
 
-**0.1.0-alpha17-elevation-64-poc · experimental · initial hardware timing pass**
+**0.1.0-alpha18-elevation-64-poc · experimental · DUAL hardware validation pending**
 
 Original code/documentation © 2026 Adrian Vos (soveda), MIT;
 [license](../../LICENSE), [dependency attribution](../../THIRD_PARTY_NOTICES.md).
@@ -36,15 +36,35 @@ clearer with 64 taps. This is a positive subjective listening result alongside
 the initial SOLO timing pass. Run duration and a blind-identification score were
 not specified; two-source 64-tap performance remains unvalidated.
 
+## Alpha18 two-source pass (2026-10-11)
+
+Both sources now use the 64-tap height bank in the optimized DUAL build. Working
+FIR history and slewed coefficients use int32 words instead of int16 halfwords;
+M0+ word loads accept immediate offsets, avoiding repeated halfword address setup.
+The convolution loop processes eight taps per iteration to reduce loop overhead.
+Measured tables remain int16, all coefficient values and arithmetic are unchanged,
+and no filter taps, room cues or stereo source paths are removed. This trades
+1,024 bytes of working state across two sources for fewer kernel instructions.
+Core 0's callback, warning thresholds and block transport remain unchanged.
+Alpha18 build: main RAM 175,120 bytes, flash 136,564 bytes, scratch banks
+2,048 bytes each. This is memory usage, not a processor timing measurement.
+
+Sanitizer tests pass for all measured height-direction impulse references,
+64-tap horizontal scalar FIR references, strength bypass, rapid changing geometry/
+profiles, bounded output, room and block transport. The experimental editor passes
+its height/preset/lifecycle and SOLO/DUAL telemetry tests. Hardware timing must
+still establish whether this reduction provides sufficient two-source headroom.
+The passing alpha17 SOLO binary remains available unchanged as the fallback.
+
 ## Firmware and editor
 
-- [SOLO firmware](uf2/Spatial_Disorientation_0.1.0-alpha17-elevation64-SOLO-startup-fix.uf2):
-  **start here**. Every mode renders A only from startup; B's geometry/convolution/room processing
+- [Passing alpha17 SOLO reference](uf2/Spatial_Disorientation_0.1.0-alpha17-elevation64-SOLO-startup-fix.uf2):
+  Every mode renders A only from startup; B's geometry/convolution/room processing
   is skipped and B input is silent. This isolates height listening and reduces
   worker load. B is also silent in Orbits/Disorientation on this SOLO build. Unplugging B on ordinary firmware does not skip its DSP work.
-- [DUAL firmware](uf2/Spatial_Disorientation_0.1.0-alpha16-elevation64-DUAL.uf2):
-  optional two-source load/listening comparison after SOLO. Both sources render.
-- [Experimental editor](web/index.html): identifies alpha17-elevation-64-poc;
+- [Optimized alpha18 DUAL firmware](uf2/Spatial_Disorientation_0.1.0-alpha18-elevation64-DUAL-optimized.uf2):
+  **use this for the next test**. Both sources render, including during startup.
+- [Experimental editor](web/index.html): identifies alpha18-elevation-64-poc;
   timing telemetry shows 64 taps and Mixer source A only / two sources.
 - [Checksums](uf2/SHA256SUMS.txt).
 
@@ -66,7 +86,30 @@ Reset to init also resets height. Existing flash v4 / JSON v3 formats and MIDI
 settings IDs remain unchanged. There is no 8mu height control; changing USB roles
 requires reset, so use editor/device mode for the height comparison.
 
-## Focused test
+## Alpha18 DUAL test
+
+1. Flash alpha18 DUAL and boot into Mixer. Connect the alpha18 experimental editor;
+   verify telemetry says **64 taps / Mixer: two sources**. Check for a startup
+   warning before changing settings.
+2. Patch Audio 1 only and repeat A Below/Level/Above at fixed front position,
+   near distance, full strength and room zero. Then patch Audio 2 only and repeat
+   for B at front. Unplugged inputs should remain silent.
+3. Patch different bright sources to both inputs. Set A Below / B Above, then
+   swap them. Each height change should affect only its own source. Compare the
+   retained alpha17 SOLO for A's tonal/height clarity if needed.
+4. Send heights repeatedly, change independent positions/distances, add rapid CV,
+   and test room at 0%, 30% and maximum. Exercise both active inputs at once and
+   watch timing. Thresholds remain callback 18 µs and block 1,200 µs; block deadline
+   is 1,333 µs. Look for queue warnings, gaps and the latched warning LED.
+5. Run at least 20 minutes with editor connected. Report callback/block peaks and
+   whether both sources retain the clearer height result. If there are warnings,
+   record them and return to the passing alpha17 SOLO reference.
+6. Because height applies only in Mixer, Orbits/Disorientation use horizontal
+   64-tap filters. Optional regression checks should include slow movement and
+   phase freeze/reset, with their timing reported separately. No 8mu height
+   controls or saved-height fields are added in this pass.
+
+## Previous SOLO comparison protocol
 
 1. Flash SOLO, select Mixer, patch a bright mono source to Audio 1 and monitor
    through headphones. Noise bursts, brushed percussion or a bright texture work
@@ -126,7 +169,7 @@ cmake -S experimental/mixer-elevation-64 -B /tmp/spatial-elevation64-dual -DPICO
 cmake --build /tmp/spatial-elevation64-dual -j2
 ```
 
-Both firmware builds pass: alpha17 SOLO main RAM 174,080 bytes / flash 136,544 bytes;
+Earlier builds: alpha17 SOLO main RAM 174,080 bytes / flash 136,544 bytes;
 DUAL main RAM 174,080 bytes / flash 136,540 bytes; scratch banks 2,048 bytes each.
 
 Only 64 taps are supported in this experiment. SOLO applies from startup in all modes;

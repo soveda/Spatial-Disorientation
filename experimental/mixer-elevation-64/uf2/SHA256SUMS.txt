@@ -1,3 +1,4 @@
 5839067b505a831e4c876c1fa1edecfd535047cc167cd6be13fca262459c5b2d  Spatial_Disorientation_0.1.0-alpha16-elevation64-DUAL.uf2
 50c80b2d5e5dce42d78e6f07cef71a632344f706136734320aca365a7de18d13  Spatial_Disorientation_0.1.0-alpha16-elevation64-SOLO.uf2
 6577841a5f17da70d2038bb2c2b6e9d8483d51c97356a5a87173082592849187  Spatial_Disorientation_0.1.0-alpha17-elevation64-SOLO-startup-fix.uf2
+2708df8e4b2017c99325093b9ac10dbc8b7ef101a1887cc0dce73d97afad8368  Spatial_Disorientation_0.1.0-alpha18-elevation64-DUAL-optimized.uf2
