@@ -87,8 +87,12 @@ The highest reported alpha19 block peak is now 1,158 µs: 42 µs below the warni
 threshold and about 175 µs below the 1,333.3 µs block deadline. This confirms
 reported timing under the supplied fast-CV stimulus. The existing control scan
 remains 1 kHz; audio-rate CV input does not imply audio-rate geometry updates.
-Run duration and explicit sound/control-regression or queue-fault status remain
-unspecified. No firmware change accompanies this result record.
+The user subsequently confirms no audio abnormalities. Together with frame-exact
+software comparison and the reported sub-threshold hardware peaks, this supports
+alpha19 as the current experimental optimization baseline. Run duration, explicit
+control-regression checks and queue-fault status remain unspecified. Alpha18 code
+and firmware remain preserved as fallback. No firmware change accompanies this
+result record.
 
 ## Verification and rebuild
 
