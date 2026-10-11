@@ -1,6 +1,6 @@
 # Alpha19: scene-reference optimization experiment
 
-**0.1.0-alpha19-scene-reference-64-poc · two sources · hardware timing pending**
+**0.1.0-alpha19-scene-reference-64-poc · two sources · reported hardware tests pass**
 
 Original code/documentation © 2026 Adrian Vos (soveda), MIT;
 [license](../../LICENSE), [dependency/source attribution](../../THIRD_PARTY_NOTICES.md).
@@ -120,7 +120,14 @@ python3 -m http.server 8796 --bind 127.0.0.1 --directory experimental/scene-refe
 
 Visit `http://127.0.0.1:8796`. [UF2 checksums](uf2/SHA256SUMS.txt).
 Build passes: main RAM 175,136 bytes, flash 136,584 bytes and 2,048 bytes
-per scratch bank. Hardware timing is still pending.
+per scratch bank. Reported hardware timings are recorded above.
 Measured banks are unchanged from alpha18 and retain the existing KEMAR generator
 and data notices; block ownership follows Workshop_BlockAudioCard. Source-reference
 integration and comparison tests are original Adrian Vos code under MIT.
+
+## Compiled kernel inspection
+
+[Alpha18/alpha19 FIR inspection](docs/FIR_INSPECTION.md) records the generated
+instructions, stack use and remaining optimization opportunities. The inner
+loop has no spills and is identical in both builds. This inspection changes
+only documentation.
