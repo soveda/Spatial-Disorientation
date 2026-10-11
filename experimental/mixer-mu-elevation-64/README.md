@@ -1,6 +1,6 @@
 # Alpha21: Mixer 8mu elevation
 
-**0.1.0-alpha21-mixer-mu-elevation-64-poc · two sources · hardware tests pending**
+**0.1.0-alpha21-mixer-mu-elevation-64-poc · two sources · fader 8 and initial timings confirmed**
 
 Original code, tests and documentation © 2026 Adrian Vos (soveda),
 [MIT](../../LICENSE). Preserve [third-party attribution](../../THIRD_PARTY_NOTICES.md)
@@ -112,6 +112,25 @@ manual Send heights and readback still work in a separate editor session.
 
 If behaviour or timing regresses, flash alpha20. No Save is needed for testing.
 
+## Reported hardware results (2026-10-11)
+
+The user confirms **fader 8 works as planned** and reports 64 taps / two sources:
+
+| Mode / reported scene | Callback peak | Block peak | Margin below 1,200 µs warning |
+|---|---:|---:|---:|
+| Disorientation Fig8, free-running, distances A 3% / B 34% | 13 µs | 1,114 µs | 86 µs |
+| Twin Orbits, opposing/free-running, distance 35% | 11 µs | 1,119 µs | 81 µs |
+| Spatial Mixer, A selected, Main/X/Y pickup pending, distances A/B 0% | 13 µs | 1,114 µs | 86 µs |
+
+All supplied callback/block timings are below their warning thresholds. Maximum
+block peak is 1,119 µs, about 214 µs below the 1,333.3 µs deadline. This is 1 µs
+above alpha20's reported maximum of 1,118 µs: no material timing change is apparent
+in these reports, although scene/settings differ and these are not controlled
+benchmarks. The selected-source elevation control is confirmed; run duration,
+room/height settings, exact test coverage and explicit queue/audio-regression
+results were not supplied. Do not infer completion of the full stability protocol.
+No firmware change accompanies this result record; alpha20 remains fallback.
+
 ## Verification and rebuild
 
 Build passes with Pico SDK 2.3.0 / Arm GNU Toolchain 15.2.Rel1. Main RAM 175,744
@@ -146,5 +165,5 @@ copied editor from the repository root:
 python3 -m http.server 8798 --bind 127.0.0.1 --directory experimental/mixer-mu-elevation-64/web
 ```
 
-Visit `http://127.0.0.1:8798`. Hardware validation remains pending; software output
-agreement does not establish callback/block timing or physical pickup behaviour.
+Visit `http://127.0.0.1:8798`. Initial hardware timings and fader-8 operation are confirmed above. Full stability
+protocol coverage remains unspecified.
