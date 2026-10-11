@@ -131,3 +131,7 @@ integration and comparison tests are original Adrian Vos code under MIT.
 instructions, stack use and remaining optimization opportunities. The inner
 loop has no spills and is identical in both builds. This inspection changes
 only documentation.
+
+[Geometry caching investigation](docs/GEOMETRY_CACHE_INSPECTION.md) includes
+frame-exact temporary-prototype checks and cache-hit counts. Savings are strongest
+for stationary scenes; hardware timing savings have not been measured.
