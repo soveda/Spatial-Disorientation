@@ -1,6 +1,6 @@
 # Spatial Mixer: 64-tap height comparison
 
-**0.1.0-alpha17-elevation-64-poc · experimental · hardware tests pending**
+**0.1.0-alpha17-elevation-64-poc · experimental · initial hardware timing pass**
 
 Original code/documentation © 2026 Adrian Vos (soveda), MIT;
 [license](../../LICENSE), [dependency attribution](../../THIRD_PARTY_NOTICES.md).
@@ -27,6 +27,13 @@ startup workload error; hardware must determine whether it explains the entire
 reported overrun. Reset and verify peak/warning state before changing heights,
 then during repeated height/CV changes. The alpha16 SOLO binary is retained only
 as the failed comparison artifact; use alpha17 for the next test.
+
+User reports alpha17 passes: peak callback **14 µs**, peak 64-frame block
+**707 µs**, 64 taps, Mixer source A only. Pendulum works as expected with the
+documented centre/width controls. Editor telemetry showed A selected, X/Y pickup
+pending, and both distances zero. Run duration and improved blind height
+perception were not specified. This validates the reported timing test, not
+two-source 64-tap performance or a stronger height-localization result.
 
 ## Firmware and editor
 
