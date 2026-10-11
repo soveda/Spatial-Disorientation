@@ -1,6 +1,6 @@
 # Alpha20: smoothing-only 64-tap experiment
 
-**0.1.0-alpha20-smoothing-64-poc · two sources · initial hardware timings reported**
+**0.1.0-alpha20-smoothing-64-poc · two sources · user reports all tests pass**
 
 Original code, tests and documentation © 2026 Adrian Vos (soveda),
 [MIT](../../LICENSE). Preserve [third-party attribution](../../THIRD_PARTY_NOTICES.md)
@@ -28,7 +28,7 @@ The entire [alpha19 source](../scene-reference-64/src/dsp/spatial.h),
 [alpha19 UF2](../scene-reference-64/uf2/Spatial_Disorientation_0.1.0-alpha19-scene-reference64-DUAL.uf2)
 and [alpha19 editor](../scene-reference-64/web/index.html) remain untouched as
 fallback. Alpha19's highest reported block peak is 1,158 µs with fast CV and no
-audio abnormalities reported. Initial alpha20 hardware timings are recorded below; a complete listening/stability pass has not yet been reported.
+audio abnormalities reported. Initial alpha20 hardware timings are recorded below; the user subsequently reports all tests pass (2026-10-11).
 Root source/editor and Workshop Computer release are unchanged.
 
 A copy of the experimental editor has updated version/help text only. Its controls
@@ -85,8 +85,9 @@ are 38/23 µs lower. The reported maximum is 40 µs below alpha19's later 1,158 
 maximum, about 3.5%. These compare reported maxima, not a controlled benchmark:
 room/height settings, CV stimulus, run durations and explicit audio/control/queue
 results were not provided. Do not identify the third report as Disorientation
-without confirmation. Timing is encouraging; full protocol validation remains
-pending. No firmware change accompanies this record.
+without confirmation. The user subsequently reports all tests pass (2026-10-11), supporting alpha20
+as the current tested fallback. Individual duration/settings and the third
+mode label remain unspecified. No firmware change accompanies this record.
 
 ## Verification
 
@@ -137,5 +138,4 @@ python3 -m http.server 8797 --bind 127.0.0.1 --directory experimental/smoothing-
 
 Visit `http://127.0.0.1:8797`. [UF2 checksum](uf2/SHA256SUMS.txt).
 The [preceding inspection](../scene-reference-64/docs/DELAY_SLEW_INSPECTION.md)
-explains why shared delay addressing was left out. Initial alpha20 hardware timings are recorded above; complete listening/stability
-validation remains pending.
+explains why shared delay addressing was left out. Initial alpha20 hardware timings are recorded above; the user reports all tests pass (2026-10-11).

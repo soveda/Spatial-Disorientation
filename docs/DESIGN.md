@@ -292,3 +292,20 @@ comparisons, 6,291,468 exact slew steps plus settling curves, DSP/room/block/mod
 movement regressions and editor checks pass. Linked FIR is still 61 instructions
 per eight taps with no stack accesses. Actual hardware timing remains pending;
 see experimental/smoothing-64/README.md for protocol and firmware notices.
+
+## Alpha21 Mixer 8mu elevation (2026-10-11)
+
+User reports all alpha20 tests pass and requests fader 8 for Mixer elevation.
+Independent experimental/mixer-mu-elevation-64 adds selected-source Below/Level/
+Above thirds using existing measured profiles, source/session pickup and boundary
+hysteresis. Height remains runtime-only, retained on disconnect, reset to Level
+on boot, excluded from Save/export. Existing Orbits/Disorientation motion mapping
+and Mixer faders 1–7 remain. 8mu LED 8 fast-blinks for height pickup, then is steady
+A / slow-blink B, with dim/medium/bright height indication; held D diagnostics win.
+Core 0 publishes one aligned sequence/height word per source; core 1 alone owns
+applied height state and consumes before block rendering. DSP headers are unchanged
+from tested alpha20, at 192 MHz / 1.15 V with two 64-tap sources. Root source/editor
+and Workshop release remain unchanged. Build, focused mapping/mailbox tests,
+756,000 exact DSP frames, slew and existing 8mu/block/mode/editor checks pass.
+Hardware tests are pending. Original code/docs: Adrian Vos (soveda), 2026, MIT;
+existing dependency and Gardner/Martin KEMAR notices remain preserved.
