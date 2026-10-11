@@ -31,9 +31,10 @@ as the failed comparison artifact; use alpha17 for the next test.
 User reports alpha17 passes: peak callback **14 µs**, peak 64-frame block
 **707 µs**, 64 taps, Mixer source A only. Pendulum works as expected with the
 documented centre/width controls. Editor telemetry showed A selected, X/Y pickup
-pending, and both distances zero. Run duration and improved blind height
-perception were not specified. This validates the reported timing test, not
-two-source 64-tap performance or a stronger height-localization result.
+pending, and both distances zero. The user subsequently confirms height is
+clearer with 64 taps. This is a positive subjective listening result alongside
+the initial SOLO timing pass. Run duration and a blind-identification score were
+not specified; two-source 64-tap performance remains unvalidated.
 
 ## Firmware and editor
 
