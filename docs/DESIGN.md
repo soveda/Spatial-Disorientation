@@ -273,3 +273,22 @@ migration of all prior records/presets. 8mu choices remain volatile, preserve
 phase/pickup and revert to saved choice on disconnect. Hardware tests pending.
 Original design/code/docs: Adrian Vos (soveda), 2026, MIT; no new external code or
 data; existing source/measurement notices in ../THIRD_PARTY_NOTICES.md apply.
+
+## Alpha20 isolated smoothing experiment (2026-10-11)
+
+User authorizes a smoothing-only hardware pass following compiled delay/slew
+inspection. New `experimental/smoothing-64` copies alpha19 and changes only source
+and coefficient slew arithmetic to exact bounded magnitude/sign power-of-two
+steps. Legacy Slew is retained. FIR unrolling, delay addressing, geometry cadence,
+scene-reference block transport, 192 MHz/1.15 V and both 64-tap sources remain.
+Shared delay addressing is excluded because the compiled candidate added register
+moves to every FIR iteration. Alpha19 source/UF2 remains the fallback; root source,
+editor and Workshop release are unchanged. A copied experimental editor updates
+only version/help text. Flash/JSON/SysEx formats and height runtime semantics match.
+
+Original implementation/docs: Adrian Vos (soveda), 2026, MIT; existing dependency
+and Gardner/Martin KEMAR notices remain. Firmware build, 756,000 exact audio frame
+comparisons, 6,291,468 exact slew steps plus settling curves, DSP/room/block/modes/
+movement regressions and editor checks pass. Linked FIR is still 61 instructions
+per eight taps with no stack accesses. Actual hardware timing remains pending;
+see experimental/smoothing-64/README.md for protocol and firmware notices.

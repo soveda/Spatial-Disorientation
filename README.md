@@ -28,6 +28,10 @@ peak callback/block readings **7 / 1,021 µs** and **8 / 996 µs**, both at 32 t
 Both are below the 18 µs callback / 1,200 µs block warning thresholds.
 Separate alpha9 8mu and full Twin Orbits regression results are not reported.
 
+The separate [alpha20 smoothing-only 64-tap experiment](experimental/smoothing-64/README.md)
+is ready for hardware timing comparison against preserved alpha19. Its software
+outputs match alpha19; hardware validation is pending.
+
 Original code and documentation © 2026 Adrian Vos (soveda), [MIT](LICENSE).
 Third-party code and measurement data retain their own notices and terms; the
 project license does not relicense them. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
