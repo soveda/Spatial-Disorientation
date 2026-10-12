@@ -130,3 +130,29 @@ Visit `http://127.0.0.1:8800` in a Chrome-family browser; use a USB-C data cable
 allow MIDI/SysEx. Close Serial Monitor/other MIDI apps. Editor is self-contained;
 iOS is unsupported. Run `node tests/editor_test.cjs` from the experiment directory.
 No hosted alpha23 publication is implied by this local build.
+
+
+## Reported hardware timings (2026-10-12)
+
+Adrian Vos supplied the following alpha23 readings, all with 64 taps/two sources:
+
+| Displayed path / height | Callback peak | Block peak | Warning |
+|---|---:|---:|---|
+| Fig8, A/B 0°; distances 4%/30% | 13 µs | 1,131 µs | None shown |
+| Wander, A −32.1° / B −33.7°; distances 8%/23% | 13 µs | 1,209 µs | Slow DSP block |
+| Pendulum, A −40° / B −23.1°; distances 25%/25% | 13 µs | 1,209 µs | Latched slow DSP block |
+| Fig8, A −40° / B −8.8°; distances 43%/41% | 13 µs | 1,209 µs | Latched slow DSP block |
+
+Callback peak is 5 µs below its 18 µs warning. Maximum reported block peak is
+9 µs above the 1,200 µs warning and about 124 µs below the 1,333.3 µs processing
+deadline. This reports reduced safety margin, not proof of missed playback. No
+audio-queue warning is shown. Peak values and fault flags latch until reset;
+identical later 1,209 µs readings cannot establish individual path peaks without
+separate resets. The higher reading is first shown during Wander; it is not a
+controlled isolated benchmark of that path.
+
+Vertical movement is reflected in telemetry, but subjective sound, settings/run
+duration, Save/reset and audio-abnormality results were not supplied. Do not
+record the full protocol as passed. Recover timing headroom before implementing
+the user's requested future selectable sloping paths. Firmware remains unchanged;
+alpha22 stays the tested fallback. Record © 2026 Adrian Vos (soveda), MIT.

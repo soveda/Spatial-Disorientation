@@ -372,3 +372,21 @@ stability are pending; test intermediate moving heights/high room/rapid CV.
 Root source/editor and Workshop release are unchanged. Original code/design/docs
 Adrian Vos (soveda), 2026, MIT; existing Gardner/Martin KEMAR and dependency
 notices/terms preserved; no new external dataset/code.
+
+
+## Alpha23 initial timing report and next refinement (2026-10-12)
+
+User reports callback 13 µs, initial Level-height Fig8 block 1,131 µs, then a
+1,209 µs block peak and slow-DSP warning first displayed in Wander with nonzero
+height. Subsequent Pendulum/Fig8 show the same latched peak/warning; separate
+mode peaks are not established without reset. The maximum exceeds the warning
+by 9 µs but remains about 124 µs below the processing deadline. No audio-queue
+warning is shown; listening/stability/persistence results were not provided.
+Do not mark alpha23 hardware protocol passed. Recover headroom before widening
+path scope; alpha22 remains tested fallback.
+
+The user requests future selectable sloping paths if vertical movement works.
+Stage path-plane tilt (left/right, front/back or diagonal direction and amount)
+as a later refinement; its interaction with existing vertical excursion and
+±40° limits needs definition. No sloping path code is introduced. Original
+result/design record Adrian Vos (soveda), 2026, MIT.
