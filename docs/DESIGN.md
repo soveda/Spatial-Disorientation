@@ -436,3 +436,33 @@ until hardware A/B testing. No sloping paths/Wander cache/clock change in this
 pass. Root/current firmware/editor and Workshop release remain unchanged.
 Original code/design/docs Adrian Vos (soveda), MIT; existing Gardner/Martin KEMAR
 and dependency notices/terms preserved.
+
+
+## Alpha25 sustained readings and alpha26 slope experiment (2026-10-12)
+
+User reports alpha25 20-minute Fig8 peak 13/1180 µs callback/block and Wander
+14/1197 µs. These readings alone do not establish a useful sustained saving
+against alpha24's 1199 µs. Audio/queue results were not supplied with these runs.
+User explicitly requests a separate sloping-path timing test despite the margin.
+experimental/sloping-paths-64 retains alpha25 source/editor/UF2 as fallback.
+
+Add Disorientation uphill bearing ID18 (0..4095 full turn) and tilt ID19
+(0..2048 = 0..40°). Fixed-point horizontal unit direction rotation and original
+asin lookup resolve height/azimuth at existing staggered geometry cadence.
+Distance remains the existing path distance. Existing vertical centre/bob adds
+after rotation and clips to ±40°. Thus combined bob+tilt is not a rigid plane;
+the inclination is about the listener rather than the translated path centre.
+Zero tilt bypasses geometry and preserves exact alpha25 audio. All64 taps/two
+sources, 192 MHz/1.15 V, existing DSP/control/queue/core ownership and 8mu mappings
+remain. No extra live slope fader is introduced; saved settings apply in host boot.
+
+Dedicated experimental editor/protocol6, JSON6 and flash7 preserve old fields,
+migrating old presets/flash to zero tilt. Apply-only leaves physical flash intact.
+Before experimental Save export old presets: alpha25 rejects flash7 and JSON6;
+restoring its saved banks requires old exports. Build, sanitized independent
+rotation/bounds/freeze/180000 slope transport frames and settings migrations,
+756000 alpha25-exact zero-tilt scene/transport frames, 1024000 direct HRTF frames
+and editor lifecycle/preset/save regressions pass. Hardware timing/listening
+pending. Root editor/source and Workshop release unchanged. Original code/table/
+design/docs Adrian Vos (soveda), MIT; Gardner/Martin KEMAR and dependency
+notices/terms retained, no new external measurements or code.

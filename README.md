@@ -723,3 +723,5 @@ This independent repository is not a Workshop_Computer release submission.
 
 Alpha10 Mixer 8mu tests reported passed by the user on 2026-10-09. No new timing
 readings supplied. Record: Adrian Vos (soveda), 2026, MIT.
+
+The separate [alpha26 sloping-path experiment](experimental/sloping-paths-64/README.md) adds uphill direction/tilt to Disorientation for timing and listening comparison with alpha25. Use its dedicated editor; review persistence/fallback compatibility before experimental Save. Original implementation/docs Adrian Vos (soveda), MIT, with existing KEMAR and dependency notices preserved.
