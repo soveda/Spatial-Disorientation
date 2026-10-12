@@ -344,3 +344,31 @@ protocol as passed, with persistence explicitly confirmed. No new timing peaks
 or run duration were provided, so measured headroom remains unspecified for
 continuous height. Alpha22 is the tested fallback for the staged vertical
 Disorientation pass. No firmware change. Result record Adrian Vos (soveda), MIT.
+
+
+## Alpha23 vertical Disorientation experiment (2026-10-12)
+
+User authorizes the staged vertical pass. Independent
+experimental/vertical-disorientation-64 builds on tested alpha22, preserving
+its complete source/editor/UF2. Original phase-related rise/fall for Fig8, lifted
+Pendulum ends, and deterministic third-axis Wander nodes add bounded ±40° height
+to the existing renderer. Wander reuses segment/easing/reset/reversal behaviour.
+Horizontal direction/distance is unchanged. Geometry stays on core 1; centre
+and excursion are captured alongside sample audio/phase on core 0.
+
+Disorientation IDs 16/17 supply centre 0–4096 and excursion 0–2048; defaults
+2048/0 preserve old horizontal audio. Separate saved/exported settings use
+flash v6 / JSON v5 / SysEx v5. Legacy flash v1–v5 and preset v1–v4 migrate default
+vertical values, preserving supported old fields including alpha22 Mixer heights.
+Worker telemetry appends rendered height. Read/Apply/Save mute/lockout and
+single-writer bounded queues remain. 8mu fader 8 retains Disorientation motion
+amount; no height CV/host Save gesture. Mixer height and Orbits remain supported.
+
+192 MHz/1.15 V, ComputerCard 0.4.0, two sources/all 64 taps, 64-frame blocks and
+128-frame latency remain. Build, 756,000 zero-depth/reference frames, vertical
+path/bounds/freeze/reverse/reset/capture checks, migration/editor and existing
+regressions pass under host sanitizers. Hardware sound, timing, persistence and
+stability are pending; test intermediate moving heights/high room/rapid CV.
+Root source/editor and Workshop release are unchanged. Original code/design/docs
+Adrian Vos (soveda), 2026, MIT; existing Gardner/Martin KEMAR and dependency
+notices/terms preserved; no new external dataset/code.

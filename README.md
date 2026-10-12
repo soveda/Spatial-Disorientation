@@ -28,9 +28,13 @@ peak callback/block readings **7 / 1,021 µs** and **8 / 996 µs**, both at 32 t
 Both are below the 18 µs callback / 1,200 µs block warning thresholds.
 Separate alpha9 8mu and full Twin Orbits regression results are not reported.
 
-The new [alpha22 continuous Mixer height and persistence pass](experimental/continuous-elevation-64/README.md)
-adds smooth height control and saved/exported A/B heights, with vertical
-Disorientation staged next. Matching experimental editor/firmware are required;
+The new [alpha23 vertical Disorientation experiment](experimental/vertical-disorientation-64/README.md)
+adds saved height centre/excursion for Fig8, Pendulum and Wander. Matching
+experimental editor/firmware are required; hardware validation is pending.
+
+The tested [alpha22 continuous Mixer height and persistence pass](experimental/continuous-elevation-64/README.md)
+adds smooth height control and saved/exported A/B heights, and supplies
+alpha23’s tested fallback. Matching experimental editor/firmware are required;
 the user reports tests pass, including Save to card (2026-10-12).
 
 The separate [alpha20 smoothing-only 64-tap experiment](experimental/smoothing-64/README.md)
