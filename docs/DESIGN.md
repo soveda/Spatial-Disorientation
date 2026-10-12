@@ -390,3 +390,25 @@ Stage path-plane tilt (left/right, front/back or diagonal direction and amount)
 as a later refinement; its interaction with existing vertical excursion and
 ±40° limits needs definition. No sloping path code is introduced. Original
 result/design record Adrian Vos (soveda), 2026, MIT.
+
+
+## Alpha24 HRTF row-address cache experiment (2026-10-12)
+
+User authorizes the address-caching experiment to recover headroom at 192 MHz.
+Independent experimental/hrtf-address-cache-64 preserves alpha23 source/editor/
+UF2 as fallback. Only Hrtf::Geometry resolves primary/Level current/next rows
+and intermediate-height status; per-frame Update reuses those immutable pointers.
+No coefficient math, rounding, smoothing or geometry rate changes. All paths,
+controls, both 64-tap sources, delay reads and room model remain alpha23.
+Clock 192 MHz/1.15 V and existing block/queue/flash ownership are unchanged.
+SysEx v5 / JSON v5 / flash v6 remain compatible with alpha23's editor and records.
+No Wander-node cache, FIR unroll or sloping path is added in this isolated pass.
+
+1,024,000 direct HRTF plus 756,000 renderer/transport exact comparisons and
+sanitized vertical/Mixer/settings/DSP/room/control/editor regressions pass.
+Linked FIR remains 61 instructions per eight taps without stack accesses/MOVs.
+Static Source::Process instructions reduce 784→770 and stack references 74→60
+across all paths; these are not cycle/speed measurements. Build passes; hardware
+timing remains pending. Root/current firmware/editor and Workshop release are
+unchanged. Original code/design/docs Adrian Vos (soveda), MIT; existing KEMAR
+Gardner/Martin and dependency notices/terms preserved.

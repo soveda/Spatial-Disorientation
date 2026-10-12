@@ -28,7 +28,11 @@ peak callback/block readings **7 / 1,021 µs** and **8 / 996 µs**, both at 32 t
 Both are below the 18 µs callback / 1,200 µs block warning thresholds.
 Separate alpha9 8mu and full Twin Orbits regression results are not reported.
 
-The new [alpha23 vertical Disorientation experiment](experimental/vertical-disorientation-64/README.md)
+The new [alpha24 HRTF address-cache experiment](experimental/hrtf-address-cache-64/README.md)
+retains alpha23 audio exactly in host comparisons and keeps 192 MHz/two 64-tap
+sources. Alpha23 editor/settings remain compatible; hardware timing is pending.
+
+The [alpha23 vertical Disorientation experiment](experimental/vertical-disorientation-64/README.md)
 adds saved height centre/excursion for Fig8, Pendulum and Wander. Matching
 experimental editor/firmware are required; hardware validation is pending.
 
