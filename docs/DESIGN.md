@@ -412,3 +412,27 @@ across all paths; these are not cycle/speed measurements. Build passes; hardware
 timing remains pending. Root/current firmware/editor and Workshop release are
 unchanged. Original code/design/docs Adrian Vos (soveda), MIT; existing KEMAR
 Gardner/Martin and dependency notices/terms preserved.
+
+
+## Alpha24 result and alpha25 FIR unroll experiment (2026-10-12)
+
+User reports alpha24 peaking at 1,199 µs with no audible issues; callback peaks,
+exact settings/duration and full protocol completion are unspecified. The margin
+to the warning is only 1 µs. User authorizes the isolated 16-tap FIR unroll test.
+experimental/fir-unroll16-64 preserves alpha24 source/editor/UF2 as fallback.
+Only FIR grouping changes to 16 paired taps per iteration; explicit inlining
+retains alpha24's call structure after the first compiler candidate outlined
+the larger kernel. All 64 taps/two sources, math/rounding/smoothing, HRTF address
+cache, geometry cadence, paths, controls, room/delays and data formats remain.
+192 MHz/1.15 V, ComputerCard 0.4.0 and block/core ownership are unchanged.
+SysEx v5 / JSON v5 / flash v6 and alpha23/24 experimental editors stay compatible.
+
+Final build passes with 1,024,000 direct HRTF plus 756,000 scene/transport exact
+comparisons against alpha24, vertical/Mixer/scalar FIR and existing regressions.
+Linked FIR is 119 instructions per 16 taps × four iterations = 476 per source
+frame, versus 488 previously. It has two MOVs per iteration but no stack accesses
+or calls. Surrounding static stack references rise 60→68; net timing is uncertain
+until hardware A/B testing. No sloping paths/Wander cache/clock change in this
+pass. Root/current firmware/editor and Workshop release remain unchanged.
+Original code/design/docs Adrian Vos (soveda), MIT; existing Gardner/Martin KEMAR
+and dependency notices/terms preserved.

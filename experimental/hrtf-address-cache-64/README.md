@@ -117,3 +117,14 @@ python3 -m http.server 8801 --bind 127.0.0.1 --directory experimental/hrtf-addre
 
 Visit `http://127.0.0.1:8801`. Run `node tests/editor_test.cjs` from this experiment
 directory. No hosted alpha24 publication is implied by this local build.
+
+
+## Reported hardware result (2026-10-12)
+
+Adrian Vos reports a current peak of **1,199 µs**, followed by **no audible
+issues**. This is below the 1,200 µs warning by only 1 µs; if conditions match
+the preceding 1,203 µs alpha23 stress run, the apparent improvement is 4 µs.
+No new callback peak, run duration or detailed settings were supplied. This
+report supports alpha24 as the working reference, without establishing the full
+stability protocol or sufficient headroom for sloping paths. Firmware/checksum
+are unchanged. Result record © 2026 Adrian Vos (soveda), MIT.

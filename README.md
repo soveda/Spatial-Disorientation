@@ -28,7 +28,11 @@ peak callback/block readings **7 / 1,021 µs** and **8 / 996 µs**, both at 32 t
 Both are below the 18 µs callback / 1,200 µs block warning thresholds.
 Separate alpha9 8mu and full Twin Orbits regression results are not reported.
 
-The new [alpha24 HRTF address-cache experiment](experimental/hrtf-address-cache-64/README.md)
+The new [alpha25 16-tap FIR unroll experiment](experimental/fir-unroll16-64/README.md)
+keeps alpha24 audio/settings compatible at 192 MHz with two 64-tap sources.
+Compiled loop overhead is lower; hardware A/B timing is pending.
+
+The [alpha24 HRTF address-cache experiment](experimental/hrtf-address-cache-64/README.md)
 retains alpha23 audio exactly in host comparisons and keeps 192 MHz/two 64-tap
 sources. Alpha23 editor/settings remain compatible; hardware timing is pending.
 
