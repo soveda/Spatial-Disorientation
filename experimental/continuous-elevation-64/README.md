@@ -1,6 +1,6 @@
 # Alpha22: continuous Mixer elevation and saved heights
 
-**0.1.0-alpha22-continuous-elevation64-DUAL · experimental · hardware validation pending**
+**0.1.0-alpha22-continuous-elevation64-DUAL · experimental · user reports tests pass (2026-10-12)**
 
 Original code, tests and documentation © 2026 Adrian Vos (soveda),
 [MIT](../../LICENSE). Preserve [third-party notices](../../THIRD_PARTY_NOTICES.md)
@@ -125,7 +125,7 @@ Targets remain callback <18 µs and block <1,200 µs, with the actual block dead
    Fig8/Pendulum/Wander including freeze/reset/D selection and fader-8 motion.
 
 Report listening results, save/reset results, run duration and mode-specific peaks.
-Hardware timing and subjective interpolation quality are **not yet validated**.
+The user reports the tests pass, including Save to card; see the result record below.
 
 ## Verification and rebuild
 
@@ -157,3 +157,13 @@ Publication is separate from this local build.
 
 Vertical Disorientation movement is [staged next](docs/NEXT_VERTICAL_PASS.md),
 with no vertical path implementation in this firmware.
+
+
+## Reported hardware result (2026-10-12)
+
+Adrian Vos reports: “tests pass including saving to card.” Alpha22's hardware
+test protocol is recorded as passed, with Save to card explicitly confirmed.
+No new callback/block peaks, run duration or detailed listening observations
+were supplied; do not infer numerical headroom from this report. Firmware and
+checksum remain unchanged. Alpha22 is the tested fallback for the staged vertical
+Disorientation pass. Result record © 2026 Adrian Vos (soveda), MIT.

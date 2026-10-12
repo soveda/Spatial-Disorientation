@@ -335,3 +335,12 @@ legacy compatibility, preserve fader-8 motion for the initial experiment, verify
 headroom before increasing scope. No vertical Disorientation code is in alpha22.
 Original code/docs Adrian Vos (soveda), 2026, MIT; existing Gardner/Martin KEMAR
 measurement and dependency attribution/terms are preserved.
+
+
+## Alpha22 hardware result (2026-10-12)
+
+The user reports tests pass, including saving to card. Record alpha22 hardware
+protocol as passed, with persistence explicitly confirmed. No new timing peaks
+or run duration were provided, so measured headroom remains unspecified for
+continuous height. Alpha22 is the tested fallback for the staged vertical
+Disorientation pass. No firmware change. Result record Adrian Vos (soveda), MIT.

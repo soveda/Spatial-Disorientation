@@ -31,7 +31,7 @@ Separate alpha9 8mu and full Twin Orbits regression results are not reported.
 The new [alpha22 continuous Mixer height and persistence pass](experimental/continuous-elevation-64/README.md)
 adds smooth height control and saved/exported A/B heights, with vertical
 Disorientation staged next. Matching experimental editor/firmware are required;
-hardware validation is pending.
+the user reports tests pass, including Save to card (2026-10-12).
 
 The separate [alpha20 smoothing-only 64-tap experiment](experimental/smoothing-64/README.md)
 has passed the user
