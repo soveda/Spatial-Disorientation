@@ -277,7 +277,7 @@ data; existing source/measurement notices in ../THIRD_PARTY_NOTICES.md apply.
 ## Alpha20 isolated smoothing experiment (2026-10-11)
 
 User authorizes a smoothing-only hardware pass following compiled delay/slew
-inspection. New `experimental/smoothing-64` copies alpha19 and changes only source
+inspection. New `archive/experimental/smoothing-64` copies alpha19 and changes only source
 and coefficient slew arithmetic to exact bounded magnitude/sign power-of-two
 steps. Legacy Slew is retained. FIR unrolling, delay addressing, geometry cadence,
 scene-reference block transport, 192 MHz/1.15 V and both 64-tap sources remain.
@@ -291,12 +291,12 @@ and Gardner/Martin KEMAR notices remain. Firmware build, 756,000 exact audio fra
 comparisons, 6,291,468 exact slew steps plus settling curves, DSP/room/block/modes/
 movement regressions and editor checks pass. Linked FIR is still 61 instructions
 per eight taps with no stack accesses. Actual hardware timing remains pending;
-see experimental/smoothing-64/README.md for protocol and firmware notices.
+see archive/experimental/smoothing-64/README.md for protocol and firmware notices.
 
 ## Alpha21 Mixer 8mu elevation (2026-10-11)
 
 User reports all alpha20 tests pass and requests fader 8 for Mixer elevation.
-Independent experimental/mixer-mu-elevation-64 adds selected-source Below/Level/
+Independent archive/experimental/mixer-mu-elevation-64 adds selected-source Below/Level/
 Above thirds using existing measured profiles, source/session pickup and boundary
 hysteresis. Height remains runtime-only, retained on disconnect, reset to Level
 on boot, excluded from Save/export. Existing Orbits/Disorientation motion mapping
@@ -314,7 +314,7 @@ existing dependency and Gardner/Martin KEMAR notices remain preserved.
 ## Alpha22 continuous Mixer height and persistence (2026-10-12)
 
 User authorizes continuous Mixer elevation, saving height and staging vertical
-Disorientation next. Independent experimental/continuous-elevation-64 replaces
+Disorientation next. Independent archive/experimental/continuous-elevation-64 replaces
 three-state height with 0–4096 continuous Level-to-measured-±40° interpolation
 and continuous timing projection, retaining exact alpha21 audio at anchors.
 Mixer 8mu fader 8 retains source/session pickup, now continuous; LED brightness
@@ -349,7 +349,7 @@ Disorientation pass. No firmware change. Result record Adrian Vos (soveda), MIT.
 ## Alpha23 vertical Disorientation experiment (2026-10-12)
 
 User authorizes the staged vertical pass. Independent
-experimental/vertical-disorientation-64 builds on tested alpha22, preserving
+archive/experimental/vertical-disorientation-64 builds on tested alpha22, preserving
 its complete source/editor/UF2. Original phase-related rise/fall for Fig8, lifted
 Pendulum ends, and deterministic third-axis Wander nodes add bounded ±40° height
 to the existing renderer. Wander reuses segment/easing/reset/reversal behaviour.
@@ -395,7 +395,7 @@ result/design record Adrian Vos (soveda), 2026, MIT.
 ## Alpha24 HRTF row-address cache experiment (2026-10-12)
 
 User authorizes the address-caching experiment to recover headroom at 192 MHz.
-Independent experimental/hrtf-address-cache-64 preserves alpha23 source/editor/
+Independent archive/experimental/hrtf-address-cache-64 preserves alpha23 source/editor/
 UF2 as fallback. Only Hrtf::Geometry resolves primary/Level current/next rows
 and intermediate-height status; per-frame Update reuses those immutable pointers.
 No coefficient math, rounding, smoothing or geometry rate changes. All paths,
@@ -419,7 +419,7 @@ Gardner/Martin and dependency notices/terms preserved.
 User reports alpha24 peaking at 1,199 µs with no audible issues; callback peaks,
 exact settings/duration and full protocol completion are unspecified. The margin
 to the warning is only 1 µs. User authorizes the isolated 16-tap FIR unroll test.
-experimental/fir-unroll16-64 preserves alpha24 source/editor/UF2 as fallback.
+archive/experimental/fir-unroll16-64 preserves alpha24 source/editor/UF2 as fallback.
 Only FIR grouping changes to 16 paired taps per iteration; explicit inlining
 retains alpha24's call structure after the first compiler candidate outlined
 the larger kernel. All 64 taps/two sources, math/rounding/smoothing, HRTF address
@@ -444,7 +444,7 @@ User reports alpha25 20-minute Fig8 peak 13/1180 µs callback/block and Wander
 14/1197 µs. These readings alone do not establish a useful sustained saving
 against alpha24's 1199 µs. Audio/queue results were not supplied with these runs.
 User explicitly requests a separate sloping-path timing test despite the margin.
-experimental/sloping-paths-64 retains alpha25 source/editor/UF2 as fallback.
+archive/experimental/sloping-paths-64 retains alpha25 source/editor/UF2 as fallback.
 
 Add Disorientation uphill bearing ID18 (0..4095 full turn) and tilt ID19
 (0..2048 = 0..40°). Fixed-point horizontal unit direction rotation and original
@@ -466,3 +466,20 @@ and editor lifecycle/preset/save regressions pass. Hardware timing/listening
 pending. Root editor/source and Workshop release unchanged. Original code/table/
 design/docs Adrian Vos (soveda), MIT; Gardner/Martin KEMAR and dependency
 notices/terms retained, no new external measurements or code.
+
+
+## 0.2.0-beta1 consolidation (2026-10-13)
+
+User requests a beta for other testers and archival of old versions. Current root
+promotes user-tested alpha26, retaining192MHz, two64-tap sources and all controls.
+Older root source/editor/docs/UF2 are archived under archive/alpha14; all experimental
+builds under archive/experimental with rebased build paths and preserved binary
+checksums. Packaged beta UF2 equals alpha26 byte-for-byte; root rebuild differs only
+in build-date byte. Dedicated beta editor, operator guide, protocol/migration notes,
+feedback checklist and metadata replace historical alpha root documentation.
+User reports slope audible; Pendulum25min14/1175µs clean/noqueue, Fig8 20min14/1176µs
+(no separate listening/queue report), Wander30min14/1193µs clean/noqueue. Do not infer
+an independent board/8mu/USBrole pass from these reports. Further tester acceptance
+includes persistence and separateUSBhost/device sessions. No Workshop release
+change or new DSP behaviour. Original code/docs AdrianVos(soveda),MIT; existing
+KEMAR/dependency notices preserved.

@@ -39,8 +39,14 @@ inline void RunMuHost(Shared& shared,void (*worker)()){
                     if(shared.flags&4)brightness=(now/125000)&1?4095:0;
                 }else if(i==7&&(feedback&2048)&&(feedback&4096))brightness=(now/125000)&1?4095:0;
                 else if(i==7&&(feedback&1024)){
-                    // Mixer LED 8: steady A, blinking B. Fader 8 is unused.
-                    brightness=(feedback&512)&&!((now/250000)&1)?0:1024;
+                    // Mixer LED 8: fast blink awaiting height pickup; once picked,
+                    // steady A / slow blink B, brightness follows height continuously.
+                    if(!(feedback&128))brightness=(now/125000)&1?512:0;
+                    else {
+                        uint32_t height=(feedback>>16)&255u;
+                        brightness=512+static_cast<int32_t>(height)*27;
+                        if((feedback&512)&&!((now/250000)&1))brightness=0;
+                    }
                 }else if(i==7&&(feedback&256))brightness=4095;
                 else if(feedback&(1u<<i))brightness=256+(mu.Fader(i)*3>>2);
                 else brightness=(now/125000)&1?512:0; // Waiting for pickup.

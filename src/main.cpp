@@ -20,9 +20,12 @@ static spatial::Engine engine;
 static void RenderBlock() {
     uint32_t start=time_us_32();
     bool saving=shared.save!=0;
+    shared.elevation=shared.mu_elevation.Consume(shared.elevation);
+    engine.SetElevation(shared.mode==1?shared.elevation:spatial::kLevelElevations);
     bool rendered=blocks.Render(engine);
     if(rendered){
         const auto& s=engine.RenderedScene();
+        shared.resolved_elevation=engine.RenderedElevation();
         shared.resolved_a=s.angle[0]>>20;shared.resolved_b=s.angle[1]>>20;
         shared.resolved_distance_a=s.distance;shared.resolved_distance_b=s.distance_b;
     }
@@ -45,6 +48,9 @@ extern "C" void tusb_time_delay_ms_api(uint32_t ms) {
 static spatial::UsbEditor* editor;
 static bool host_mode=false;
 static void UsbCore() {
+    // Establish the worker-only policy before USB/audio readiness. Mode selection
+    // has a 50 ms warmup; SOLO must never render B even during that warmup.
+    engine.SetSolo(SPATIAL_ELEVATION_SOLO);
     if(host_mode)spatial::RunMuHost(shared,RenderBlock);
     else editor->Run();
 }
@@ -63,6 +69,7 @@ private:
         if (++scan_==48) {
             scan_=0;
             bool restored=shared.Consume(settings_);
+            if(restored){shared.mu_elevation.Publish(0,settings_.height[0]);shared.mu_elevation.Publish(1,settings_.height[1]);}
             boot_.Tick(SwitchVal()==Switch::Down,KnobVal(Knob::Main));
             shared.mode=static_cast<uint32_t>(boot_.Selected());
             Switch raw=SwitchVal();
@@ -91,7 +98,9 @@ private:
             if(boot_.Ready()){
                 if(mixer){
                     modes_.SelectMixer(mixer_source,main,x,y);
-                    takeover=mixer_mu_.Apply(mu_input_,modes_,main,x,y,effective_);
+                    takeover=mixer_mu_.Apply(mu_input_,modes_,main,x,y,effective_,shared.elevation);
+                    int height=mixer_mu_.ElevationChange();
+                    if(height>=0)shared.mu_elevation.Publish(modes_.SelectedSource(),static_cast<uint32_t>(height));
                     shared.mu_feedback=mixer_mu_.Feedback();
                 }else if(orbits){
                     reset=mu_controls_.Apply(mu_input_,main,x,y,effective_,orbits&&reset,orbits)||reset;
@@ -110,6 +119,8 @@ private:
             if(shared.snapshot_request==1&&boot_.Ready()){
                 spatial::Settings snapshot=settings_;
                 if(mixer)snapshot.mixer=modes_.MixerPlacement();
+                uint32_t heights=shared.elevation;
+                snapshot.height[0]=spatial::HeightAt(heights,0);snapshot.height[1]=spatial::HeightAt(heights,1);
                 shared.snapshot=snapshot;__dmb();shared.snapshot_request=2;
             }
             shared.frozen=boot_.Selected()==spatial::Mode::Disorientation&&(selected_==Switch::Down||fig8_mu_.Frozen());
@@ -119,6 +130,7 @@ private:
         modes_.Pulse(Connected(Input::Pulse1),PulseIn1RisingEdge(),
             (boot_.Selected()!=spatial::Mode::Mixer&&reset) || (Connected(Input::Pulse2) && PulseIn2RisingEdge()));
         spatial::Scene scene=boot_.Ready()?modes_.Advance():spatial::Scene{};
+        if(scene.fig8){scene.vertical_centre=settings_.vertical_centre;scene.vertical_depth=settings_.vertical_depth;scene.slope_bearing=settings_.slope_bearing;scene.slope_tilt=settings_.slope_tilt;}
         auto output=blocks.Tick(Connected(Input::Audio1)?AudioIn1():0,
                                     Connected(Input::Audio2)?AudioIn2():0,scene,effective_);
         if (startup_<4800) ++startup_;
@@ -185,6 +197,7 @@ int main() {
     storage.Init(card.Capacity());
     spatial::Settings initial=storage.Load();
     card.Configure(initial);
+    shared.elevation=spatial::PackElevations(initial.height[0],initial.height[1]); // Before core 1 starts.
     static spatial::UsbEditor usb(shared,storage,initial,RenderBlock);
     editor=&usb;
     multicore_lockout_victim_init();

@@ -2,7 +2,7 @@
 
 Original project code and documentation: Adrian Vos (soveda), 2026, MIT; see LICENSE.
 This grant covers original work, not relicensing of dependencies, measurement data
-or the copied upstream directive. The current build is alpha9; historical alpha
+or the copied upstream directive. The current build is 0.2.0-beta1; historical alpha
 sections below identify when particular sources were introduced.
 
 ## Current source-to-file map
@@ -15,7 +15,7 @@ sections below identify when particular sources were introduced.
 | You spin me round, Adrian Vos | Reused values in src/dsp/sine_table.h | vendor/YouSpinMeRound/LICENSE |
 | Raspberry Pi Pico SDK | External linked SDK and copied pico_sdk_import.cmake | vendor/PicoSDK/LICENSE.TXT (BSD-3-Clause) |
 | TinyUSB / contributors | External linked host/device stack; configuration notice in src/tusb_config.h | vendor/TinyUSB/LICENSE and NOTICE.md; full Ha Thach notice in tusb_config.h |
-| Gardner/Martin MIT KEMAR data | vendor/KEMAR/diffuse.zip, src/dsp/hrtf_table_32.h and hrtf_table_64.h; HRTF previews | vendor/KEMAR/SOURCE_TERMS.md; data attribution in generated tables |
+| Gardner/Martin MIT KEMAR data | vendor/KEMAR/diffuse.zip, src/dsp/hrtf_table_32.h, hrtf_table_64.h and elevation_table.h; historical HRTF previews | vendor/KEMAR/SOURCE_TERMS.md; data attribution in generated tables |
 
 WaveSeq source and revision are in vendor/EightMU/SOURCE.md. Its web preset UI and
 switch-bank pickup were reviewed as examples, rather than copied wholesale.
@@ -221,3 +221,18 @@ sine; Wander uses an original deterministic integer hash and cosine easing. No
 additional external algorithm implementation or dataset is copied. Existing
 sine-table, ComputerCard, WaveSeq/EightMU/rppicomidi, block transport, Pico SDK/
 TinyUSB and Gardner/Martin KEMAR notices remain preserved and applicable.
+
+
+## Beta1 measured elevation, optimizations and sloping paths
+
+0.2.0-beta1 promotes alpha26. Continuous height blends the existing horizontal
+bank with measured −40°/+40° KEMAR rings, using72direction bins and64tap minimum-
+phase ear filters. Measurements remain Gardner/Martin,MITMediaLaboratory1994,
+under vendor/KEMAR/SOURCE_TERMS.md; they are not covered by the original-code MIT
+license. The original generator is tools/generate_elevation.py; its historical
+record is archive/experimental/mixer-elevation-64/generation.json. Original
+continuous interpolation, HRTF address cache/FIR unroll/slew optimizations,
+Fig8/Pendulum/Wander height and slope rotation/asin table, code/tests/editor/docs:
+AdrianVos(soveda),2026,MIT. Slope introduces mathematical coordinates, not new
+measurements or borrowed Quasar DSP. Compiler/runtime notices in uf2/NOTICE.txt
+and licenses/ cover linked firmware components; preserve them on redistribution.

@@ -3,6 +3,7 @@
 // Fixed buffers, bounded parser and timeouts replace its dynamic allocations.
 #pragma once
 #include "shared.h"
+#include "elevation_control.h"
 #include "storage.h"
 #include "midi_tx.h"
 #include "dsp/hrtf_table.h"
@@ -31,16 +32,18 @@ public:
             uint32_t now=time_us_32();
             if (now-last_telemetry_>=50000) {
                 last_telemetry_=now;
-                uint8_t data[13];
+                uint8_t data[17];
                 Pack(shared_.angle_a,data);Pack(shared_.angle_b,data+2);
                 Pack(shared_.distance,data+4);data[6]=shared_.flags&127;data[7]=shared_.mode;Pack(shared_.distance_b,data+8);data[10]=shared_.mixer_state;data[11]=shared_.frozen;
                 if(tx_.Empty()) {
                     data[12]=shared_.movement;
+                    uint32_t heights=shared_.resolved_elevation;
+                    Pack(HeightAt(heights,0),data+13);Pack(HeightAt(heights,1),data+15);
                     Send(0x43,0,data,sizeof(data));
-                    uint8_t timing[5];
+                    uint8_t timing[6];
                     Pack(shared_.callback_peak_us>16383?16383:shared_.callback_peak_us,timing);
                     Pack(shared_.block_peak_us>16383?16383:shared_.block_peak_us,timing+2);
-                    timing[4]=kHrtfTaps;
+                    timing[4]=kHrtfTaps;timing[5]=SPATIAL_ELEVATION_SOLO;
                     Send(0x44,0,timing,sizeof(timing));
                 }
             }
@@ -73,7 +76,7 @@ private:
     }
     void Snapshot(uint8_t seq) {
         if(shared_.mode>2||!Capture()){Ack(1,seq,4);return;}
-        uint8_t data[37];size_t n=EncodeSettings(current_,shared_.mode,data);Send(0x41,seq,data,n);
+        uint8_t data[43];size_t n=EncodeSettings(current_,shared_.mode,data);Send(0x41,seq,data,n);
     }
     void Message() {
         if (length_<6 || rx_[0]!=0x7d || rx_[1]!=0x53 || rx_[2]!=0x44) return;
@@ -97,6 +100,15 @@ private:
             if (shared_.save==2) { __dmb();okay=storage_.Save(current_); }
             __dmb();shared_.save=0;
             Ack(command,seq,okay ? 0 : 5);
+        } else if(command==4){
+            uint32_t packed;
+            if(shared_.mode!=1||!DecodeElevation(rx_+6,length_-6,packed)){Ack(command,seq,3);return;}
+            shared_.elevation=packed;Ack(command,seq,0);
+        } else if(command==5&&length_==6){
+            if(shared_.mode!=1){Ack(command,seq,3);return;}
+            uint8_t data[4];uint32_t heights=shared_.elevation;
+            Pack(HeightAt(heights,0),data);Pack(HeightAt(heights,1),data+2);
+            Send(0x45,seq,data,4);
         } else Ack(command,seq,1);
     }
     void Byte(uint8_t value) {

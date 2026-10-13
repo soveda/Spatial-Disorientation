@@ -9,3 +9,6 @@
 *.o
 
 !uf2/*.uf2
+
+/dist/
+!/archive/**/*.uf2

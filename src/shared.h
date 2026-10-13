@@ -1,6 +1,7 @@
 // Copyright (c) 2026 Adrian Vos (soveda). SPDX-License-Identifier: MIT
 #pragma once
 #include "settings.h"
+#include "elevation_mailbox.h"
 #include "mu_controls.h"
 #include "hardware/sync.h"
 namespace spatial {
@@ -22,8 +23,12 @@ struct Shared {
     volatile uint32_t mu_feedback=0;
     // Core 1 owns resolved Fig8 geometry; core 0 uses it for LEDs/telemetry only.
     volatile uint32_t resolved_a=0,resolved_b=2048,resolved_distance_a=0,resolved_distance_b=0;
+    alignas(4) volatile uint32_t resolved_elevation=kLevelElevations; // Core 1 writes; telemetry only.
     volatile uint32_t frozen=0;
     volatile uint32_t movement=0;
+    // Core 1 alone writes applied heights; core 0 reads for pickup.
+    alignas(4) volatile uint32_t elevation=kLevelElevations;
+    ElevationMailbox mu_elevation; // Core 0 requests, core 1 applies before rendering.
     bool ConsumeMu(MuInput& input){
         if(!mu_ready)return false;
         __dmb();input=mu_queued;__dmb();mu_ready=0;return true;

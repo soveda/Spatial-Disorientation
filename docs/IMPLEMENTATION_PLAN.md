@@ -1,3 +1,10 @@
+> Current version: **0.2.0-beta1** (2026-10-13). These historical planning notes
+> are retained with attribution; entries marked future below may now be complete.
+> Three modes, 8mu control, per-mode presets, continuous Mixer height, vertical
+> Disorientation and sloping paths are implemented. Current controls and testing:
+> [README](../README.md) / [tester protocol](TEST_PROTOCOL.md).
+> Original update ©2026 AdrianVos(soveda),MIT; existing data/dependency terms retained.
+
 # Spatial Disorientation implementation plan
 
 Updated 2026-10-09. Original plan © 2026 Adrian Vos (soveda), MIT.
