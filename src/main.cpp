@@ -85,9 +85,7 @@ private:
             }
             if (selected_!=Switch::Down) linked_=selected_==Switch::Up;
             int32_t main=KnobVal(Knob::Main),x=KnobVal(Knob::X),y=KnobVal(Knob::Y);
-            if(shared.ConsumeMu(mu_input_))mu_age_=0;
-            else if(mu_age_<150)++mu_age_;
-            if(mu_age_==150)mu_input_.yaw=0; // No stale integrated motion during USB waits.
+            shared.ConsumeMu(mu_input_); // Held tilt remains a position, not an expiring rate.
             if(boot_.Ready()&&!mode_started_){restored=true;mode_started_=true;}
             if(boot_.Ready()&&boot_.Selected()==spatial::Mode::Mixer&&restored){
                 modes_.RestoreMixer(settings_.mixer,main,x,y);mixer_mu_.Rearm();
@@ -134,7 +132,7 @@ private:
         if(boot_.Ready()&&boot_.Selected()==spatial::Mode::Orbits){
             scene.orbit=true;scene.vertical_centre=orbits_mu_.Height();scene.slope_bearing=orbits_mu_.Bearing();scene.slope_tilt=orbits_mu_.Tilt();
         }
-        if(scene.fig8){scene.vertical_centre=settings_.vertical_centre;scene.vertical_depth=settings_.vertical_depth;scene.slope_bearing=settings_.slope_bearing;scene.slope_tilt=settings_.slope_tilt;}
+        if(scene.fig8){scene.rotation=fig8_mu_.Rotation();scene.vertical_centre=settings_.vertical_centre;scene.vertical_depth=settings_.vertical_depth;scene.slope_bearing=settings_.slope_bearing;scene.slope_tilt=settings_.slope_tilt;}
         auto output=blocks.Tick(Connected(Input::Audio1)?AudioIn1():0,
                                     Connected(Input::Audio2)?AudioIn2():0,scene,effective_);
         if (startup_<4800) ++startup_;
@@ -184,7 +182,7 @@ private:
     spatial::StartupMode boot_;
     uint32_t startup_=0,led_tick_=0;
     int32_t fade_=0;
-    unsigned scan_=0,stable_count_=0,silent_=0,mu_age_=0;
+    unsigned scan_=0,stable_count_=0,silent_=0;
     Switch candidate_=Switch::Middle,selected_=Switch::Middle;
     bool linked_=false,settled_=false,overrun_=false,callback_slow_=false;
 };

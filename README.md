@@ -1,11 +1,12 @@
-# Spatial Disorientation — 0.3.0-beta2
+# Spatial Disorientation — 0.4.0-beta3
 
 Two independent mono sources placed and moved in headphone stereo on the Music
 Thing Modular Workshop Computer. Inspired by Neuzeit Instruments Quasar, with an
 independent implementation. Three startup modes: **Twin Orbits**, **Spatial Mixer**
 and **Disorientation** (Fig8, Pendulum, Wander). This beta includes Orbits height/slope and two8mu pages, continuous Mixer
 height, vertical Disorientation, elevation randomise/reset tools and the tested
-repeated-save fix.
+repeated-save fix. Pitch/roll motion directly places sound, with corrected roll
+polarity: right edge down moves right; yaw is unused.
 
 Original code and documentation © 2026 Adrian Vos (soveda), [MIT](LICENSE).
 Measured ear filters: Bill Gardner and Keith Martin, MIT Media Laboratory (1994),
@@ -19,7 +20,7 @@ or dependencies. No Quasar firmware, graphics or transfer functions are included
 
 ## Get started
 
-1. Download [the beta UF2](uf2/Spatial_Disorientation_0.3.0-beta2.uf2).
+1. Download [the beta UF2](uf2/Spatial_Disorientation_0.4.0-beta3.uf2).
    [Checksums](uf2/SHA256SUMS.txt) identify the current binary. Back up existing
    presets with your old editor before using this beta's Save to card.
 2. Put the Computer in its normal BOOTSEL firmware-loading mode and copy the UF2
@@ -80,7 +81,9 @@ python3 -m http.server 8804 --bind 127.0.0.1 --directory web
 ```
 
 Open `http://127.0.0.1:8804`. Hosted editors require HTTPS. This package does not
-publish a new hosted editor automatically; an old alpha editor is incompatible.
+publish a new hosted editor automatically. Editors using protocols before v7 are
+incompatible. Beta2 and the 0.3/0.4 alpha editors using protocol7 work, but this
+editor documents the current motion mapping.
 Select the desired startup mode before connecting or applying its settings.
 
 Changes wait for **Apply**; there is no automatic send. **Read** replaces displayed
@@ -122,18 +125,19 @@ The live diagram shows direction only; its radius does not represent distance.
 
 ### Migration and downgrade
 
-Beta2 uses **SysEx7 / preset JSON7 / flash8**, compatible with the0.3.0 alpha1–3
-experiments. It reads flash1–7 and imports JSON1–6, preserving supported old fields.
+Beta3 uses **SysEx7 / preset JSON7 / flash8**, compatible with beta2, the0.3.0
+alpha1–3 and0.4.0 pitch/roll experiments. No settings migration is needed from
+beta2. It reads flash1–7 and imports JSON1–6, preserving supported old fields.
 Migrating beta1 defaults only the new Orbits height/slope to level/zero tilt.
 Older missing Mixer heights default to level; missing vertical excursion/tilt to
 zero. No automatic boot migration write. Beta1’s editor uses an older protocol;
-use the matching beta2 editor. Each mode still has its own settings bank.
+use the matching beta3 editor. Each mode still has its own settings bank.
 
-**Export old presets before beta2 Save.** Apply-only leaves old flash intact.
-After beta2 Save, beta1 cannot read flash8 and starts defaults. To downgrade,
+**Export old presets before beta3 Save.** Apply-only leaves old flash intact.
+After beta3 Save, beta1 cannot read flash8 and starts defaults. To downgrade,
 load the archived beta1 UF2/editor, import your old exports and explicitly Save
-in each desired startup mode. Beta1 cannot import JSON7. Alpha1/2/3 have the same
-formats as beta2 and need no schema downgrade. [Archived versions](archive/README.md).
+in each desired startup mode. Beta1 cannot import JSON7. The0.3.0 alpha1/2/3 and
+0.4.0 pitch/roll alphas have the same formats as beta3 and need no schema downgrade. [Archived versions](archive/README.md).
 
 ## Direct 8mu control
 
@@ -156,7 +160,7 @@ resumes: there is no persistent page indicator. These are8mu LEDs, not Computer 
 |4|Room|Room|Room|Room|
 |5/6|A/B trim|A/B trim|A/B trim|A/B trim|
 |7|Spatial strength|Spatial strength|Spatial strength|Spatial strength|
-|8|Motion amount|Motion amount|Selected-source height|Motion amount|
+|8|Tilt sensitivity|Tilt sensitivity|Selected-source height|Motion amount|
 
 Faders1–3 rearm pickup on each Orbits page switch. Remote-owned speed/distance/
 separation stay held while editing height; return to normal waits for pickup.
@@ -166,8 +170,29 @@ when not remotely owned. No change to Disorientation/Mixer page behaviour.
 
 Orbits/Disorientation A resets/recentres at Main/current pose, B toggles motion,
 C holds phase. Motion/CV can still reshape held positions. C release restores the
-prior speed. Roll offsets the anchor and yaw rate integrates position/depth.
-Fader8 remains motion amount, including on Orbits height page; no new gyro axis.
+prior speed. **Yaw is unused. Pitch controls front/back; roll controls left/right.**
+The8mu reports positive roll when its right edge is raised; the mapping inverts
+that sign so sound follows the lowered edge. Capture neutral approximately flat.
+
+- **Orbits:** tilt is a directional pointer relative to the captured Main anchor.
+  At centre Main/reset phase, back edge raised points front; right edge lowered
+  points right; front edge raised points back; left edge lowered points left.
+  Combined tilt selects intermediate directions. Hold a pose to hold direction;
+  returning near neutral holds the last direction. Fader8 sets tilt sensitivity:
+  lower values need more tilt to engage, zero returns to the anchor. Once engaged,
+  it retains full angular travel. X automatic orbit and CV remain additive; centre
+  X and remove CV for direct positioning. Height/slope pages do not alter motion.
+- **Disorientation:** pitch directly offsets bounded Main depth (positive pitch
+  towards front); roll rotates the whole path towards the lowered edge, about±90°
+  from flat at full amount. Fader8 scales both contributions; zero returns depth
+  to its anchor and rotation to zero. Motion-off/disconnect eases rotation tozero;
+  Main waits for panel pickup. A recaptures both axes/Main and resets rotation.
+  Rotation follows the configured world-space slope. Height/bob/slope are set in
+  the editor; there is no direct8mu elevation page for Disorientation.
+
+Holding a pose does not accumulate movement. A captures neutral on either mode;
+C freezes phase but permits tilt/CV reshaping.
+
 Disorientation D tap cycles Fig8/Pendulum/Wander, with LEDs1/2/3 briefly identifying
 movement; longD keeps timing. Mixer A/B select sources, C is unused and D is timing.
 Mixer LED8 identifies A steady/B blinking, with height brightness/pickup feedback.
@@ -201,12 +226,13 @@ Unchanged saves skip mute/erase; failures return an error and latch the general
 faultLED once callbacks run. A stopped core cannot guarantee LED feedback. Save
 pauses are excluded from timing peaks.
 
-**Beta2 ships the exact user-tested alpha3 UF2 bytes; the promoted root rebuild
-also matches byte-for-byte.** The user reports all alpha3 tests pass, including
-8mu pickup/page control and effective indicator. Randomisation listening confirms
-elevation changes are effective. The alpha2 save fix separately passed.
+**Beta3 ships the exact user-tested0.4.0-alpha2-roll-polarity UF2 bytes.** The user
+reports its tests pass and requests promotion. This adds direct pitch/roll control
+and the corrected lean direction to beta2. Earlier save-fix, elevation and8mu page
+passes remain the baseline. No new peak values or duration were supplied with this
+pass; firmware/build checks supplement the user's hardware acceptance.
 
-Historical timing context from earlier builds (not new beta2 measurements):
+Historical timing context from earlier builds (not new beta3 measurements):
 
 | Build / mode | Duration | Callback / block peak |
 |---|---|---|
@@ -215,7 +241,7 @@ Historical timing context from earlier builds (not new beta2 measurements):
 | Alpha26 Wander |30min|14 /1193µs; clean, no queue warnings|
 |0.3alpha1 opposing Orbits|22min|12 /1188µs; clean, no queue warnings|
 
-No new alpha3 peak values or run duration were supplied with its pass. Headroom
+No new pitch/roll alpha2 peak values or run duration were supplied with its pass. Headroom
 remains narrow; historical Wander was only7µs below the block warning. Additional
 testers should log their own board/headphones, controls/CV, duration and USBrole,
 covering editor and separate8mu boots. [Protocol/feedback](docs/TEST_PROTOCOL.md).
@@ -237,19 +263,9 @@ Python scientific libraries or measurement download. Mathematical slope-table
 reproduction uses `tools/generate_slope_table.py`; measured-bank provenance and
 archived elevation generator are recorded in the notices. Old preview audio is
 historical, not proof of the beta's sound. [Archive](archive/README.md) holds earlier
-versions; current `uf2/` contains only beta2 and its notices/checksum.
+versions; current `uf2/` contains only beta3 and its notices/checksum.
 
 
-## Pitch/roll positioning experiment
-
-[0.4.0-alpha1 pitch/roll](experimental/pitch-roll-position-64/README.md) replaces
-8mu yaw integration with direct pitch front/back and roll left/right positioning.
-Includes a separate UF2/editor and hardware test protocol; beta2 above is preserved.
-Host/build checks pass; physical testing of this mapping remains pending.
-
-
-[Alpha2 roll polarity correction](experimental/pitch-roll-polarity-64/README.md)
-reverses roll in both motion mappings: lowering the right edge moves right,
-lowering the left edge moves left. Pitch remains unchanged. Alpha1 otherwise
-passed user testing, but its physical roll convention was reversed; both prior
-alpha and beta2 remain available. Hardware confirmation of alpha2 is pending.
+Beta2 is preserved with its source/editor/firmware and original tester bundle in
+[archive/beta2](archive/beta2/README.md). The two pitch/roll alpha experiments remain
+under experimental/ for comparison; alpha1 uses the earlier reversed roll convention.

@@ -2,10 +2,11 @@
 #pragma once
 #include "config.h"
 #include "dsp/spatial.h"
+#include "tilt_position.h"
 namespace spatial {
 struct MuInput {
     int32_t fader[8]={}; // EightMU units 0..4064, converted below to full panel range.
-    int32_t roll=0,yaw=0;
+    int32_t roll=0,pitch=0,yaw=0; // Yaw retained for compatibility tests; deliberately unused.
     uint32_t buttons=0,connected=0,faders_ready=0,session=0;
 };
 // Core 0 only, at 1 kHz. USB never writes DSP/knob state directly.
@@ -22,9 +23,9 @@ public:
             have_faders_=false;previous_buttons_=in.buttons;
         }
         uint32_t pressed=in.buttons&~previous_buttons_;previous_buttons_=in.buttons;
-        if(pressed&2){motion_=!motion_;Recenter(main,in.roll);}
+        if(pressed&2){motion_=!motion_;Recenter(main,in.pitch,in.roll);}
         bool reset=(pressed&1)!=0;
-        if(reset||panelReset)Recenter(main,in.roll);
+        if(reset||panelReset)Recenter(main,in.pitch,in.roll);
         int32_t target[8]={x,y,cfg.value[0],cfg.value[1],cfg.value[2],cfg.value[3],cfg.value[4],4095};
         if(in.faders_ready){
             for(int i=0;i<8;++i){
@@ -45,14 +46,13 @@ public:
         for(int i=0;i<5;++i)cfg.value[i]=static_cast<uint16_t>(target[i+2]);
         if(orbitStop&&(in.buttons&4))x=2048; // Hold C to stop the orbit; release resumes it.
         if(motion_){
-            // Yaw is a rotation RATE, not heading. Integrate at 1 kHz, bounded
-            // to about half a turn/sec at full scale. Deadband rejects drift.
-            int32_t yaw=Clamp(in.yaw,-2032,2032);
-            if(yaw>-32&&yaw<32)yaw=0;
-            yaw=(yaw*target[7])>>12;
-            yaw_phase_+=static_cast<uint32_t>(yaw*1057);
-            int32_t tilt=(Clamp(in.roll,-2032,2032)-roll_zero_)*target[7]>>12;
-            uint32_t desired=anchor_+yaw_phase_+static_cast<uint32_t>(tilt)*1048576u;
+            // Direct two-axis pointer; holding a pose never integrates motion.
+            // EightMU positive roll lifts the right edge: invert for right-edge-down = right.
+            int32_t lateral=((roll_zero_-Clamp(in.roll,-2032,2032))*target[7])>>12;
+            int32_t forward=((Clamp(in.pitch,-2032,2032)-pitch_zero_)*target[7])>>12;
+            if(!target[7])desired_=anchor_;
+            else if(TiltActive(lateral,forward))desired_=anchor_+TiltDirection(lateral,forward);
+            uint32_t desired=desired_;
             // Smooth around the circle: crossing 0/360 never sweeps backwards.
             int32_t delta=static_cast<int32_t>(desired-angle_);
             angle_+=static_cast<uint32_t>(delta/16+(delta>0?1:(delta<0?-1:0)));
@@ -67,12 +67,13 @@ public:
     bool Motion() const {return motion_;}
     int32_t MotionDepth() const {return depth_;}
 private:
-    void Recenter(int32_t main,int32_t roll){
-        anchor_=static_cast<uint32_t>(main)*1048576u;angle_=anchor_;yaw_phase_=0;
+    void Recenter(int32_t main,int32_t pitch,int32_t roll){
+        anchor_=static_cast<uint32_t>(main)*1048576u;angle_=desired_=anchor_;
+        pitch_zero_=Clamp(pitch,-2032,2032);
         roll_zero_=Clamp(roll,-2032,2032);
     }
-    int32_t previous_[8]={},roll_zero_=0,depth_=4095;
-    uint32_t picked_=0,previous_buttons_=0,anchor_=0,angle_=0,yaw_phase_=0,session_=0;
+    int32_t previous_[8]={},roll_zero_=0,pitch_zero_=0,depth_=4095;
+    uint32_t picked_=0,previous_buttons_=0,anchor_=0,angle_=0,desired_=0,session_=0;
     bool connected_=false,have_faders_=false,motion_=false;
 };
 }

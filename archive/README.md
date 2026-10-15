@@ -26,3 +26,11 @@ Save; beta1 cannot read flash8. Separate alpha1/alpha2/alpha3 experiments remain
 `experimental/` at the repository root as historical test/fallback versions.
 Original archive record ©2026 Adrian Vos(soveda),MIT; existing measurement and
 dependency terms remain. No archived UF2 bytes have changed.
+
+
+Archived2026-10-15 for0.4.0-beta3: [beta2](beta2/README.md) preserves the full
+previous0.3.0-beta2 root source/editor/docs/firmware and original tester ZIP in
+its distribution/ folder. Beta2 and beta3 share SysEx7/JSON7/flash8; no migration
+needed between them. Beta2 retains the earlier yaw-based8mu motion. Both pitch/roll
+experiments remain in root experimental/; alpha2 is promoted, alpha1 has the old
+roll direction. No previous firmware bytes are changed.

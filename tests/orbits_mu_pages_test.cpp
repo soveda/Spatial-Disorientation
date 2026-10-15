@@ -20,7 +20,7 @@ int main(){
     // Shared faders and motion controls work on height page.
     in.fader[3]=1191;in.fader[4]=2032;in.fader[5]=2032;in.fader[6]=4064;tick();
     in.fader[3]=2000;tick();assert(cfg.value[1]>2000);
-    in.buttons=2;tick();assert(c.Motion());in.buttons=0;tick();in.yaw=1000;tick(50);assert(main!=2048);
+    in.buttons=2;tick();assert(c.Motion());in.buttons=0;tick();in.roll=1000;tick(50);assert(main!=2048);
     in.buttons=1;assert(tick());in.buttons=0;tick();
     in.buttons=4;tick(20);assert(x==2048&&(c.Feedback()&4096));in.buttons=0;tick();assert(x==speed);
     // D >=500ms is diagnostics only; release does not switch pages.

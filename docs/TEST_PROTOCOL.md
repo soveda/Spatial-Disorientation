@@ -1,8 +1,8 @@
-# Beta2 tester protocol and feedback
+# Beta3 tester protocol and feedback
 
 © 2026 Adrian Vos (soveda), MIT. Hardware reports in this conversation informed
 these checks. [Source/data/dependency attribution](../THIRD_PARTY_NOTICES.md).
-Test **0.3.0-beta2**, two sources/64 taps, with its matching editor. Headphones and
+Test **0.4.0-beta3**, two sources/64 taps, with its matching editor. Headphones and
 a suitable modular-to-headphone output path are required for binaural listening.
 
 1. **Install and startup.** Export old presets before beta Save. Load the beta UF2,
@@ -41,7 +41,7 @@ a suitable modular-to-headphone output path are required for binaural listening.
    host with8mu connected. Test fader pickup and mappings in README. Mixer A/B
    source selection, continuous fader8 height and panel handback; motion unused.
    Orbits/Disorientation B motion takeover, A reset/recentre, C hold freeze, fader8
-   motion amount. Disorientation D tap cycles movement; long D hold shows timing
+   tilt sensitivity in Orbits / motion amount in Disorientation. Disorientation D tap cycles movement; long D hold shows timing
    and must not cycle on release. No host gesture autosaves. Unplug/reconnect and
    reset; check pickup and restoration. Report if using older hardware USB role.
    Orbits: D tap<500ms toggles normal/height pages. LEDs1–3 identify normal;
@@ -49,6 +49,21 @@ a suitable modular-to-headphone output path are required for binaural listening.
    shared4–8, C release returning prior speed and longD not switching. Connect
    with D held: release must stay normal. Height page faders1/2/3=height/tilt/uphill.
    Disconnect restores saved elevation and panel pickup; no flash changes.
+   **Pitch/roll direction check:** begin with source A only, Main/X centred, no CV
+   and approximately flat8mu; A recaptures neutral, B enables motion. In Orbits,
+   back edge raised = front, right edge down = right, front edge raised = back,
+   left edge down = left, relative to captured Main. Combined tilt moves between
+   directions. Hold a pose30seconds: no accumulated yaw motion. Return nearflat:
+   last direction holds. Small jitter should not spin; twisting at unchanged tilt
+   should not add motion. Lower fader8 needs more tilt; zero returns anchor.
+   A at a tilted pose recaptures neutral. Add slow X, then C hold/release to check
+   automatic orbit combines with motion. Both Orbits pages retain this behaviour.
+   In Disorientation, pitch changes bounded front/back Main depth, roll turns the
+   whole path towards the lowered edge. Check all3 movements and steady poses.
+   Fader8 scales depth/rotation; zero restores anchor/zero rotation. A recaptures,
+   C freezes phase while tilt can still reshape placement, B restores panel pickup
+   and eases rotation tozero. Test non-flat recapture and disconnect/reconnect.
+   Height/slope remain configured in the editor, not through a Disorientation page.
 7. **Timing/stability.** Both sources, high room/strength, moving intermediate
    heights, large tilt/bob, fast knobs/CV and available audio-rate CV. Reboot
    before each Fig8/Pendulum/Wander comparison so peaks are independent. Run
@@ -67,7 +82,7 @@ are not automatically passes. Keep fallback UF2/editor/old exports available.
 Copy this into an issue or message; no feedback is sent automatically.
 
 ```text
-Version: 0.3.0-beta2 (UF2 SHA256 if checked)
+Version: 0.4.0-beta3 (UF2 SHA256 if checked)
 Workshop Computer hardware revision / program card:
 Headphones and monitoring path:
 Audio sources / connected inputs:

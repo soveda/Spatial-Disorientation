@@ -21,7 +21,7 @@ inline void RunMuHost(Shared& shared,void (*worker)()){
             MuInput input;
             input.connected=mu.Connected();input.faders_ready=mu.FadersReady();input.session=mu.Session();
             for(int i=0;i<8;++i)input.fader[i]=mu.Fader(i);
-            input.roll=mu.Roll();input.yaw=mu.FreshYaw(now);
+            input.roll=mu.Roll();input.pitch=mu.Pitch(); // Absolute tilt values; yaw is not used.
             for(int i=0;i<4;++i)if(mu.Button(i))input.buttons|=1u<<i;
             shared.PublishMu(input);
         }

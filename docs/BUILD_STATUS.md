@@ -1,34 +1,27 @@
-# Beta2 verification — 2026-10-15
+# Beta3 verification — 2026-10-15
 
-©2026 Adrian Vos(soveda), MIT. [Source and dependency attribution](../THIRD_PARTY_NOTICES.md).
+©2026 Adrian Vos(soveda),MIT. [Source/dependency attribution](../THIRD_PARTY_NOTICES.md).
 
-**0.3.0-beta2** promotes user-tested0.3.0-alpha3, commit`c6906d0`, without DSP or
-control changes. The distributed UF2 and root Release rebuild both have SHA256:
-`d8f2c50715d2963bcb964203e19795e8d15f59419d62241e1da6e01a834d98ef`.
-The firmware bytes are identical to the alpha3 accepted by the user.
+**0.4.0-beta3** promotes user-tested0.4.0-alpha2-roll-polarity, commit67228dd,
+with no control/DSP changes. Distributed UF2 is byte-identical to the accepted alpha:
+`ff641228bbca88632c47de0419f0194238a98026c79164e5411022e0fdc92149`.
+Root Release rebuild also matches. PicoSDK2.3.0/ArmGNU15.2.Rel1, warning-free build;
+flash147876B, RAM189792B, scratch2048B each.192MHz/1.15V,48kHz,two sources/64taps,
+64-frame worker/128-frame transport. ComputerCard0.4.0 local ADC/DMA flash-pause
+adaptation remains byte-identical to beta2.
 
-Build passes without warnings with PicoSDK2.3.0/ArmGNU15.2.Rel1. Flash147108B,
-mainRAM187968B, scratch2048B each.192MHz/1.15V, audio48kHz, two sources/64taps,
-64frame blocks and128frame transport remain. ComputerCard0.4.0 includes the local
-attributed ADC/DMA flash-pause adaptation; it is not an unmodified upstream header.
+23C++host programs pass ASan/UBSan against promoted root: physical pitch/roll
+cardinals through Orbits scene placement, yaw rejection/neutral hold, non-flat
+recapture, Disorientation roll sign,180000 changing-rotation captured frames,
+existing pickup/page/reconnect, save parser/init/Apply/Read and1000changed+
+100unchanged saves/failure injection, HRTF/room/slope/vertical/smoothing/queues.
+Editor script regressions pass for lifecycle, presets/migration and staged elevation
+tools. User reports tests pass and asks promotion; no new peak/duration numbers
+were supplied. Earlier timing history is context, not beta3 profiling.
 
-All22C++host programs pass ASan/UBSan against promoted root, including Orbits pages/
-pickup/held values/fresh-session/D-hold/A/B/C/reconnect,1000changed+100unchanged
-mock saves and injected failures, actual parser init→Apply→Read, settings/migrations,
-HRTF/FIR/scene/transport/height/slope/room/smoothing/8mu/MIDIqueue regressions.
-Actual editor script passes simulatedMIDI lifecycle, stale-readback detection,
-randomise/reset per-mode isolation/no-send/bounds, Apply/Save/preset/migration tests.
-These tests supplement rather than replace hardware acceptance.
-
-User reports: save fix passes; alpha3 all tests pass and page indicator effective;
-randomisation reveals effective elevation. No new alpha3 timing or run-duration
-numbers were supplied. Historical alpha26 Wander30min14/1193µs and alpha1 Orbits
-22min12/1188µs give context only, not beta2 measurements or a universal load limit.
-Additional testers should log exact settings/board/USB role and peaks, especially
-continuous height changes, heavyCV and separate editor/8mu boots.
-
-Metadata validates against canonical Workshop Computer schema with0errors/0warnings.
-Beta1 complete source/editor/docs/UF2/original testerZIP is preserved in archive/beta1;
-all29 archived UF2 checksums are verified. Current distribution contains one UF2 and
-matching editor/notices/source/test guide. Beta1 migration/downgrade is documented.
-Upstream Workshop release and remote Pages are not changed by local packaging.
+Metadata validates against the canonical Workshop Computer schema with0errors/
+0warnings. Beta2 source/editor/docs/firmware and original tester ZIP are archived
+under archive/beta2; older archives retained. Firmware checksums verified. Settings
+formats remain SysEx7/JSON7/flash8, compatible with beta2. Existing beta1 migration/
+downgrade instructions remain applicable. Root beta includes current editor, notices,
+source and tester guide. No Workshop release changes or remote publishing implied.

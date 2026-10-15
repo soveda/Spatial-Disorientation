@@ -1,11 +1,11 @@
-# Firmware build and component provenance — beta2
+# Firmware build and component provenance — beta3
 
 Original record ©2026 Adrian Vos(soveda), MIT. Third-party notices retain their
-own ownership/terms. Recorded2026-10-15 for0.3.0-beta2.
+own ownership/terms. Recorded2026-10-15 for0.3.0-beta3.
 
-- Distributed firmware: user-tested0.3.0-alpha3, preserved byte-for-byte; root
-  rebuild matches. Source checkpointc6906d0, with packaging/path/doc changes only.
-- SHA256: `d8f2c50715d2963bcb964203e19795e8d15f59419d62241e1da6e01a834d98ef`.
+- Distributed firmware: user-tested0.4.0-alpha2-roll-polarity, preserved byte-for-byte; root
+  rebuild matches. Source checkpoint67228dd, with packaging/path/doc changes only.
+- SHA256: `ff641228bbca88632c47de0419f0194238a98026c79164e5411022e0fdc92149`.
 - ComputerCard0.4.0, Chris Johnson MIT, with local Adrian Vos MIT flash-pause/
   restart additions; vendor/ComputerCard/PATCHES.md records the adaptation.
 - CPU192MHz/1.15V,48kHz, two64tap sources,64frame worker,128frame transport.
@@ -22,8 +22,8 @@ own ownership/terms. Recorded2026-10-15 for0.3.0-beta2.
   and related adaptation notices remain in repository and firmware notice bundle.
 - KEMAR measurements Bill Gardner/Keith Martin, MIT Media Laboratory1994:
   vendor/KEMAR/SOURCE_TERMS.md. Separate measurement terms, not MIT software.
-- User reports alpha2 save fix and alpha3 tests pass. No new alpha3 peak or duration
-  supplied; do not present older horizontal/alpha26 timings as beta2 profiling.
+- User reports pitch/roll alpha2 tests pass; earlier save-fix/pages passed. No new pitch/roll peak or duration
+  supplied; do not present older horizontal/alpha26 timings as beta3 profiling.
 
 Runtime archive members named in the current link map follow. Inclusion in the
 map can include discarded sections and is not proof that every member contributes

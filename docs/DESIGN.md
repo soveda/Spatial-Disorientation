@@ -605,3 +605,18 @@ Original code/docs Adrian Vos(soveda),MIT; dependency/KEMAR notices retained.
 Build: flash147876B/RAM189792B,scratch2048B per core,192MHz/64taps/two sources.
 23C++ASan/UBSan and editor regressions pass. Hardware confirmation pending;
 alpha1 and beta2 code/editors/UF2 remain intact. No remote publication implied.
+
+
+## Beta3 promotion after pitch/roll alpha2 acceptance (2026-10-15)
+
+User reports tests pass and requests beta promotion with README/docs updated.
+Root0.4.0-beta3 copies tested pitch-roll-polarity alpha2 source/tests/editor without
+control/DSP changes; distributed UF2 preserves exact tested bytes. Full previous
+beta2 root snapshot and original tester ZIP retained in archive/beta2, with rebased
+historical links/test paths. Earlier experiments remain. Current docs describe
+pitch front/back, corrected roll left/right, neutral hold, distinct fader8 semantics,
+Disorientation path rotation and editor-only elevation. Formats7/7/8 unchanged.
+23C++ASan/UBSan+editor regressions and root build/metadata validation pass; root
+rebuild matches tested firmware. No new hardware peaks/duration inferred. MIT
+Adrian Vos(soveda), existing dependency and Gardner/Martin terms retained. No remote
+publishing or Workshop release update is part of this promotion.

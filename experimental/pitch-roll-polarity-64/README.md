@@ -70,7 +70,7 @@ fader, source-select and panel-pickup behaviour remains beta2 behaviour.
 
 [Alpha UF2](uf2/Spatial_Disorientation_0.4.0-alpha2-roll-polarity64-DUAL.uf2) ·
 [SHA256](uf2/SHA256SUMS.txt) · [Matching editor](web/index.html).
-[User-passed beta2 fallback](../../uf2/Spatial_Disorientation_0.3.0-beta2.uf2).
+[User-passed beta2 fallback](../../archive/beta2/uf2/Spatial_Disorientation_0.3.0-beta2.uf2).
 
 192MHz/1.15V,48kHz,64 taps,two sources,64-frame DSP blocks/128-frame transport
 latency. SysEx7/JSON7/flash8 stay compatible with beta2 and 0.3alpha1–3. Beta2 editor
@@ -142,3 +142,5 @@ The earlier tests verified numeric positive-roll directions but encoded the wron
 physical convention; the new tests explicitly name the lowered/raised edge.
 
 Final firmware size: flash147876B, RAM189792B, scratch2048B per core.
+
+User reports tests pass; promoted unchanged to root0.4.0-beta3 on2026-10-15.

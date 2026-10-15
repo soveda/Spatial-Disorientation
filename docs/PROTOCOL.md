@@ -1,10 +1,10 @@
-# Beta2 editor and persistence contract
+# Beta3 editor and persistence contract
 
 © 2026 Adrian Vos(soveda), MIT. Transport adapts Chris Johnson's ComputerCard
 web_interface example; [attribution](../THIRD_PARTY_NOTICES.md). Firmware source
 `src/settings.h` and `src/usb_editor.h` are authoritative.
 
-**SysEx7 / JSON7 / flash8**, matching0.3.0-beta2 (and0.3.0alpha1–3).
+**SysEx7 / JSON7 / flash8**, matching0.4.0-beta3 (also beta2,0.3.0alpha1–3 and0.4.0pitch/roll alphas).
 Frame: `F0 7D 53 44 07 command sequence payload F7`. All interior bytes are7-bit.
 Sequences1–127 correlate requests;0 is telemetry. One request at a time; fixed
 buffers/queues and bounded parsing. Unsupported versions are rejected.

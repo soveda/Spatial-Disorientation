@@ -2,7 +2,7 @@
 
 Original project code and documentation: Adrian Vos (soveda), 2026, MIT; see LICENSE.
 This grant covers original work, not relicensing of dependencies, measurement data
-or the copied upstream directive. The current build is 0.3.0-beta2; historical alpha
+or the copied upstream directive. The current build is 0.4.0-beta3; historical alpha
 sections below identify when particular sources were introduced.
 
 ## Current source-to-file map
@@ -250,3 +250,13 @@ See vendor/ComputerCard/PATCHES.md for exact modifications; beta1 retains the
 unmodified header in archive/beta1/vendor/ComputerCard. The sampler stops after
 mute before flash lockout and resumes in a known state afterwards. No new HRTF
 data or external DSP is added. Measurement and linked-runtime terms stay separate.
+
+
+## Beta3 direct pitch/roll motion
+
+0.4.0-beta3 promotes the user-tested0.4.0-alpha2-roll-polarity, commit67228dd.
+Direct gravity-vector atan lookup, neutral hold, corrected relative roll sign,
+Disorientation captured path rotation and tests/docs: Adrian Vos(soveda),2026,MIT.
+Reuses this project's existing integer atan table and WaveSeq/EightMU-derived
+mapping/pickup; no new external code/data. ComputerCard flash-pause adaptation,
+Gardner/Martin KEMAR terms and all linked dependency/runtime notices remain.

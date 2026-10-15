@@ -19,6 +19,7 @@ struct Scene {
     bool fig8=false; // Dynamic Disorientation path.
     uint8_t movement=0;uint32_t path_epoch=0;
     int32_t distance_b = -1; // Negative shares A distance; otherwise independent B.
+    uint32_t rotation=0; // Captured Disorientation roll placement; zero preserves beta2.
 };
 class Delay {
 public:
@@ -142,7 +143,7 @@ public:
                     scene.movement==2?wander_[e].Point(angle,scene.shape,scene.excursion,scene.path_epoch,scene.vertical_depth!=0):
                     FigureEight(angle,scene.shape,scene.excursion);
                 height=PathHeight(angle,scene.movement,scene.vertical_centre,scene.vertical_depth,wander_[e].Height());
-                auto slope=SlopePath(point.angle,scene.slope_bearing,scene.slope_tilt);
+                auto slope=SlopePath(point.angle+scene.rotation,scene.slope_bearing,scene.slope_tilt);
                 height=Clamp(height+slope.height,0,4096);
                 angle=slope.angle;distance=point.distance;
             }
