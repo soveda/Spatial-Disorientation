@@ -216,3 +216,5 @@ The next alpha is a separate [Twin Orbits height/slope experiment](experimental/
 It has its own firmware/editor and persistence version; beta1 above remains the
 tester build. Original experimental code/docs ©2026 Adrian Vos(soveda),MIT;
 existing KEMAR/data/dependency terms are preserved. Hardware validation is pending.
+
+A separate [alpha2 repeated-save fix candidate](experimental/orbits-save-fix-64/README.md) addresses the reported sampling/Save failure in the Orbits experiment. Beta1 and alpha1 remain intact. Local ComputerCard0.4.0 pause/resume adaptation retains Chris Johnson’s MIT attribution; additions ©2026 Adrian Vos(soveda),MIT. Hardware validation is pending.

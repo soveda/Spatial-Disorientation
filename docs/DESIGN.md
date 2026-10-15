@@ -501,3 +501,28 @@ or live height/tilt mapping is introduced. Root beta source/editor/UF2 and archi
 fallbacks remain unchanged. Hardware timing/listening/persistence testing pending.
 Original implementation/design/docs Adrian Vos(soveda),2026,MIT; existing
 Gardner/Martin KEMAR and dependency attribution/terms retained.
+
+
+## Orbits repeated-save failure and alpha2 candidate (2026-10-15)
+
+User reports alpha1 overall listening works, subtle slope, staticheight audible;
+repeated saves first stop responding while audio continues, another attempt stops
+audio with rapid phantomCV display and no CV patched. No warningLED. Old code locks
+out core0 for flash while ADC/DMA continue, plausibly losing sampling alignment.
+A separate experimental/orbits-save-fix-64 retains alpha1 and beta. Local attributed
+ComputerCard0.4.0 adaptation pauses ADC/DMA after mute, drains/clears FIFO, preserves
+mux/buffer state, restarts round-robin/input0 and existing DMA without reclaiming
+channels. Core1 requests, core0 owns hardware. Explicit flash lockout remains.
+Save waits for physical pause/restart, always releases requests on failure, reports
+status5 and latches a save fault for LED once callbacks run. Unchanged saves skip
+flash/mute. SysEx7/JSON7/flash8 unchanged; all DSP/controls remain alpha1. Hardware
+confirmation pending. Actual firmware parser/storage tested with repeated-save and
+failure-injection mocks; DSP regressions/editor checks pass. Original new code/docs
+Adrian Vos(soveda),MIT; ComputerCard Chris Johnson MIT and KEMAR/dependency terms
+preserved. Reset init sets height/tilt tozero; it is not a DSP regression.
+
+User clarifies height/tilt failed to reapply after init: Read returned old values,
+hardware reset restored effect. Alpha2 tests actual parser/SPSC init/Apply/Read
+plus browser stale-ack simulation; editor checks Orbits readback and retains staged
+edits on mismatch. No independent init DSP bug has been reproduced. Final build
+144300B flash/185104B RAM, tests pass; hardware confirmation remains pending.
