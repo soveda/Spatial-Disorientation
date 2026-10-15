@@ -16,3 +16,13 @@ Back up old presets before beta Save; use old exports and the matching archived
 editor to restore saved settings after downgrading. Apply-only testing preserves
 old flash. Build archived experiments with their CMake file and the shared root
 vendor folders. `alpha14/` also contains its original dependency snapshot.
+
+
+Archived2026-10-15: `beta1/` preserves the previous root0.2.0-beta1 source, editor,
+documentation, notices, UF2 and original tester ZIP (`distribution/`). Its comparison
+test paths and external Markdown links are rebased. Beta1 uses protocol6/JSON6/
+flash7, while beta2 uses protocol7/JSON7/flash8. Back up beta1 presets before beta2
+Save; beta1 cannot read flash8. Separate alpha1/alpha2/alpha3 experiments remain in
+`experimental/` at the repository root as historical test/fallback versions.
+Original archive record ©2026 Adrian Vos(soveda),MIT; existing measurement and
+dependency terms remain. No archived UF2 bytes have changed.

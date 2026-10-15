@@ -1,7 +1,7 @@
 // Copyright (c) 2026 Adrian Vos (soveda). SPDX-License-Identifier: MIT
 #define spatial beta
 #define __dmb beta_dmb
-#include "../../../src/block_audio.h"
+#include "../../../archive/beta1/src/block_audio.h"
 #undef __dmb
 #undef spatial
 #include "block_audio.h"

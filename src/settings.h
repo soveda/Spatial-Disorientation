@@ -3,7 +3,7 @@
 #include "config.h"
 #include <cstring>
 namespace spatial {
-constexpr uint8_t kProtocolVersion=6;
+constexpr uint8_t kProtocolVersion=7;
 struct Placement {
     uint16_t value[6]={2048,0,4095,0,0,4095}; // A then B: position, distance, level.
     bool Valid()const{for(auto v:value)if(v>4095)return false;return true;}
@@ -14,22 +14,23 @@ struct Settings {
     uint16_t height[2]={2048,2048}; // Continuous Mixer height: 0 below, 2048 level, 4096 above.
     uint16_t vertical_centre=2048,vertical_depth=0; // Disorientation only: centre 0..4096, excursion 0..2048.
     uint16_t slope_bearing=0,slope_tilt=0; // Disorientation ID18 uphill 0..4095; ID19 tilt 0..2048.
-    bool Valid()const{return slope_bearing<=4095&&slope_tilt<=2048&&vertical_centre<=4096&&vertical_depth<=2048&&height[0]<=4096&&height[1]<=4096&&config[0].Valid()&&config[1].Valid()&&config[2].Valid()&&mixer.Valid()&&movement<3&&reserved==0;}
+    uint16_t orbits_height=2048,orbits_bearing=0,orbits_tilt=0,orbits_reserved=0;
+    bool Valid()const{return orbits_height<=4096&&orbits_bearing<=4095&&orbits_tilt<=2048&&orbits_reserved==0&&slope_bearing<=4095&&slope_tilt<=2048&&vertical_centre<=4096&&vertical_depth<=2048&&height[0]<=4096&&height[1]<=4096&&config[0].Valid()&&config[1].Valid()&&config[2].Valid()&&mixer.Valid()&&movement<3&&reserved==0;}
 };
-static_assert(sizeof(Settings)==64,"Stable flash layout");
+static_assert(sizeof(Settings)==72,"Stable flash layout");
 inline bool DecodeSettings(const uint8_t* data,size_t n,Settings& settings,uint32_t& mode){
     if(!n||data[0]>2)return false;
-    uint32_t m=data[0];size_t fields=m==1?14:(m==2?11:6);
+    uint32_t m=data[0];size_t fields=m==1?14:(m==2?11:9);
     if(n!=1+fields*3)return false;
     Settings candidate=settings;Config cfg;Placement place;uint16_t movement=0;
     uint32_t seen=0;
     for(size_t i=1;i<n;i+=3){
-        uint32_t id=data[i];if(id<1||(m==1?(id>15||id==13):m==2?(id>6&&id!=13&&id!=16&&id!=17&&id!=18&&id!=19):id>6)||data[i+1]>127||data[i+2]>127)return false;
+        uint32_t id=data[i];if(id<1||(m==1?(id>15||id==13):m==2?(id>6&&id!=13&&id!=16&&id!=17&&id!=18&&id!=19):(id>6&&id!=16&&id!=18&&id!=19))||data[i+1]>127||data[i+2]>127)return false;
         uint32_t bit=1u<<(id-1);if(seen&bit)return false;seen|=bit;
         uint16_t v=data[i+1]|(uint16_t(data[i+2])<<7);
-        if(id<=6)cfg.value[id-1]=v;else if(id==13)movement=v;else if(id==16)candidate.vertical_centre=v;else if(id==17)candidate.vertical_depth=v;else if(id==18)candidate.slope_bearing=v;else if(id==19)candidate.slope_tilt=v;else if(id>=14)candidate.height[id-14]=v;else place.value[id-7]=v;
+        if(id<=6)cfg.value[id-1]=v;else if(id==13)movement=v;else if(id==16){if(m==0)candidate.orbits_height=v;else candidate.vertical_centre=v;}else if(id==17)candidate.vertical_depth=v;else if(id==18){if(m==0)candidate.orbits_bearing=v;else candidate.slope_bearing=v;}else if(id==19){if(m==0)candidate.orbits_tilt=v;else candidate.slope_tilt=v;}else if(id>=14)candidate.height[id-14]=v;else place.value[id-7]=v;
     }
-    if(!cfg.Valid()||(m==1&&(!place.Valid()||candidate.height[0]>4096||candidate.height[1]>4096))||(m==2&&(movement>2||candidate.vertical_centre>4096||candidate.vertical_depth>2048||candidate.slope_bearing>4095||candidate.slope_tilt>2048)))return false;
+    if(!cfg.Valid()||(m==0&&(candidate.orbits_height>4096||candidate.orbits_bearing>4095||candidate.orbits_tilt>2048))||(m==1&&(!place.Valid()||candidate.height[0]>4096||candidate.height[1]>4096))||(m==2&&(movement>2||candidate.vertical_centre>4096||candidate.vertical_depth>2048||candidate.slope_bearing>4095||candidate.slope_tilt>2048)))return false;
     candidate.config[m]=cfg;if(m==1)candidate.mixer=place;else if(m==2)candidate.movement=movement;
     settings=candidate;mode=m;return true;
 }
@@ -43,10 +44,17 @@ inline size_t EncodeSettings(const Settings& settings,uint32_t mode,uint8_t* dat
         data[28]=18;data[29]=settings.slope_bearing&127;data[30]=settings.slope_bearing>>7;
         data[31]=19;data[32]=settings.slope_tilt&127;data[33]=settings.slope_tilt>>7;
     }
-    return mode==1?43:(mode==2?34:19);
+    if(mode==0){
+        const uint16_t values[]={settings.orbits_height,settings.orbits_bearing,settings.orbits_tilt};
+        const uint8_t ids[]={16,18,19};
+        for(int i=0;i<3;++i){data[19+3*i]=ids[i];data[20+3*i]=values[i]&127;data[21+3*i]=values[i]>>7;}
+    }
+    return mode==1?43:(mode==2?34:28);
 }
 constexpr uint32_t kRecordMagic=0x314f4453;
 struct Record {uint32_t magic,version,checksum;Settings settings;};
+struct V7Settings {Config config[3];Placement mixer;uint16_t movement=0,reserved=0;uint16_t height[2]={2048,2048};uint16_t vertical_centre=2048,vertical_depth=0;uint16_t slope_bearing=0,slope_tilt=0;};
+struct V7Record {uint32_t magic,version,checksum;V7Settings settings;};
 struct V6Settings {Config config[3];Placement mixer;uint16_t movement=0,reserved=0;uint16_t height[2]={2048,2048};uint16_t vertical_centre=2048,vertical_depth=0;};
 struct V6Record {uint32_t magic,version,checksum;V6Settings settings;};
 struct V5Settings {Config config[3];Placement mixer;uint16_t movement=0,reserved=0;uint16_t height[2]={2048,2048};};
@@ -58,8 +66,8 @@ struct V3Record {uint32_t magic,version,checksum;V3Settings settings;};
 struct PreviousSettings {Config config[2];Placement mixer;};
 struct PreviousRecord {uint32_t magic,version,checksum;PreviousSettings settings;};
 struct LegacyRecord {uint32_t magic,version,checksum;Config config;};
-static_assert(sizeof(Record)==76&&sizeof(V6Record)==72&&sizeof(V5Record)==68&&sizeof(V4Record)==64&&sizeof(V3Record)==60&&sizeof(PreviousRecord)==48&&sizeof(LegacyRecord)==24,"Stable record layouts");
-inline Record MakeRecord(const Settings& settings){return {kRecordMagic,7,Checksum(reinterpret_cast<const uint8_t*>(&settings),sizeof(settings)),settings};}
+static_assert(sizeof(Record)==84&&sizeof(V7Settings)==64&&offsetof(Settings,orbits_height)==64&&sizeof(V7Record)==76&&sizeof(V6Record)==72&&sizeof(V5Record)==68&&sizeof(V4Record)==64&&sizeof(V3Record)==60&&sizeof(PreviousRecord)==48&&sizeof(LegacyRecord)==24,"Stable record layouts");
+inline Record MakeRecord(const Settings& settings){return {kRecordMagic,8,Checksum(reinterpret_cast<const uint8_t*>(&settings),sizeof(settings)),settings};}
 inline Settings LoadRecord(const uint8_t* data,size_t n){
     Settings result;
     if(n<sizeof(LegacyRecord))return result;
@@ -107,7 +115,21 @@ inline Settings LoadRecord(const uint8_t* data,size_t n){
         }
         return result;
     }
-    if(old.version==7&&n>=sizeof(Record)){
+    if(old.version==7&&n>=sizeof(V7Record)){
+        V7Record previous;std::memcpy(&previous,data,sizeof(previous));
+        if(previous.checksum==Checksum(reinterpret_cast<const uint8_t*>(&previous.settings),sizeof(previous.settings))){
+            // Copy validated legacy fields; keep new Orbits defaults level/no slope.
+            Settings candidate;const auto& s=previous.settings;
+            for(int i=0;i<3;++i)candidate.config[i]=s.config[i];
+            candidate.mixer=s.mixer;candidate.movement=s.movement;candidate.reserved=s.reserved;
+            candidate.height[0]=s.height[0];candidate.height[1]=s.height[1];
+            candidate.vertical_centre=s.vertical_centre;candidate.vertical_depth=s.vertical_depth;
+            candidate.slope_bearing=s.slope_bearing;candidate.slope_tilt=s.slope_tilt;
+            if(candidate.Valid())return candidate;
+        }
+        return result;
+    }
+    if(old.version==8&&n>=sizeof(Record)){
         Record current;std::memcpy(&current,data,sizeof(current));
         if(current.settings.Valid()&&current.checksum==Checksum(reinterpret_cast<const uint8_t*>(&current.settings),sizeof(Settings)))return current.settings;
     }

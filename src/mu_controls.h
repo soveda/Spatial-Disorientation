@@ -11,7 +11,7 @@ struct MuInput {
 // Core 0 only, at 1 kHz. USB never writes DSP/knob state directly.
 class MuControls {
 public:
-    bool Apply(const MuInput& in,int32_t& main,int32_t& x,int32_t& y,Config& cfg,bool panelReset=false,bool orbitStop=true){
+    bool Apply(const MuInput& in,int32_t& main,int32_t& x,int32_t& y,Config& cfg,bool panelReset=false,bool orbitStop=true,uint32_t faderMask=255){
         if(!in.connected){
             picked_=0;connected_=false;motion_=false;previous_buttons_=0;
             depth_=4095;
@@ -30,6 +30,7 @@ public:
             for(int i=0;i<8;++i){
                 int32_t raw=Clamp(in.fader[i],0,4064);
                 int32_t value=raw+(raw>>7); // 0..4095 without ISR division.
+                if(!(faderMask&(1u<<i))){previous_[i]=value;continue;}
                 // Pickup engages near the target or while crossing it. The first
                 // valid snapshot cannot invent a crossing from unreceived zero.
                 int32_t diff=value-target[i],old=previous_[i]-target[i];

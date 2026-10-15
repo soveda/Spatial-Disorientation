@@ -549,3 +549,17 @@ staging supported, other settings remain. Protocol7/JSON7/flash8 and alpha2 samp
 pause/verified-resume remain. Original code/docs AdrianVos(soveda),MIT, reusing
 existing WaveSeq/EightMU pickup adaptation; existing KEMAR/dependency attribution
 preserved. Alpha3 hardware mapping/timing/listening validation pending.
+
+
+## Beta2 promotion after alpha3 user acceptance (2026-10-15)
+
+User reports all alpha3 tests pass, page indicator effective and randomisation
+reveals effective elevation; asks promotion. Root0.3.0-beta2 copies alpha3 source/
+editor/local ComputerCard adaptation without DSP/control changes. DistributedUF2
+is byte-identical alpha3; root rebuild also matches. No new alpha3 timing/duration
+numbers inferred. Beta1 complete root snapshot, original UF2 and testerZIP are
+archived under archive/beta1. Current metadata/docs/editor/tester package updated;
+22C++host and editor regressions run against promoted root. Formats7/7/8 require
+beta1 backups before Save; alpha1–3 compatible. No Workshop release changes or
+remote publication are implied. Original new code/docs Adrian Vos(soveda),MIT;
+ComputerCard Chris Johnson MIT, all existing KEMAR/runtime/dependency notices retained.

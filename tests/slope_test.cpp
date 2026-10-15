@@ -48,7 +48,7 @@ int main(){
     Settings bank;bank.slope_bearing=4095;bank.slope_tilt=2048;bank.vertical_centre=731;bank.vertical_depth=1536;
     uint8_t data[43];uint32_t mode=0;Settings decoded;
     auto n=EncodeSettings(bank,2,data);assert(n==34&&DecodeSettings(data,n,decoded,mode));assert(decoded.slope_bearing==4095&&decoded.slope_tilt==2048);
-    auto record=MakeRecord(bank);assert(record.version==7);auto loaded=LoadRecord(reinterpret_cast<const uint8_t*>(&record),sizeof(record));assert(loaded.slope_bearing==4095&&loaded.slope_tilt==2048);
+    auto record=MakeRecord(bank);assert(record.version==8);auto loaded=LoadRecord(reinterpret_cast<const uint8_t*>(&record),sizeof(record));assert(loaded.slope_bearing==4095&&loaded.slope_tilt==2048);
     V6Settings old;old.vertical_centre=731;old.vertical_depth=1536;old.height[0]=3555;old.movement=2;old.config[2].value[1]=3100;
     V6Record v6{kRecordMagic,6,Checksum(reinterpret_cast<const uint8_t*>(&old),sizeof(old)),old};
     loaded=LoadRecord(reinterpret_cast<const uint8_t*>(&v6),sizeof(v6));assert(loaded.vertical_centre==731&&loaded.vertical_depth==1536&&loaded.height[0]==3555&&loaded.movement==2&&loaded.config[2].value[1]==3100&&loaded.slope_tilt==0&&loaded.slope_bearing==0);

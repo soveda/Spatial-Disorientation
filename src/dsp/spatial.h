@@ -15,6 +15,7 @@ struct Scene {
     uint16_t shape=0,excursion=0;
     uint16_t vertical_centre=2048,vertical_depth=0; // Captured alongside phase; never read live in DSP.
     uint16_t slope_bearing=0,slope_tilt=0; // Captured with phase: uphill bearing / 0..40 degree tilt.
+    bool orbit=false; // Apply independently saved Orbits height/slope at geometry rate.
     bool fig8=false; // Dynamic Disorientation path.
     uint8_t movement=0;uint32_t path_epoch=0;
     int32_t distance_b = -1; // Negative shares A distance; otherwise independent B.
@@ -144,6 +145,10 @@ public:
                 auto slope=SlopePath(point.angle,scene.slope_bearing,scene.slope_tilt);
                 height=Clamp(height+slope.height,0,4096);
                 angle=slope.angle;distance=point.distance;
+            }
+            if(scene.orbit){
+                auto slope=SlopePath(angle,scene.slope_bearing,scene.slope_tilt);
+                height=Clamp(scene.vertical_centre+slope.height,0,4096);angle=slope.angle;
             }
             resolved_elevation_=(resolved_elevation_&~(8191u<<(e*13)))|(uint32_t(height)<<(e*13));
             rendered_.angle[e]=angle;

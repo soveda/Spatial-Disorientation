@@ -8,6 +8,7 @@
 #include "pico/multicore.h"
 #include "modes.h"
 #include "mixer_mu_controls.h"
+#include "orbits_mu_controls.h"
 #include "fig8_mu_controls.h"
 #include "block_audio.h"
 #include "usb_editor.h"
@@ -47,6 +48,7 @@ extern "C" void tusb_time_delay_ms_api(uint32_t ms) {
 }
 static spatial::UsbEditor* editor;
 static bool host_mode=false;
+static ComputerCard* audio_card=nullptr;
 static void UsbCore() {
     // Establish the worker-only policy before USB/audio readiness. Mode selection
     // has a 50 ms warmup; SOLO must never render B even during that warmup.
@@ -94,7 +96,7 @@ private:
             effective_=config_;
             bool orbits=boot_.Selected()==spatial::Mode::Orbits;
             bool mixer=boot_.Selected()==spatial::Mode::Mixer;
-            uint32_t takeover=0;bool motion=false;
+            uint32_t takeover=0;
             if(boot_.Ready()){
                 if(mixer){
                     modes_.SelectMixer(mixer_source,main,x,y);
@@ -103,9 +105,8 @@ private:
                     if(height>=0)shared.mu_elevation.Publish(modes_.SelectedSource(),static_cast<uint32_t>(height));
                     shared.mu_feedback=mixer_mu_.Feedback();
                 }else if(orbits){
-                    reset=mu_controls_.Apply(mu_input_,main,x,y,effective_,orbits&&reset,orbits)||reset;
-                    motion=mu_controls_.Motion();
-                    shared.mu_feedback=mu_controls_.Picked()|(motion?256:0);
+                    reset=orbits_mu_.Apply(mu_input_,main,x,y,effective_,settings_,reset)||reset;
+                    shared.mu_feedback=orbits_mu_.Feedback();
                 }else{
                     reset=fig8_mu_.Apply(mu_input_,main,x,y,effective_,settings_.movement);
                     modes_.SetMovement(fig8_mu_.Movement());
@@ -130,6 +131,9 @@ private:
         modes_.Pulse(Connected(Input::Pulse1),PulseIn1RisingEdge(),
             (boot_.Selected()!=spatial::Mode::Mixer&&reset) || (Connected(Input::Pulse2) && PulseIn2RisingEdge()));
         spatial::Scene scene=boot_.Ready()?modes_.Advance():spatial::Scene{};
+        if(boot_.Ready()&&boot_.Selected()==spatial::Mode::Orbits){
+            scene.orbit=true;scene.vertical_centre=orbits_mu_.Height();scene.slope_bearing=orbits_mu_.Bearing();scene.slope_tilt=orbits_mu_.Tilt();
+        }
         if(scene.fig8){scene.vertical_centre=settings_.vertical_centre;scene.vertical_depth=settings_.vertical_depth;scene.slope_bearing=settings_.slope_bearing;scene.slope_tilt=settings_.slope_tilt;}
         auto output=blocks.Tick(Connected(Input::Audio1)?AudioIn1():0,
                                     Connected(Input::Audio2)?AudioIn2():0,scene,effective_);
@@ -150,7 +154,7 @@ private:
             LedBrightness(0,(4095-a)/2);LedBrightness(1,(4095+a)/2);
             LedBrightness(2,(4095-b)/2);LedBrightness(3,(4095+b)/2);
             uint32_t block_fault=blocks.fault|blocks.worker_fault;
-            overrun_=overrun_ || block_fault;
+            overrun_=overrun_ || block_fault || shared.save_fault;
             LedOn(4,boot_.Selected()==spatial::Mode::Mixer?modes_.SelectedSource()==0:linked_);LedOn(5,overrun_);
             if(boot_.Selected()==spatial::Mode::Mixer&&boot_.Ready()&&modes_.Pickup()!=7){
                 if((led_tick_++/250)&1){int first=modes_.SelectedSource()*2;LedOff(first);LedOff(first+1);}
@@ -173,7 +177,7 @@ private:
     spatial::Config config_,effective_;
     bool mode_started_=false;
     spatial::MuInput mu_input_;
-    spatial::MuControls mu_controls_;
+    spatial::OrbitsMuControls orbits_mu_;
     spatial::MixerMuControls mixer_mu_;
     spatial::Fig8MuControls fig8_mu_;
     spatial::Modes modes_;
@@ -198,7 +202,10 @@ int main() {
     spatial::Settings initial=storage.Load();
     card.Configure(initial);
     shared.elevation=spatial::PackElevations(initial.height[0],initial.height[1]); // Before core 1 starts.
-    static spatial::UsbEditor usb(shared,storage,initial,RenderBlock);
+    audio_card=&card;
+    static spatial::UsbEditor usb(shared,storage,initial,RenderBlock,
+        [](){audio_card->RequestAudioPauseForFlash();},[](){return audio_card->AudioPausedForFlash();},
+        [](){audio_card->ResumeAudioAfterFlash();},[](){return audio_card->AudioRunningAfterFlash();});
     editor=&usb;
     multicore_lockout_victim_init();
     multicore_launch_core1(UsbCore);

@@ -1,8 +1,8 @@
-# Beta1 tester protocol and feedback
+# Beta2 tester protocol and feedback
 
 © 2026 Adrian Vos (soveda), MIT. Hardware reports in this conversation informed
 these checks. [Source/data/dependency attribution](../THIRD_PARTY_NOTICES.md).
-Test **0.2.0-beta1**, two sources/64 taps, with its matching editor. Headphones and
+Test **0.3.0-beta2**, two sources/64 taps, with its matching editor. Headphones and
 a suitable modular-to-headphone output path are required for binaural listening.
 
 1. **Install and startup.** Export old presets before beta Save. Load the beta UF2,
@@ -23,7 +23,14 @@ a suitable modular-to-headphone output path are required for binaural listening.
    First centre0°, vertical excursion0°, tilt0°. Then test vertical bob, and slope
    alone at40° uphill front/right/diagonal. Confirm both ears/sources and audible
    elevation without watching. Combine bob/tilt: heights must stay within±40°.
-5. **Editor/presets.** USB-C data cable; Chrome/Edge SysEx permission; matching
+5. **Editor/presets.** Try the bottom Randomise elevation/Reset elevation tools
+   in each displayed mode. They must stage without sending; unrelated settings
+   stay unchanged. Apply, Read and Save separately. Orbits reset height0°/tilt0°,
+   then change and Apply again: readback must match and sound return.
+   Repeat20 changed Apply/Save cycles, waiting for replies, with no CV patched:
+   sound/controls resume, no phantom CV or unresponsive Save. Ten identical saves
+   should skip interruption/flash. Then check the normal editor lifecycle.
+   USB-C data cable; Chrome/Edge SysEx permission; matching
    ports. Changes wait for Apply; Read discards staged changes. Test init without
    automatic Save, named Export/Import offline, reconnect retaining staged edits,
    mode mismatch rejection, old preset import, explicit Apply/Save/reset/Read.
@@ -37,6 +44,11 @@ a suitable modular-to-headphone output path are required for binaural listening.
    motion amount. Disorientation D tap cycles movement; long D hold shows timing
    and must not cycle on release. No host gesture autosaves. Unplug/reconnect and
    reset; check pickup and restoration. Report if using older hardware USB role.
+   Orbits: D tap<500ms toggles normal/height pages. LEDs1–3 identify normal;
+   LEDs6–8 height, for1second. Check held values and fresh pickup for faders1–3,
+   shared4–8, C release returning prior speed and longD not switching. Connect
+   with D held: release must stay normal. Height page faders1/2/3=height/tilt/uphill.
+   Disconnect restores saved elevation and panel pickup; no flash changes.
 7. **Timing/stability.** Both sources, high room/strength, moving intermediate
    heights, large tilt/bob, fast knobs/CV and available audio-rate CV. Reboot
    before each Fig8/Pendulum/Wander comparison so peaks are independent. Run
@@ -55,7 +67,7 @@ are not automatically passes. Keep fallback UF2/editor/old exports available.
 Copy this into an issue or message; no feedback is sent automatically.
 
 ```text
-Version: 0.2.0-beta1 (UF2 SHA256 if checked)
+Version: 0.3.0-beta2 (UF2 SHA256 if checked)
 Workshop Computer hardware revision / program card:
 Headphones and monitoring path:
 Audio sources / connected inputs:

@@ -12,7 +12,7 @@
 namespace spatial {
 class UsbEditor {
 public:
-    UsbEditor(Shared& shared,Storage& storage,const Settings& cfg,void (*worker)()):shared_(shared),storage_(storage),current_(cfg),worker_(worker) {}
+    UsbEditor(Shared& shared,Storage& storage,const Settings& cfg,void (*worker)(),void (*pause)(),bool (*paused)(),void (*resume)(),bool (*running)()):shared_(shared),storage_(storage),current_(cfg),worker_(worker),pause_(pause),paused_(paused),resume_(resume),running_(running) {}
     void Run() {
         tud_init(0); // Only the selected role starts on the single USB controller.
         __dmb();shared_.usb_ready=1;
@@ -25,10 +25,7 @@ public:
                 uint32_t count=tud_midi_stream_read(chunk,sizeof(chunk));
                 for (uint32_t i=0;i<count;++i) Byte(chunk[i]);
             }
-            if (pending_ && !shared_.ready) {
-                __dmb(); current_=pending_cfg_;pending_=false;
-                Ack(2,pending_seq_,0);
-            }
+            FinishApply();
             uint32_t now=time_us_32();
             if (now-last_telemetry_>=50000) {
                 last_telemetry_=now;
@@ -51,6 +48,9 @@ public:
         }
     }
 private:
+    void FinishApply(){
+        if(pending_&&!shared_.ready){__dmb();current_=pending_cfg_;pending_=false;Ack(2,pending_seq_,0);}
+    }
     static void Pack(uint32_t v,uint8_t* dest) { dest[0]=v&127;dest[1]=(v>>7)&127; }
     bool Send(uint8_t command,uint8_t seq,const uint8_t* data,size_t n) {
         uint8_t msg[64]={0xf0,0x7d,0x53,0x44,kProtocolVersion,command,seq};
@@ -93,11 +93,23 @@ private:
             // Explicit Save creates a brief audio pause, never a flash write in
             // the ISR. Zero reaches the DAC before core 0 is locked out.
             if(shared_.mode>2||!Capture()){Ack(command,seq,4);return;}
+            // Unchanged saves need neither a mute nor an erase/program cycle.
+            if(storage_.Unchanged(current_)){Ack(command,seq,0);return;}
             __dmb();shared_.save=1;
             uint32_t start=time_us_32();
-            while (shared_.save!=2 && time_us_32()-start<500000) { worker_();tud_task();Pump(); }
+            while(shared_.save!=2&&time_us_32()-start<500000){worker_();tud_task();Pump();}
             bool okay=false;
-            if (shared_.save==2) { __dmb();okay=storage_.Save(current_); }
+            if(shared_.save==2){
+                pause_();start=time_us_32();
+                while(!paused_()&&time_us_32()-start<500000){worker_();tud_task();Pump();}
+                if(paused_()){__dmb();okay=storage_.Save(current_);}
+            }
+            // Always release both requests, including timeout/verification failure.
+            // Keep timing suppression until the sampler is actually running.
+            resume_();start=time_us_32();
+            while(!running_()&&time_us_32()-start<500000){worker_();tud_task();Pump();}
+            okay=okay&&running_();
+            if(!okay)shared_.save_fault=1;
             __dmb();shared_.save=0;
             Ack(command,seq,okay ? 0 : 5);
         } else if(command==4){
@@ -127,6 +139,7 @@ private:
     bool active_=false,pending_=false;
     uint32_t last_telemetry_=0;
     void (*worker_)();
+    void (*pause_)();bool (*paused_)();void (*resume_)();bool (*running_)();
     MidiTx tx_;
 };
 }

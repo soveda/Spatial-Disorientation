@@ -35,3 +35,7 @@ restore its blocking TX/reinitialization loops. Preserve the TinyUSB enumeration
 delay hook that services the block worker. Motion replaces Main only while enabled;
 8mu runtime changes never write saved settings. Offline LED diagnostics are needed
 because the user cannot connect 8mu and editor simultaneously.
+
+Beta2 uses the locally attributed ComputerCard0.4.0 flash-pause adaptation in
+vendor/ComputerCard. Preserve its ADC/DMA mute/pause/restart handshake and Chris
+Johnson MIT notice; see vendor/ComputerCard/PATCHES.md.

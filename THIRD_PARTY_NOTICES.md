@@ -2,7 +2,7 @@
 
 Original project code and documentation: Adrian Vos (soveda), 2026, MIT; see LICENSE.
 This grant covers original work, not relicensing of dependencies, measurement data
-or the copied upstream directive. The current build is 0.2.0-beta1; historical alpha
+or the copied upstream directive. The current build is 0.3.0-beta2; historical alpha
 sections below identify when particular sources were introduced.
 
 ## Current source-to-file map
@@ -236,3 +236,17 @@ Fig8/Pendulum/Wander height and slope rotation/asin table, code/tests/editor/doc
 AdrianVos(soveda),2026,MIT. Slope introduces mathematical coordinates, not new
 measurements or borrowed Quasar DSP. Compiler/runtime notices in uf2/NOTICE.txt
 and licenses/ cover linked firmware components; preserve them on redistribution.
+
+
+## Beta2 Orbits elevation/pages and repeated-save fix
+
+0.3.0-beta2 promotes user-tested0.3.0alpha3, commitc6906d0. Original additions
+Adrian Vos(soveda),2026,MIT: Orbits saved height/uphill/tilt, layered8mu mapping,
+page-specific pickup/retention, LEDpage feedback, staged elevation randomise/reset
+and verified readback. Existing WaveSeq/EightMU/rppicomidi origins remain credited.
+The root ComputerCard0.4.0 header now carries a local attributed ADC/DMA pause/
+restart adaptation; original Chris Johnson2024–2026 MIT notice and API remain.
+See vendor/ComputerCard/PATCHES.md for exact modifications; beta1 retains the
+unmodified header in archive/beta1/vendor/ComputerCard. The sampler stops after
+mute before flash lockout and resumes in a known state afterwards. No new HRTF
+data or external DSP is added. Measurement and linked-runtime terms stay separate.

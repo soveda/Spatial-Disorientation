@@ -23,7 +23,7 @@ int main(){
     assert(target.config[0].value[1]==1200&&target.config[1].value[1]==3000&&target.mixer.value[4]==2700);
     Settings before=target;data[19]=1;assert(!DecodeSettings(data,n,target,mode));assert(!std::memcmp(&before,&target,sizeof(target)));
     EncodeSettings(bank,1,data);data[21]=127;assert(!DecodeSettings(data,n,target,mode));
-    n=EncodeSettings(bank,0,data);assert(n==19&&DecodeSettings(data,n,target,mode)&&mode==0&&target.config[1].value[1]==3000);
+    n=EncodeSettings(bank,0,data);assert(n==28&&DecodeSettings(data,n,target,mode)&&mode==0&&target.config[1].value[1]==3000);
     data[0]=3;assert(!DecodeSettings(data,n,target,mode));
     bank.config[2].value[1]=700;n=EncodeSettings(bank,2,data);
     assert(n==34&&DecodeSettings(data,n,target,mode)&&mode==2&&target.config[2].value[1]==700&&target.config[1].value[1]==3000);

@@ -1,10 +1,11 @@
-# Spatial Disorientation — 0.2.0-beta1
+# Spatial Disorientation — 0.3.0-beta2
 
 Two independent mono sources placed and moved in headphone stereo on the Music
 Thing Modular Workshop Computer. Inspired by Neuzeit Instruments Quasar, with an
 independent implementation. Three startup modes: **Twin Orbits**, **Spatial Mixer**
-and **Disorientation** (Fig8, Pendulum, Wander). This beta includes continuous Mixer
-height, vertical movement and user-selected sloping paths.
+and **Disorientation** (Fig8, Pendulum, Wander). This beta includes Orbits height/slope and two8mu pages, continuous Mixer
+height, vertical Disorientation, elevation randomise/reset tools and the tested
+repeated-save fix.
 
 Original code and documentation © 2026 Adrian Vos (soveda), [MIT](LICENSE).
 Measured ear filters: Bill Gardner and Keith Martin, MIT Media Laboratory (1994),
@@ -12,12 +13,13 @@ Measured ear filters: Bill Gardner and Keith Martin, MIT Media Laboratory (1994)
 [separate data terms](vendor/KEMAR/SOURCE_TERMS.md). ComputerCard, Workshop_BlockAudioCard,
 WaveSeq/EightMU/rppicomidi, Pico SDK, TinyUSB and linked runtime credits/licenses:
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), [firmware notices](uf2/NOTICE.txt),
-[build-component notices](licenses/BUILD_COMPONENTS.md). MIT does not relicense data
+[build-component notices](licenses/BUILD_COMPONENTS.md) and the
+[local ComputerCard0.4.0 flash-pause adaptation](vendor/ComputerCard/PATCHES.md). MIT does not relicense data
 or dependencies. No Quasar firmware, graphics or transfer functions are included.
 
 ## Get started
 
-1. Download [the beta UF2](uf2/Spatial_Disorientation_0.2.0-beta1.uf2).
+1. Download [the beta UF2](uf2/Spatial_Disorientation_0.3.0-beta2.uf2).
    [Checksums](uf2/SHA256SUMS.txt) identify the current binary. Back up existing
    presets with your old editor before using this beta's Save to card.
 2. Put the Computer in its normal BOOTSEL firmware-loading mode and copy the UF2
@@ -88,12 +90,20 @@ settings for the active mode; it does not save automatically. Export downloads t
 displayed settings; Import stages them until Apply. Preset names live in JSON
 files, not card flash. Three separate settings banks preserve inactive modes.
 
+At the bottom, **Randomise elevation** stages new height/slope values for the
+shown mode; **Reset elevation** stages level height and zero excursion/tilt.
+These tools leave other sound settings alone and send nothing until Apply.
+Random combinations avoid immediate height clipping. Mixer randomises/resets A/B
+height only. Orbits Apply/init checks height/tilt readback and reports a mismatch
+rather than claiming success if the card returns old values.
+
 Shared settings: separation/phase separation, room reflections, A/B level trims,
 spatial strength and clock division. Separation and clock division are unused in
 Mixer. Mixer Read/Save capture both current placements and applied heights.
 
 | Height/path setting | Behaviour |
 |---|---|
+| Orbits height centre | −40° to +40°, both sources, independently saved from Disorientation |
 | Mixer A/B height | Continuous −40° to +40°, independently saved/exported |
 | Disorientation height centre | −40° to +40°, both sources |
 | Vertical excursion | 0–40° half-range; phase-related Fig8, lifted Pendulum ends, eased Wander height |
@@ -112,62 +122,71 @@ The live diagram shows direction only; its radius does not represent distance.
 
 ### Migration and downgrade
 
-Beta uses **SysEx 6 / preset JSON 6 / flash 7**. It reads flash 1–6 and preset files
-1–5, retaining supported old fields and defaulting missing height to level, vertical
-excursion/tilt to zero. No migration writes flash automatically. Alpha26 settings
-are already compatible. Alpha25 and older editors reject the beta protocol.
+Beta2 uses **SysEx7 / preset JSON7 / flash8**, compatible with the0.3.0 alpha1–3
+experiments. It reads flash1–7 and imports JSON1–6, preserving supported old fields.
+Migrating beta1 defaults only the new Orbits height/slope to level/zero tilt.
+Older missing Mixer heights default to level; missing vertical excursion/tilt to
+zero. No automatic boot migration write. Beta1’s editor uses an older protocol;
+use the matching beta2 editor. Each mode still has its own settings bank.
 
-**Export your old presets before beta Save.** Apply-only beta testing leaves old
-flash intact. After beta Save, alpha25/older firmware cannot read flash 7 and uses
-defaults; restoring old saved banks requires old JSON exports, the matching old
-editor and explicit Save in each startup mode. Old editors cannot import beta JSON6.
-[Archived versions and checksums](archive/README.md) remain recoverable.
+**Export old presets before beta2 Save.** Apply-only leaves old flash intact.
+After beta2 Save, beta1 cannot read flash8 and starts defaults. To downgrade,
+load the archived beta1 UF2/editor, import your old exports and explicitly Save
+in each desired startup mode. Beta1 cannot import JSON7. Alpha1/2/3 have the same
+formats as beta2 and need no schema downgrade. [Archived versions](archive/README.md).
 
 ## Direct 8mu control
 
-Connect 8mu and reset separately from an editor session. On hardware Rev1.1 USB
-power role selects host/device at boot; older boards retain editor/device operation.
-Reset after changing USB roles. Mixer ignores accelerometer/gyro; other modes
-can use motion to replace Main. Motion starts off; CV remains additive.
+Connect8mu and reset separately from an editor session. Rev1.1 detects USB power
+role at boot; older boards retain editor/device operation. Reset after changing
+roles. Mixer ignores motion; Orbits/Disorientation can replace Main with motion.
+Motion starts off, and CV remains additive. No8mu gesture writes flash.
 
-| 8mu fader | Twin Orbits | Mixer | Disorientation |
-|---|---|---|---|
-| 1 | Speed/direction | Selected distance | Speed/direction |
-| 2 | Distance | Selected level | Excursion |
-| 3 | Source separation | Selected position | Phase separation |
-| 4 | Room | Room | Room |
-| 5 / 6 | A / B trim | A / B trim | A / B trim |
-| 7 | Spatial strength | Spatial strength | Spatial strength |
-| 8 | Motion amount | Selected-source continuous height | Motion amount |
+**Twin Orbits D tap/release under500ms toggles normal and height/slope pages.**
+Holding D at least500ms shows timing; releasing that long hold keeps the page.
+Normal is selected on startup/connection. Brief8mu indication after page changes:
+**LEDs1–3 = normal; LEDs6–8 = height**, lit for1second. Then pickup/level feedback
+resumes: there is no persistent page indicator. These are8mu LEDs, not Computer LEDs.
 
-Faders use pickup near/crossing existing values, with waiting LED feedback. Mixer
-source changes rearm source-specific faders; other source values stay put.
-Mixer A/B select sources; C is unused; D held shows timing. Mixer LED8 identifies
-A steady/B blinking with height brightness and pickup indication.
+| Fader | Orbits normal | Orbits height/slope | Mixer | Disorientation |
+|---|---|---|---|---|
+|1|Speed/direction|Height −40°..+40°|Selected distance|Speed/direction|
+|2|Distance|Tilt0..40°|Selected level|Excursion|
+|3|Separation|Uphill direction|Selected position|Phase separation|
+|4|Room|Room|Room|Room|
+|5/6|A/B trim|A/B trim|A/B trim|A/B trim|
+|7|Spatial strength|Spatial strength|Spatial strength|Spatial strength|
+|8|Motion amount|Motion amount|Selected-source height|Motion amount|
 
-For Orbits/Disorientation: A resets phase and recentres at Main/current pose;
-B toggles motion; C held freezes automatic traversal. Roll offsets the anchor;
-yaw rate integrates a held position/depth with deadband and bounded controls.
-In Disorientation, **tap D and release within 500 ms** cycles Fig8/Pendulum/Wander;
-hold D at least 500 ms for diagnostics without cycling. LEDs1/2/3 briefly identify
-movement. Orbits D is diagnostics only. No new live height/tilt mapping is assigned
-in Disorientation; configure and Save those settings with the editor before the
-8mu boot. Mixer fader8 height remains available.
+Faders1–3 rearm pickup on each Orbits page switch. Remote-owned speed/distance/
+separation stay held while editing height; return to normal waits for pickup.
+Height/slope values also remain when leaving their page. Shared faders4–8 retain
+ownership. A fader waiting for pickup blinks. Normal panel controls remain available
+when not remotely owned. No change to Disorientation/Mixer page behaviour.
 
-8mu never writes flash. Live motion, phase and trim overrides are excluded from
-saved presets. Main/X/Y use pickup on handback from Disorientation/Mixer ownership.
-Editor and 8mu cannot be tested simultaneously on the card's one USB controller.
+Orbits/Disorientation A resets/recentres at Main/current pose, B toggles motion,
+C holds phase. Motion/CV can still reshape held positions. C release restores the
+prior speed. Roll offsets the anchor and yaw rate integrates position/depth.
+Fader8 remains motion amount, including on Orbits height page; no new gyro axis.
+Disorientation D tap cycles Fig8/Pendulum/Wander, with LEDs1/2/3 briefly identifying
+movement; longD keeps timing. Mixer A/B select sources, C is unused and D is timing.
+Mixer LED8 identifies A steady/B blinking, with height brightness/pickup feedback.
+
+Orbits disconnect restores saved height/slope and disables motion. Remotely owned
+X/Y wait for panel pickup; reconnect starts normal with fresh fader pickup. Runtime
+8mu values do not change saved presets. For persistent height/slope use the editor
+and Save in a separate USB boot. Other8mu mapping/ownership rules remain unchanged.
 
 ## LEDs, timing and known limits
 
 The four upper LEDs show source A/B left/right direction pairs; equal brightness
 can mean front or back. Mixer selected pairs blink while panel pickup is pending.
 Bottom-left indicates linked movement or editing A in Mixer. **Bottom-right latches
-a timing/queue warning**: callback ≥18 µs, block ≥1200 µs, or a queue fault.
+a general warning**: callback ≥18 µs, block ≥1200 µs, a queue fault or a failed save/resume (once callbacks run).
 Reset clears peaks/warnings. Startup LED patterns override runtime feedback.
 
 Hold 8mu D for offline peak block-time bands: each lit LED represents 150 µs;
-eight lit means above 1050 µs. All eight flash if a timing/queue warning latched.
+eight lit means above 1050 µs. All eight flash if a timing/queue/save warning latched.
 A lit band alone is not a warning. The editor reports exact latched peaks and
 separate slow-DSP/callback/queue flags. Reboot between comparisons.
 
@@ -176,22 +195,30 @@ Core0 captures audio/controls; core1 renders 64-frame DSP blocks and services
 bounded USB work. Added transport latency is 128 frames, about **2.67 ms**. Block
 deadline is **1333.3 µs**; 1200 µs is an early warning. A missed output block can
 produce 64 frames of silence; late audio is discarded. Flash saves intentionally
-pause/fade audio and are excluded from timing peaks.
+fade, stop ADC/DMA, lock out for verified flash access, then restart sampling in
+a known state before acknowledging. This fixes the tested repeated-save failure.
+Unchanged saves skip mute/erase; failures return an error and latch the general
+faultLED once callbacks run. A stopped core cannot guarantee LED feedback. Save
+pauses are excluded from timing peaks.
 
-User-reported alpha26 slope stress results underlying this beta:
+**Beta2 ships the exact user-tested alpha3 UF2 bytes; the promoted root rebuild
+also matches byte-for-byte.** The user reports all alpha3 tests pass, including
+8mu pickup/page control and effective indicator. Randomisation listening confirms
+elevation changes are effective. The alpha2 save fix separately passed.
 
-| Movement | Duration | Callback / block peak |
+Historical timing context from earlier builds (not new beta2 measurements):
+
+| Build / mode | Duration | Callback / block peak |
 |---|---|---|
-| Pendulum | 25 minutes | 14 / 1175 µs; audible slope, no clicks/gaps/queue warnings |
-| Fig8 | 20 minutes | 14 / 1176 µs; no separate listening/queue report supplied |
-| Wander | 30 minutes | 14 / 1193 µs; clean audio, no queue warnings |
+| Alpha26 Pendulum |25min|14 /1175µs; clean, no queue warnings|
+| Alpha26 Fig8 |20min|14 /1176µs; no separate listening/queue report|
+| Alpha26 Wander |30min|14 /1193µs; clean, no queue warnings|
+|0.3alpha1 opposing Orbits|22min|12 /1188µs; clean, no queue warnings|
 
-Audio-rate CV was used in the preceding tests. Exact stress settings and USB role
-were not fully logged. Wander leaves only **7 µs below the warning**; these results
-cover one tester/setup, not every board/headphone/USB load. Beta1 ships the exact
-alpha26 UF2 bytes; the root rebuild differs only in its embedded build-date byte.
-Independent testing should cover saved settings, separate 8mu boots and worst-load
-CV. [Tester protocol and feedback template](docs/TEST_PROTOCOL.md).
+No new alpha3 peak values or run duration were supplied with its pass. Headroom
+remains narrow; historical Wander was only7µs below the block warning. Additional
+testers should log their own board/headphones, controls/CV, duration and USBrole,
+covering editor and separate8mu boots. [Protocol/feedback](docs/TEST_PROTOCOL.md).
 
 ## Source and build
 
@@ -210,13 +237,4 @@ Python scientific libraries or measurement download. Mathematical slope-table
 reproduction uses `tools/generate_slope_table.py`; measured-bank provenance and
 archived elevation generator are recorded in the notices. Old preview audio is
 historical, not proof of the beta's sound. [Archive](archive/README.md) holds earlier
-versions; current `uf2/` contains only beta1 and its notices/checksum.
-
-The next alpha is a separate [Twin Orbits height/slope experiment](experimental/orbits-height-64/README.md).
-It has its own firmware/editor and persistence version; beta1 above remains the
-tester build. Original experimental code/docs ©2026 Adrian Vos(soveda),MIT;
-existing KEMAR/data/dependency terms are preserved. Hardware validation is pending.
-
-A separate [alpha2 repeated-save fix candidate](experimental/orbits-save-fix-64/README.md) addresses the reported sampling/Save failure in the Orbits experiment. Beta1 and alpha1 remain intact. Local ComputerCard0.4.0 pause/resume adaptation retains Chris Johnson’s MIT attribution; additions ©2026 Adrian Vos(soveda),MIT. Hardware validation is pending.
-
-[Alpha3 Orbits8mu pages and elevation tools](experimental/orbits-mu-pages-64/README.md) builds on the user-passed save fix. D tap selects normal/height pages; editor elevation buttons stage edits for Apply. Original additions ©2026 Adrian Vos(soveda),MIT; existing dependency/data notices preserved. Root beta remains unchanged.
+versions; current `uf2/` contains only beta2 and its notices/checksum.

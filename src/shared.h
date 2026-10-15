@@ -13,6 +13,7 @@ struct Shared {
     alignas(4) volatile uint32_t ready = 0;
     // 0 running; core 1 requests 1; core 0 acknowledges silence with 2.
     alignas(4) volatile uint32_t save = 0;
+    alignas(4) volatile uint32_t save_fault = 0; // Core 1 latches failed save/resume; core 0 displays.
     volatile uint32_t angle_a=0,angle_b=2048,distance=0,flags=0;
     volatile uint32_t callback_peak_us=0,block_peak_us=0;
     volatile uint32_t usb_ready=0,mode=0,distance_b=0,mixer_state=0;

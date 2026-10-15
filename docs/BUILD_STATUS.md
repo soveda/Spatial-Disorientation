@@ -1,34 +1,34 @@
-# Beta1 verification
+# Beta2 verification — 2026-10-15
 
-© 2026 Adrian Vos(soveda), MIT. Source/data/dependency attribution in
-[THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md). Recorded2026-10-13.
+©2026 Adrian Vos(soveda), MIT. [Source and dependency attribution](../THIRD_PARTY_NOTICES.md).
 
-0.2.0-beta1 promotes alpha26 without DSP/control changes. Packaged UF2 is byte-for-
-byte the user-tested alpha26 binary. SHA256:
-`79482afee79ec2576f27c444a253411be2936322fc17519bb1bc642165f04855`.
+**0.3.0-beta2** promotes user-tested0.3.0-alpha3, commit`c6906d0`, without DSP or
+control changes. The distributed UF2 and root Release rebuild both have SHA256:
+`d8f2c50715d2963bcb964203e19795e8d15f59419d62241e1da6e01a834d98ef`.
+The firmware bytes are identical to the alpha3 accepted by the user.
 
-Root Release rebuild with Pico SDK2.3.0/Arm GNU15.2.Rel1 passes: flash141504B,
-RAM182252B, scratch2048B each. Rebuild differs from packaged UF2 by one payload
-byte in embedded build date (Oct12→Oct13); executable code/data are otherwise
-identical. This is not a fresh DSP hardware revision. Clock192MHz/1.15V, ComputerCard
-0.4.0, audio48kHz, two sources/64taps, block64, transport128 remain.
+Build passes without warnings with PicoSDK2.3.0/ArmGNU15.2.Rel1. Flash147108B,
+mainRAM187968B, scratch2048B each.192MHz/1.15V, audio48kHz, two sources/64taps,
+64frame blocks and128frame transport remain. ComputerCard0.4.0 includes the local
+attributed ADC/DMA flash-pause adaptation; it is not an unmodified upstream header.
 
-Host checks with ASan/UBSan cover all root C++test programs, including FIR scalar
-reference,1024000 exactHRTF comparisons,756000 alpha25-exact zero-tilt scene/transport
-frames,180000 changing-slope transport frames, independent rotation reference,
-heightbounds/freeze/reverse, settings/migration/rejection, smoothing, room, block
-starvation/recovery, modes/startup,8mu ownership/pickup and MIDIbackpressure.
-Actual editor script passes simulated-MIDI lifecycle/Apply/Read/Save/preset legacy
-migration/slope/height/telemetry checks. This does not replace hardware USB testing.
+All22C++host programs pass ASan/UBSan against promoted root, including Orbits pages/
+pickup/held values/fresh-session/D-hold/A/B/C/reconnect,1000changed+100unchanged
+mock saves and injected failures, actual parser init→Apply→Read, settings/migrations,
+HRTF/FIR/scene/transport/height/slope/room/smoothing/8mu/MIDIqueue regressions.
+Actual editor script passes simulatedMIDI lifecycle, stale-readback detection,
+randomise/reset per-mode isolation/no-send/bounds, Apply/Save/preset/migration tests.
+These tests supplement rather than replace hardware acceptance.
 
-User reports: Pendulum25min14/1175µs, audible slope and no clicks/gaps/queue faults;
-Fig8 20min14/1176µs (listening/queue result not separately supplied); Wander30min
-14/1193µs, audio clean/no queue warnings. Earlier tests used audio-rateCV; exact
-settings/USBrole not fullylogged. Narrowest block warning margin7µs; deadline
-1333.3µs. These readings are one setup, not guaranteed limits for other boards.
+User reports: save fix passes; alpha3 all tests pass and page indicator effective;
+randomisation reveals effective elevation. No new alpha3 timing or run-duration
+numbers were supplied. Historical alpha26 Wander30min14/1193µs and alpha1 Orbits
+22min12/1188µs give context only, not beta2 measurements or a universal load limit.
+Additional testers should log exact settings/board/USB role and peaks, especially
+continuous height changes, heavyCV and separate editor/8mu boots.
 
-Beta tester priorities: matched hardware/headphone reports, persistence/preset
-roundtrip, separate8mu boots and high-load sustained runs. Current root metadata
-uses canonical Workshop Computer fields; upstream release remains unchanged.
-Archives preserve28 previousUF2 files and a checksum manifest. Tester bundle
-contains only current beta/editor/docs/licenses; it does not remove fallback files.
+Metadata validates against canonical Workshop Computer schema with0errors/0warnings.
+Beta1 complete source/editor/docs/UF2/original testerZIP is preserved in archive/beta1;
+all29 archived UF2 checksums are verified. Current distribution contains one UF2 and
+matching editor/notices/source/test guide. Beta1 migration/downgrade is documented.
+Upstream Workshop release and remote Pages are not changed by local packaging.
