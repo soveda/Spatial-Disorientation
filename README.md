@@ -238,3 +238,11 @@ reproduction uses `tools/generate_slope_table.py`; measured-bank provenance and
 archived elevation generator are recorded in the notices. Old preview audio is
 historical, not proof of the beta's sound. [Archive](archive/README.md) holds earlier
 versions; current `uf2/` contains only beta2 and its notices/checksum.
+
+
+## Pitch/roll positioning experiment
+
+[0.4.0-alpha1 pitch/roll](experimental/pitch-roll-position-64/README.md) replaces
+8mu yaw integration with direct pitch front/back and roll left/right positioning.
+Includes a separate UF2/editor and hardware test protocol; beta2 above is preserved.
+Host/build checks pass; physical testing of this mapping remains pending.

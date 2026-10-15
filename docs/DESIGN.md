@@ -563,3 +563,27 @@ archived under archive/beta1. Current metadata/docs/editor/tester package update
 beta1 backups before Save; alpha1–3 compatible. No Workshop release changes or
 remote publication are implied. Original new code/docs Adrian Vos(soveda),MIT;
 ComputerCard Chris Johnson MIT, all existing KEMAR/runtime/dependency notices retained.
+
+
+## Direct pitch/roll positioning alpha (2026-10-15)
+
+User requests replacing difficult yaw control and explicitly chooses pitch
+front/back plus roll left/right. Separate experimental/pitch-roll-position-64,
+0.4.0-alpha1-pitch-roll, preserves user-passed beta2. Orbits uses the existing atan
+lookup on relative gravity pitch/roll for direct circular position around captured
+Main. Neutral square±64 holds last direction; fader8 scales tilt sensitivity and
+zero returns anchor. No yaw integration or stale-rate timer; held pose remains valid.
+A/B capture both tilt axes and Main. Automatic orbit/CV remain additive. Existing
+normal/height pages, pickup, flash safety and LED diagnostics remain unchanged.
+Disorientation pitch directly controls bounded Main depth; roll rotates its entire
+path before world-space slope. Circular rotation smoothing runs at1kHz on core0,
+returns zero when motion disabled, and is captured in each runtime scene. Mixer
+ignores motion. No save/protocol layout change: SysEx7/JSON7/flash8.
+
+Original code/docs Adrian Vos(soveda),MIT; existing WaveSeq/EightMU, ComputerCard
+Chris Johnson MIT and Gardner/Martin KEMAR attribution/terms retained. No new
+external code/data. Build192MHz/1.15V/64taps/two sources: flash147884B/RAM189808B,
+scratch2048B each;23C++ASan/UBSan programs and editor checks pass. New tests cover
+atan2 reference, directional cardinals, neutral/held pose/yaw rejection and180000
+changing-rotation captured-scene comparisons. Hardware load/listening/pickup testing
+of this alpha pending; beta2 remains the fallback. No remote publication implied.
