@@ -25,3 +25,16 @@ under archive/beta2; older archives retained. Firmware checksums verified. Setti
 formats remain SysEx7/JSON7/flash8, compatible with beta2. Existing beta1 migration/
 downgrade instructions remain applicable. Root beta includes current editor, notices,
 source and tester guide. No Workshop release changes or remote publishing implied.
+
+
+## Archive cleanup verification — 2026-10-15
+
+Five superseded alpha experiments moved into archive/experimental/ with rebased
+build, Markdown and comparison-test paths. All five CMake configurations pass;
+the moved pitch/roll baseline rebuild is byte-identical to current beta3. Twenty
+archived comparison programs (four per moved experiment) pass ASan/UBSan; all five
+matching editor script checks pass. Current beta build/editor checks pass; source,
+editor, firmware and active regression tests remain unchanged by housekeeping.
+All35 archived UF2 and14 historical WAV checksums verify. Preview WAVs now live
+in archive/previews/ with their attribution/checksum list. Old build caches are
+retained locally under ignored archive/local-builds/. Tester ZIP refreshed.

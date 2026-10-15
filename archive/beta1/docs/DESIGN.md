@@ -487,7 +487,7 @@ KEMAR/dependency notices preserved.
 ## Separate Twin Orbits height/slope alpha (2026-10-15)
 
 User requests the next alpha experiment adding height/slope to Orbits. Independent
-experimental/orbits-height-64 copies beta1 and adds a mode-owned Orbits centre
+archive/experimental/orbits-height-64 copies beta1 and adds a mode-owned Orbits centre
 height, uphill bearing and tilt, IDs16/18/19. Defaults level/zero tilt preserve beta
 Orbits; no new bob oscillator. Core0 captures these with phase; core1 resolves
 SlopePath and bounded height at existing geometry cadence. Scene identifies Orbits
@@ -509,7 +509,7 @@ User reports alpha1 overall listening works, subtle slope, staticheight audible;
 repeated saves first stop responding while audio continues, another attempt stops
 audio with rapid phantomCV display and no CV patched. No warningLED. Old code locks
 out core0 for flash while ADC/DMA continue, plausibly losing sampling alignment.
-A separate experimental/orbits-save-fix-64 retains alpha1 and beta. Local attributed
+A separate archive/experimental/orbits-save-fix-64 retains alpha1 and beta. Local attributed
 ComputerCard0.4.0 adaptation pauses ADC/DMA after mute, drains/clears FIFO, preserves
 mux/buffer state, restarts round-robin/input0 and existing DMA without reclaiming
 channels. Core1 requests, core0 owns hardware. Explicit flash lockout remains.
@@ -531,7 +531,7 @@ edits on mismatch. No independent init DSP bug has been reproduced. Final build
 ## User-passed save fix; Orbits 8mu pages alpha3 (2026-10-15)
 
 User reports the alpha2 save fix passes and authorizes the first Orbits8mu pages
-plus editor Randomise/Reset elevation buttons. Separate experimental/orbits-mu-pages-64
+plus editor Randomise/Reset elevation buttons. Separate archive/experimental/orbits-mu-pages-64
 retains beta1/alpha2. Short D release<500ms toggles normal vs height/slope; D hold
 retains diagnostics. Faders1–3 are speed/distance/separation or height/tilt/uphill;
 4–8 retain room/A/B/strength/motion. Page switches rearm1–3 while holding remote

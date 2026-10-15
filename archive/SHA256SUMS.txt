@@ -24,6 +24,11 @@ c92ea71a3dc7309df56fca42cf973db819137479eee3d83669ac61c3aecb2dd0  experimental/f
 6577841a5f17da70d2038bb2c2b6e9d8483d51c97356a5a87173082592849187  experimental/mixer-elevation-64/uf2/Spatial_Disorientation_0.1.0-alpha17-elevation64-SOLO-startup-fix.uf2
 2708df8e4b2017c99325093b9ac10dbc8b7ef101a1887cc0dce73d97afad8368  experimental/mixer-elevation-64/uf2/Spatial_Disorientation_0.1.0-alpha18-elevation64-DUAL-optimized.uf2
 9a0743917d57e28d72f0c1412420e975c4be26fe6c64fe493886a9e37153ae59  experimental/mixer-mu-elevation-64/uf2/Spatial_Disorientation_0.1.0-alpha21-mixer-mu-elevation64-DUAL.uf2
+8484d0e4697002d4e032813dcc3dcbd31d32727edcd2a6bd628c3ac24089a528  experimental/orbits-height-64/uf2/Spatial_Disorientation_0.3.0-alpha1-orbits-height64-DUAL.uf2
+d8f2c50715d2963bcb964203e19795e8d15f59419d62241e1da6e01a834d98ef  experimental/orbits-mu-pages-64/uf2/Spatial_Disorientation_0.3.0-alpha3-orbits-mu-pages64-DUAL.uf2
+958c821287c6b17a90c1f82dbb2b37a445d312f1502fc0099bdbc6b5fd9151e3  experimental/orbits-save-fix-64/uf2/Spatial_Disorientation_0.3.0-alpha2-orbits-save-fix64-DUAL.uf2
+ff641228bbca88632c47de0419f0194238a98026c79164e5411022e0fdc92149  experimental/pitch-roll-polarity-64/uf2/Spatial_Disorientation_0.4.0-alpha2-roll-polarity64-DUAL.uf2
+e5927e3811150f5f0a9e3fd3548239c2387d4153b2f221d9b3b6defb4d4255be  experimental/pitch-roll-position-64/uf2/Spatial_Disorientation_0.4.0-alpha1-pitch-roll64-DUAL.uf2
 8acd0ace32cccb56c634053faf8851add3ff61b52be3a5d5a337f33e39fccd3a  experimental/scene-reference-64/uf2/Spatial_Disorientation_0.1.0-alpha19-scene-reference64-DUAL.uf2
 79482afee79ec2576f27c444a253411be2936322fc17519bb1bc642165f04855  experimental/sloping-paths-64/uf2/Spatial_Disorientation_0.1.0-alpha26-sloping-paths-64-DUAL.uf2
 c112125b0630972be2babdfb4439fbec85482ed58c0093544186b6d7c2c409bf  experimental/smoothing-64/uf2/Spatial_Disorientation_0.1.0-alpha20-smoothing64-DUAL.uf2

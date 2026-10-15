@@ -212,11 +212,11 @@ archived elevation generator are recorded in the notices. Old preview audio is
 historical, not proof of the beta's sound. [Archive](../README.md) holds earlier
 versions; current `uf2/` contains only beta1 and its notices/checksum.
 
-The next alpha is a separate [Twin Orbits height/slope experiment](../../experimental/orbits-height-64/README.md).
+The next alpha is a separate [Twin Orbits height/slope experiment](../archive/experimental/orbits-height-64/README.md).
 It has its own firmware/editor and persistence version; beta1 above remains the
 tester build. Original experimental code/docs ©2026 Adrian Vos(soveda),MIT;
 existing KEMAR/data/dependency terms are preserved. Hardware validation is pending.
 
-A separate [alpha2 repeated-save fix candidate](../../experimental/orbits-save-fix-64/README.md) addresses the reported sampling/Save failure in the Orbits experiment. Beta1 and alpha1 remain intact. Local ComputerCard0.4.0 pause/resume adaptation retains Chris Johnson’s MIT attribution; additions ©2026 Adrian Vos(soveda),MIT. Hardware validation is pending.
+A separate [alpha2 repeated-save fix candidate](../archive/experimental/orbits-save-fix-64/README.md) addresses the reported sampling/Save failure in the Orbits experiment. Beta1 and alpha1 remain intact. Local ComputerCard0.4.0 pause/resume adaptation retains Chris Johnson’s MIT attribution; additions ©2026 Adrian Vos(soveda),MIT. Hardware validation is pending.
 
-[Alpha3 Orbits8mu pages and elevation tools](../../experimental/orbits-mu-pages-64/README.md) builds on the user-passed save fix. D tap selects normal/height pages; editor elevation buttons stage edits for Apply. Original additions ©2026 Adrian Vos(soveda),MIT; existing dependency/data notices preserved. Root beta remains unchanged.
+[Alpha3 Orbits8mu pages and elevation tools](../archive/experimental/orbits-mu-pages-64/README.md) builds on the user-passed save fix. D tap selects normal/height pages; editor elevation buttons stage edits for Apply. Original additions ©2026 Adrian Vos(soveda),MIT; existing dependency/data notices preserved. Root beta remains unchanged.

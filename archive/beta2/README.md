@@ -242,13 +242,13 @@ versions; current `uf2/` contains only beta2 and its notices/checksum.
 
 ## Pitch/roll positioning experiment
 
-[0.4.0-alpha1 pitch/roll](../../experimental/pitch-roll-position-64/README.md) replaces
+[0.4.0-alpha1 pitch/roll](../archive/experimental/pitch-roll-position-64/README.md) replaces
 8mu yaw integration with direct pitch front/back and roll left/right positioning.
 Includes a separate UF2/editor and hardware test protocol; beta2 above is preserved.
 Host/build checks pass; physical testing of this mapping remains pending.
 
 
-[Alpha2 roll polarity correction](../../experimental/pitch-roll-polarity-64/README.md)
+[Alpha2 roll polarity correction](../archive/experimental/pitch-roll-polarity-64/README.md)
 reverses roll in both motion mappings: lowering the right edge moves right,
 lowering the left edge moves left. Pitch remains unchanged. Alpha1 otherwise
 passed user testing, but its physical roll convention was reversed; both prior

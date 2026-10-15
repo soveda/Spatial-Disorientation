@@ -268,4 +268,14 @@ versions; current `uf2/` contains only beta3 and its notices/checksum.
 
 Beta2 is preserved with its source/editor/firmware and original tester bundle in
 [archive/beta2](archive/beta2/README.md). The two pitch/roll alpha experiments remain
-under experimental/ for comparison; alpha1 uses the earlier reversed roll convention.
+under archive/experimental/ for comparison; alpha1 uses the earlier reversed roll convention.
+
+
+## Repository layout
+
+Current beta source, editor, firmware and regression tests are in `src/`, `web/`,
+`uf2/` and `tests/`. `docs/` contains operator/test/design records; `vendor/` and
+`licenses/` retain dependencies and attribution. `dist/` holds the local current
+tester ZIP. [Archive index](archive/README.md) groups previous betas, all superseded
+alpha experiments and historical audio previews. Old build caches are retained
+locally under ignored `archive/local-builds/`; use a fresh build for current work.

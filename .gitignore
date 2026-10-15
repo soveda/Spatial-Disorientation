@@ -12,3 +12,5 @@
 
 /dist/
 !/archive/**/*.uf2
+
+/archive/local-builds/

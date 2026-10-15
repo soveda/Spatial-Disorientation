@@ -487,7 +487,7 @@ KEMAR/dependency notices preserved.
 ## Separate Twin Orbits height/slope alpha (2026-10-15)
 
 User requests the next alpha experiment adding height/slope to Orbits. Independent
-experimental/orbits-height-64 copies beta1 and adds a mode-owned Orbits centre
+archive/experimental/orbits-height-64 copies beta1 and adds a mode-owned Orbits centre
 height, uphill bearing and tilt, IDs16/18/19. Defaults level/zero tilt preserve beta
 Orbits; no new bob oscillator. Core0 captures these with phase; core1 resolves
 SlopePath and bounded height at existing geometry cadence. Scene identifies Orbits
@@ -509,7 +509,7 @@ User reports alpha1 overall listening works, subtle slope, staticheight audible;
 repeated saves first stop responding while audio continues, another attempt stops
 audio with rapid phantomCV display and no CV patched. No warningLED. Old code locks
 out core0 for flash while ADC/DMA continue, plausibly losing sampling alignment.
-A separate experimental/orbits-save-fix-64 retains alpha1 and beta. Local attributed
+A separate archive/experimental/orbits-save-fix-64 retains alpha1 and beta. Local attributed
 ComputerCard0.4.0 adaptation pauses ADC/DMA after mute, drains/clears FIFO, preserves
 mux/buffer state, restarts round-robin/input0 and existing DMA without reclaiming
 channels. Core1 requests, core0 owns hardware. Explicit flash lockout remains.
@@ -531,7 +531,7 @@ edits on mismatch. No independent init DSP bug has been reproduced. Final build
 ## User-passed save fix; Orbits 8mu pages alpha3 (2026-10-15)
 
 User reports the alpha2 save fix passes and authorizes the first Orbits8mu pages
-plus editor Randomise/Reset elevation buttons. Separate experimental/orbits-mu-pages-64
+plus editor Randomise/Reset elevation buttons. Separate archive/experimental/orbits-mu-pages-64
 retains beta1/alpha2. Short D release<500ms toggles normal vs height/slope; D hold
 retains diagnostics. Faders1–3 are speed/distance/separation or height/tilt/uphill;
 4–8 retain room/A/B/strength/motion. Page switches rearm1–3 while holding remote
@@ -568,7 +568,7 @@ ComputerCard Chris Johnson MIT, all existing KEMAR/runtime/dependency notices re
 ## Direct pitch/roll positioning alpha (2026-10-15)
 
 User requests replacing difficult yaw control and explicitly chooses pitch
-front/back plus roll left/right. Separate experimental/pitch-roll-position-64,
+front/back plus roll left/right. Separate archive/experimental/pitch-roll-position-64,
 0.4.0-alpha1-pitch-roll, preserves user-passed beta2. Orbits uses the existing atan
 lookup on relative gravity pitch/roll for direct circular position around captured
 Main. Neutral square±64 holds last direction; fader8 scales tilt sensitivity and
@@ -594,7 +594,7 @@ of this alpha pending; beta2 remains the fallback. No remote publication implied
 User reports pitch/roll alpha1 tests pass but roll appears reversed. Inspection:
 EightMU::Roll is positive with right edge lifted; alpha1 used positive relative
 roll for positive (rightward) scene angle. This makes a right-edge-down lean move
-left. Isolated experimental/pitch-roll-polarity-64 /0.4.0-alpha2-roll-polarity
+left. Isolated archive/experimental/pitch-roll-polarity-64 /0.4.0-alpha2-roll-polarity
 subtracts measured roll from captured neutral in both Orbits and Disorientation.
 Pitch, raw sensor API, yaw rejection, timing architecture, flash handshake,
 settings formats and all DSP code stay unchanged. Tests explicitly assert
