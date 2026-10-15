@@ -186,3 +186,5 @@ The experimental editor verifies Orbits height/tilt readback after init/Apply an
 keeps desired edits staged with an explicit error if the card returns old values.
 The editor regression simulates a falsely acknowledged Apply to verify this case.
 This does not claim a separate init firmware bug was reproduced or fixed.
+
+User validation2026-10-15: “Save fix passes.” No new timing, duration or save count supplied. Alpha2 source/UF2 remain the fallback for the separate alpha3 mapping pass. Original record ©2026 Adrian Vos(soveda),MIT; existing notices retained.

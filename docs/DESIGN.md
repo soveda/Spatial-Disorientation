@@ -526,3 +526,26 @@ hardware reset restored effect. Alpha2 tests actual parser/SPSC init/Apply/Read
 plus browser stale-ack simulation; editor checks Orbits readback and retains staged
 edits on mismatch. No independent init DSP bug has been reproduced. Final build
 144300B flash/185104B RAM, tests pass; hardware confirmation remains pending.
+
+
+## User-passed save fix; Orbits 8mu pages alpha3 (2026-10-15)
+
+User reports the alpha2 save fix passes and authorizes the first Orbits8mu pages
+plus editor Randomise/Reset elevation buttons. Separate experimental/orbits-mu-pages-64
+retains beta1/alpha2. Short D release<500ms toggles normal vs height/slope; D hold
+retains diagnostics. Faders1–3 are speed/distance/separation or height/tilt/uphill;
+4–8 retain room/A/B/strength/motion. Page switches rearm1–3 while holding remote
+normal values and elevation values, preserve shared-fader ownership and avoid
+false initial crossings. A/B/C/motion remain; C release restores prior speed.
+Disconnect restores saved elevation and motion-off, with X/Y panel pickup; fresh
+connection starts normal. Core0 owns mapping at1kHz and captures runtime heights
+with audio. No8mu autosave or settings layout change. Host LEDs1–3 identify normal,
+6–8 height briefly; longD diagnostics override notices. Root beta remains intact.
+
+Bottom editor tools stage active-mode elevation only: Orbits centre/bearing/tilt,
+Mixer A/Bheight, Disorientation centre/depth/bearing/tilt. Random values avoid
+immediate clipping; Reset is level/zero tilt/depth. Apply/Save stay explicit, offline
+staging supported, other settings remain. Protocol7/JSON7/flash8 and alpha2 sampler
+pause/verified-resume remain. Original code/docs AdrianVos(soveda),MIT, reusing
+existing WaveSeq/EightMU pickup adaptation; existing KEMAR/dependency attribution
+preserved. Alpha3 hardware mapping/timing/listening validation pending.
