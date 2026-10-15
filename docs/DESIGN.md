@@ -483,3 +483,21 @@ an independent board/8mu/USBrole pass from these reports. Further tester accepta
 includes persistence and separateUSBhost/device sessions. No Workshop release
 change or new DSP behaviour. Original code/docs AdrianVos(soveda),MIT; existing
 KEMAR/dependency notices preserved.
+
+## Separate Twin Orbits height/slope alpha (2026-10-15)
+
+User requests the next alpha experiment adding height/slope to Orbits. Independent
+experimental/orbits-height-64 copies beta1 and adds a mode-owned Orbits centre
+height, uphill bearing and tilt, IDs16/18/19. Defaults level/zero tilt preserve beta
+Orbits; no new bob oscillator. Core0 captures these with phase; core1 resolves
+SlopePath and bounded height at existing geometry cadence. Scene identifies Orbits
+explicitly so Mixer and Disorientation retain behaviour. Both sources/64taps,
+192MHz/1.15V, audio/block scheduling and all physical/8mu mappings stay fixed.
+
+Separate editor/protocol7, JSON7 and flash8 add the three Orbits values, preserving
+old supported fields on migration and defaulting only new fields. Beta1 presets
+must be backed up before Save because beta1 rejects flash8/JSON7. No host Save
+or live height/tilt mapping is introduced. Root beta source/editor/UF2 and archived
+fallbacks remain unchanged. Hardware timing/listening/persistence testing pending.
+Original implementation/design/docs Adrian Vos(soveda),2026,MIT; existing
+Gardner/Martin KEMAR and dependency attribution/terms retained.

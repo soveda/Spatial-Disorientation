@@ -211,3 +211,8 @@ reproduction uses `tools/generate_slope_table.py`; measured-bank provenance and
 archived elevation generator are recorded in the notices. Old preview audio is
 historical, not proof of the beta's sound. [Archive](archive/README.md) holds earlier
 versions; current `uf2/` contains only beta1 and its notices/checksum.
+
+The next alpha is a separate [Twin Orbits height/slope experiment](experimental/orbits-height-64/README.md).
+It has its own firmware/editor and persistence version; beta1 above remains the
+tester build. Original experimental code/docs ©2026 Adrian Vos(soveda),MIT;
+existing KEMAR/data/dependency terms are preserved. Hardware validation is pending.
