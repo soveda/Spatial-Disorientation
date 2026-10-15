@@ -587,3 +587,21 @@ scratch2048B each;23C++ASan/UBSan programs and editor checks pass. New tests cov
 atan2 reference, directional cardinals, neutral/held pose/yaw rejection and180000
 changing-rotation captured-scene comparisons. Hardware load/listening/pickup testing
 of this alpha pending; beta2 remains the fallback. No remote publication implied.
+
+
+## Physical roll polarity correction alpha2 (2026-10-15)
+
+User reports pitch/roll alpha1 tests pass but roll appears reversed. Inspection:
+EightMU::Roll is positive with right edge lifted; alpha1 used positive relative
+roll for positive (rightward) scene angle. This makes a right-edge-down lean move
+left. Isolated experimental/pitch-roll-polarity-64 /0.4.0-alpha2-roll-polarity
+subtracts measured roll from captured neutral in both Orbits and Disorientation.
+Pitch, raw sensor API, yaw rejection, timing architecture, flash handshake,
+settings formats and all DSP code stay unchanged. Tests explicitly assert
+right-edge-down = right and left-edge-down = left through Orbits scene placement,
+Disorientation path rotation and non-flat neutral recapture. Prior numeric tests
+encoded the wrong physical convention; expanded tests name the physical edges.
+Original code/docs Adrian Vos(soveda),MIT; dependency/KEMAR notices retained.
+Build: flash147876B/RAM189792B,scratch2048B per core,192MHz/64taps/two sources.
+23C++ASan/UBSan and editor regressions pass. Hardware confirmation pending;
+alpha1 and beta2 code/editors/UF2 remain intact. No remote publication implied.

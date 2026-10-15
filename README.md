@@ -246,3 +246,10 @@ versions; current `uf2/` contains only beta2 and its notices/checksum.
 8mu yaw integration with direct pitch front/back and roll left/right positioning.
 Includes a separate UF2/editor and hardware test protocol; beta2 above is preserved.
 Host/build checks pass; physical testing of this mapping remains pending.
+
+
+[Alpha2 roll polarity correction](experimental/pitch-roll-polarity-64/README.md)
+reverses roll in both motion mappings: lowering the right edge moves right,
+lowering the left edge moves left. Pitch remains unchanged. Alpha1 otherwise
+passed user testing, but its physical roll convention was reversed; both prior
+alpha and beta2 remain available. Hardware confirmation of alpha2 is pending.
